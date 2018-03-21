@@ -9,16 +9,26 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import {PendientesComponent} from '../pages/pendientes/pendientes.component';
 import {TerminadosComponent} from '../pages/terminados/terminados.component';
 
+import { Upload } from '../pages/upload/upload';
+import { UploadList } from '../pages/upload/upload-list';
+
 
 //Servicios
 import { ListaDeseosService } from './services/lista-deseos.service';
+
+//Plugins Providers
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+import { Camera,CameraOptions} from '@ionic-native/camera';
+import { Geolocation } from '@ionic-native/geolocation';
 
 @NgModule({
   declarations: [
     MyApp,
     TabsPage,
     PendientesComponent,
-    TerminadosComponent
+    TerminadosComponent,
+    Upload,
+    UploadList
   ],
   imports: [
     BrowserModule,
@@ -29,12 +39,17 @@ import { ListaDeseosService } from './services/lista-deseos.service';
     MyApp,
     TabsPage,
     PendientesComponent,
-    TerminadosComponent
+    TerminadosComponent,
+    Upload,
+    UploadList
   ],
   providers: [
     ListaDeseosService,
     StatusBar,
     SplashScreen,
+    SQLite,
+    Camera,
+    Geolocation,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

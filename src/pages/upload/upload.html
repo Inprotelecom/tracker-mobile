@@ -1,0 +1,52 @@
+<ion-header>
+
+  <ion-navbar color="dark">
+    <ion-title>Upload</ion-title>
+
+    <ion-buttons top right>
+      <button ion-button (click)="closeModal();">
+          Cerrar
+      </button>
+
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-list>
+
+  <ion-item>
+    <ion-label floating>Comments:</ion-label>
+    <ion-input type="text"></ion-input>
+  </ion-item>
+  <ion-item *ngIf="imagePreview">
+    <img [src]="imagePreview"/>
+  </ion-item>
+
+</ion-list>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <button ion-button block icon-left>
+          <ion-icon name="gallery"></ion-icon>
+          Select
+        </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button block icon-left
+        (click)="showCamera()">
+          <ion-icon name="camera" ></ion-icon>
+          Camera
+        </button>
+      </ion-col>
+    </ion-row>
+
+</ion-grid>
+
+
+</ion-content>

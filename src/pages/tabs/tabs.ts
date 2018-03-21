@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { UploadList } from '../upload/upload-list';
 import { PendientesComponent } from '../pendientes/pendientes.component';
 import { TerminadosComponent } from '../terminados/terminados.component';
 
@@ -8,7 +9,7 @@ import { TerminadosComponent } from '../terminados/terminados.component';
 })
 export class TabsPage {
 
-  tab1Root = PendientesComponent;
+  tab1Root = UploadList;
   tab2Root = TerminadosComponent;
 
   constructor() {
