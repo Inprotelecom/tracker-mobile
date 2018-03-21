@@ -11,7 +11,7 @@ import {TerminadosComponent} from '../pages/terminados/terminados.component';
 
 
 //Servicios
-import { ListaDeseosService } from './services/lista-deseos.service.ts';
+import { ListaDeseosService } from './services/lista-deseos.service';
 
 @NgModule({
   declarations: [
