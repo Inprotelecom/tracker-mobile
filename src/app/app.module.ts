@@ -1,8 +1,11 @@
+import { IonicStorageModule } from '@ionic/storage';
+import { HttpModule } from '@angular/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { TabsPage } from '../pages/tabs/tabs';
+import { LoginPage} from '../pages/login/login';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -20,11 +23,15 @@ import { ListaDeseosService } from './services/lista-deseos.service';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { Camera,CameraOptions} from '@ionic-native/camera';
 import { Geolocation } from '@ionic-native/geolocation';
+import { DbManagerProvider } from '../providers/db-manager/db-manager';
+import { LoginProvider } from '../providers/login/login';
+import { StorageProvider } from '../providers/storage/storage';
 
 @NgModule({
   declarations: [
     MyApp,
     TabsPage,
+    LoginPage,
     PendientesComponent,
     TerminadosComponent,
     Upload,
@@ -32,12 +39,15 @@ import { Geolocation } from '@ionic-native/geolocation';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot(),
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
     TabsPage,
+    LoginPage,
     PendientesComponent,
     TerminadosComponent,
     Upload,
@@ -50,7 +60,11 @@ import { Geolocation } from '@ionic-native/geolocation';
     SQLite,
     Camera,
     Geolocation,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    DbManagerProvider,
+    LoginProvider,
+    StorageProvider,
+    Storage
   ]
 })
 export class AppModule {}
