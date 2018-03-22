@@ -9,7 +9,7 @@ import 'rxjs/add/operator/map';
 export class LoginProvider {
 
   token:string;
-  id_user:string;
+  id_user:number;
 
   constructor(public http: Http,
               private alertCrtl:AlertController,

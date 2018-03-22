@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ViewController} from "ionic-angular"
+import {ViewController} from "ionic-angular";
 import { Camera,CameraOptions} from '@ionic-native/camera';
 import { Geolocation } from '@ionic-native/geolocation';
 
