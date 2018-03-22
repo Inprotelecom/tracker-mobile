@@ -7,18 +7,20 @@ import { DbManagerProvider} from '../providers/db-manager/db-manager';
 import { SQLite } from '@ionic-native/sqlite';
 
 import { LoginPage } from '../pages/login/login';
+import { LoginProvider} from '../providers/login/login';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = LoginPage;
+  rootPage:any;
 
   constructor(platform: Platform,
     statusBar: StatusBar,
     splashScreen: SplashScreen,
     public sqlite: SQLite,
-    public dbManager:DbManagerProvider) {
+    public dbManager:DbManagerProvider,
+    public loginService:LoginProvider) {
 
 
     platform.ready().then(() => {
@@ -27,6 +29,12 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
       this.createDatabase();
+        if(this.loginService.isLogged()){
+          this.rootPage=TabsPage;
+        }else{
+          this.rootPage=LoginPage;
+        }
+
     });
   }
 

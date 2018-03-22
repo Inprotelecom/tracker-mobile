@@ -3,18 +3,18 @@ import { HttpModule } from '@angular/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { MyApp } from './app.component';
-import { TabsPage } from '../pages/tabs/tabs';
-import { LoginPage} from '../pages/login/login';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import {PendientesComponent} from '../pages/pendientes/pendientes.component';
-import {TerminadosComponent} from '../pages/terminados/terminados.component';
-
 import { Upload } from '../pages/upload/upload';
 import { UploadList } from '../pages/upload/upload-list';
 
+//Pages
+import {PendientesComponent} from '../pages/pendientes/pendientes.component';
+import {TerminadosComponent} from '../pages/terminados/terminados.component';
+import { MyApp } from './app.component';
+import { TabsPage } from '../pages/tabs/tabs';
+import { LoginPage} from '../pages/login/login';
 
 //Servicios
 import { ListaDeseosService } from './services/lista-deseos.service';
@@ -26,6 +26,11 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { DbManagerProvider } from '../providers/db-manager/db-manager';
 import { LoginProvider } from '../providers/login/login';
 import { StorageProvider } from '../providers/storage/storage';
+
+//REpositories
+
+import { UserAreaRepository} from '../providers/repository/user-area';
+
 
 @NgModule({
   declarations: [
@@ -64,7 +69,8 @@ import { StorageProvider } from '../providers/storage/storage';
     DbManagerProvider,
     LoginProvider,
     StorageProvider,
-    Storage
+    Storage,
+    UserAreaRepository
   ]
 })
 export class AppModule {}

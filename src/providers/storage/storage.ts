@@ -27,6 +27,8 @@ export class StorageProvider {
                       .then(items=>{
                         if(items){
                           this.items=items;
+                        }else{
+                          this.items=null;
                         }
 
                         resolve();
@@ -36,6 +38,8 @@ export class StorageProvider {
         if(localStorage.getItem(key)){
           this.items=JSON.parse(localStorage.getItem(key));
 
+        }else{
+          this.items=null;
         }
 
         resolve();
@@ -44,6 +48,37 @@ export class StorageProvider {
 
     return promise;
 
+  }
+
+  public storageGet(key: string, Default: any): any {
+    if(this.platform.is("cordova")){
+        this.storage.get(key).then((data) => {
+            console.log("UserOptionsService<<------------Storage.get ", key, data);
+            return (data);
+        })
+            .catch(() => {
+                console.log("UserOptionsService------------>>Load DEFAULTS", Default);
+                return Default;
+            });
+    }else{
+      if(localStorage.getItem(key)){
+        return JSON.parse(localStorage.getItem(key));
+
+      }else{
+          return Default;
+      }
+    }
+  }
+
+  public removeStorage(key: string): any {
+    if(this.platform.is("cordova")){
+          this.storage.ready().then(
+              () => {
+                  this.storage.remove(key);
+          });
+    }else{
+      localStorage.removeItem(key)
+    }
   }
 
 }

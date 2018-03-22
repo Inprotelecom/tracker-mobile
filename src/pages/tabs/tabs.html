@@ -1,5 +1,6 @@
 <ion-tabs>
-  <ion-tab [root]="tab1Root" tabTitle="Upload" tabIcon="home"></ion-tab>
-  <ion-tab [root]="tab2Root" tabTitle="Terminados" tabIcon="information-circle"></ion-tab>
+  <ion-tab tabIcon="home" [root]="tab1Root" tabTitle="Local"></ion-tab>
+  <ion-tab tabIcon="wifi" [root]="tab2Root" tabTitle="Remote"></ion-tab>
+  <ion-tab tabIcon="power" [root]="tab3Root" tabTitle="Close Session" (ionSelect)="closeSession()"></ion-tab>
 
 </ion-tabs>
