@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Platform,MenuController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { TabsPage } from '../pages/tabs/tabs';
 import { DbManagerProvider} from '../providers/db-manager/db-manager';
 import { SQLite } from '@ionic-native/sqlite';
-
 import { LoginPage } from '../pages/login/login';
 import { LoginProvider} from '../providers/login/login';
 
@@ -18,6 +17,7 @@ export class MyApp {
   constructor(platform: Platform,
     statusBar: StatusBar,
     splashScreen: SplashScreen,
+    private menuCtrl:MenuController,
     public sqlite: SQLite,
     public dbManager:DbManagerProvider,
     public loginService:LoginProvider) {
@@ -52,4 +52,11 @@ export class MyApp {
       console.error(error);
     });
   }
+
+  logOut(){
+    this.loginService.closeSession();
+    this.rootPage=LoginPage;
+    this.menuCtrl.close();
+  }
+
 }

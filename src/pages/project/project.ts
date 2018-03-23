@@ -1,14 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
+import { ProjectSubproject} from '../../app/clases/entities/project-subproject';
 
-/**
- * Generated class for the ProjectPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
-@IonicPage()
 @Component({
   selector: 'page-project',
   templateUrl: 'project.html',
@@ -16,10 +9,12 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 export class ProjectPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ProjectPage');
+  getProjects(){
+
   }
+
 
 }

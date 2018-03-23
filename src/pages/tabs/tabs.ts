@@ -7,13 +7,15 @@ import { TerminadosComponent } from '../terminados/terminados.component';
 import { LoginPage } from '../login/login';
 import { LoginProvider} from '../../providers/login/login';
 
+import { ProjectPage } from '../project/project';
+
 @Component({
   templateUrl: 'tabs.html'
 })
 export class TabsPage {
 
-  tab1Root = UploadList;
-  tab2Root = TerminadosComponent;
+  tab1Root = ProjectPage;
+  tab2Root = UploadList;
   tab3Root = LoginPage;
 
   constructor(private navCtrl:NavController,

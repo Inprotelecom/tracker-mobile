@@ -12,9 +12,6 @@ import { UserAreaRepository} from "../repository/user-area";
 import { UserArea} from '../../app/clases/entities/user-area';
 import { UserRole} from '../../app/clases/entities/user-role';
 
-
-
-
 @Injectable()
 export class LoginProvider {
 

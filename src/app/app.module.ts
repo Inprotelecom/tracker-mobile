@@ -15,9 +15,12 @@ import {TerminadosComponent} from '../pages/terminados/terminados.component';
 import { MyApp } from './app.component';
 import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage} from '../pages/login/login';
+import { ProjectPage} from '../pages/project/project';
+
 
 //Servicios
 import { ListaDeseosService } from './services/lista-deseos.service';
+import { ProjectProvider } from '../providers/project/project';
 
 //Plugins Providers
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
@@ -27,9 +30,11 @@ import { DbManagerProvider } from '../providers/db-manager/db-manager';
 import { LoginProvider } from '../providers/login/login';
 import { StorageProvider } from '../providers/storage/storage';
 
-//REpositories
+//Repositories
 
 import { UserAreaRepository} from '../providers/repository/user-area';
+import { ProjectSubprojectRepository} from '../providers/repository/project-subproject';
+
 
 
 @NgModule({
@@ -39,6 +44,7 @@ import { UserAreaRepository} from '../providers/repository/user-area';
     LoginPage,
     PendientesComponent,
     TerminadosComponent,
+    ProjectPage,
     Upload,
     UploadList
   ],
@@ -53,24 +59,28 @@ import { UserAreaRepository} from '../providers/repository/user-area';
     MyApp,
     TabsPage,
     LoginPage,
+    ProjectPage,
     PendientesComponent,
     TerminadosComponent,
     Upload,
     UploadList
   ],
   providers: [
-    ListaDeseosService,
     StatusBar,
     SplashScreen,
     SQLite,
     Camera,
     Geolocation,
+    Storage,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     DbManagerProvider,
     LoginProvider,
     StorageProvider,
-    Storage,
-    UserAreaRepository
+    ListaDeseosService,
+    UserAreaRepository,
+    ProjectProvider,
+    ProjectSubprojectRepository,
+
   ]
 })
 export class AppModule {}
