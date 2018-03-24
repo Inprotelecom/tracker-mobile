@@ -73,11 +73,20 @@ export class LoginProvider {
     }
 
     isLogged(){
-      if(this.storageService.storageGet("userId","")!=""){
-          return true;
-      }else{
-        return false;
-      }
+      return new Promise((solve,reject)=>{
+        this.storageService.storageGet("userId","")
+              .then(res =>{
+                    if(res!=""){
+                        solve(true);
+                    }else{
+                        solve(false);
+                      }
+              }).catch( error => {
+                  solve(false);
+
+              })
+      });
+
     }
 
 

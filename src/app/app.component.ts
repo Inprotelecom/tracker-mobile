@@ -26,31 +26,31 @@ export class MyApp {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      statusBar.styleDefault();
-      splashScreen.hide();
-      this.createDatabase();
-        if(this.loginService.isLogged()){
-          this.rootPage=TabsPage;
-        }else{
-          this.rootPage=LoginPage;
-        }
+
+
+        this.loginService.isLogged()
+              .then(res=>{
+                statusBar.styleDefault();
+                splashScreen.hide();
+                if(res){
+                  this.rootPage=TabsPage;
+                  console.log("User logged");
+                  this.dbManager.createDatabase();
+                }else{
+                  this.dbManager.removeDatabase();
+                  this.dbManager.createDatabase();
+                  this.rootPage=LoginPage;
+                  console.log("User Not logged");
+
+                }
+        })
+
 
     });
   }
 
-  private createDatabase(){
-    this.sqlite.create({
-      name: 'tracker-mobile.db',
-      location: 'default' // the location field is required
-    })
-    .then((db) => {
-      this.dbManager.setDatabase(db);
-      this.dbManager.initTables();
-      console.log(db);
-    })
-    .catch(error =>{
-      console.error(error);
-    });
+  ionViewWillEnter(){
+
   }
 
   logOut(){

@@ -1,0 +1,27 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title center>Cases</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        <span ion-text color="primary">Cancel</span>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <button ion-button block (click)="getRemoteCases()">
+    Sync
+  </button>
+  <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
+  <ion-list>
+    <button ion-item *ngFor="let item of cases">
+      {{ item.number }}
+    </button>
+  </ion-list>
+
+
+</ion-content>

@@ -3,6 +3,7 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import {UserArea} from '../../app/clases/entities/user-area';
 import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { DB_CONFIG} from '../../config/app-constants';
 
 @Injectable()
 export class UserAreaRepository {
@@ -18,7 +19,7 @@ export class UserAreaRepository {
   public insert(user: UserArea){
        this.platform.ready().then(() => {
                 this.sqlite = new SQLite();
-                this.sqlite.create({ name: 'tracker-mobile.db', location: 'default' }).then((db) => {
+                this.sqlite.create(DB_CONFIG).then((db) => {
                   let sql = 'INSERT INTO USER_AREA(ID_USER,ID_AREA, NAME_AREA) VALUES(?,?,?)';
                   return db.executeSql(sql, [user.userId,user.areaId, user.areaName]);
                     }, (error) => {

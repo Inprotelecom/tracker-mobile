@@ -10,26 +10,44 @@ import { ProjectSubprojectRepository} from '../repository/project-subproject';
 
 @Injectable()
 export class ProjectProvider {
-
+  projectList:ProjectSubproject []=[];
   constructor(public http: Http,
+              private platform:Platform,
               private alertCrtl:AlertController,
               private projectSubprojectRepository:ProjectSubprojectRepository) {
     console.log('Hello ProjectProvider Provider');
   }
 
-  public getAllLocalProjectSubProject(){
+  public getAllLocalProjectSubProject():any{
+    return new Promise((resolve, reject)=>{
+      if(this.platform.is('cordova')){
+
+        this.projectSubprojectRepository.findAll().then(projects => {
+
+          resolve( projects );
+        }).catch( error => {
+          console.error( error );
+          reject(error);
+        });
+
+      }else{
+        reject('No supported cordova');
+      }
+
+    })
 
   }
 
-  public getAllRemoteProjectSubProject(){
+  public getAllRemoteProjectSubProject():any{
+
     let url=URL_TRACKER_SERVICE+PROJECT_SUBPROJECT;
     let data=new URLSearchParams();
     data.append("area","");
 
-    return this.http.get(url)
-                    .map(resp=> {
+    return new Promise((resolve,reject) => {this.http.get(url)
+                    .subscribe(resp=> {
                     let data_resp= resp.json();
-                    if(data_resp.code!=0){
+                    if(data_resp!=null){
                         data_resp.forEach(data=>{
                           let projectSubproject=new ProjectSubproject();
                           projectSubproject.projectId=data.projectId;
@@ -40,9 +58,13 @@ export class ProjectProvider {
                           projectSubproject.subprojectElementStatusId=data.subprojectElementStatusId;
                           projectSubproject.projectName=data.projectName;
                           projectSubproject.subprojectName=data.subprojectName;
-                          this.projectSubprojectRepository.insert(projectSubproject);
-                        })
+                          this.projectList.push(projectSubproject);
+                          if(this.platform.is("cordova")){
 
+                            this.projectSubprojectRepository.insert(projectSubproject);
+                          }
+                        })
+                          resolve( this.projectList );
                       } else {
                             this.alertCrtl.create({
                             title:data_resp.message,
@@ -50,19 +72,20 @@ export class ProjectProvider {
                             buttons:["OK"]
                             }).present();
 
+
                     }
 
-                    }).catch((error:any) => {
+                  },(error) => {
                           console.log(error.status);
                           this.alertCrtl.create({
                           title:"Connection Error",
                           subTitle:"Connection Error",
                           buttons:["OK"]
                           }).present();
-                                return Observable.throw(error);
+
                       });
 
-
-  }
+                    })
+                  }
 
 }

@@ -7,15 +7,16 @@
 
 
 <ion-content padding>
-<button ion-button block>
+<button ion-button block (click)="getRemoteProjects()">
   Sync
 </button>
 
-<ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
+<ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
 <ion-list>
-  <ion-item *ngFor="let item of items">
-    {{ item }}
-  </ion-item>
+  <button ion-item *ngFor="let item of projectList" (click)="onProjectSelect(item)">
+    {{ item.projectName }} -
+    {{ item.subprojectName }}
+  </button>
 </ion-list>
 
 </ion-content>

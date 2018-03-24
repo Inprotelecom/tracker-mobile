@@ -51,34 +51,44 @@ export class StorageProvider {
   }
 
   public storageGet(key: string, Default: any): any {
-    if(this.platform.is("cordova")){
-        this.storage.get(key).then((data) => {
-            console.log("UserOptionsService<<------------Storage.get ", key, data);
-            return (data);
-        })
-            .catch(() => {
-                console.log("UserOptionsService------------>>Load DEFAULTS", Default);
-                return Default;
-            });
-    }else{
-      if(localStorage.getItem(key)){
-        return JSON.parse(localStorage.getItem(key));
+    return new Promise((solve,reject)=>{
+      if(this.platform.is("cordova")){
+          this.storage.get(key).then((data) => {
+              if(data!=null){
+                console.log("UserOptionsService<<------------Storage.get -"+data, key, data);
 
+                solve(data);
+              }else{
+                console.log("UserOptionsService------------>>Load DEFAULTS", Default);
+                solve(Default);
+              }
+          })
+              .catch(() => {
+                  console.log("UserOptionsService------------>>Load DEFAULTS", Default);
+                  solve(Default);
+              });
       }else{
-          return Default;
+        if(localStorage.getItem(key)){
+          solve(JSON.parse(localStorage.getItem(key)));
+
+        }else{
+            solve(Default);
+        }
       }
-    }
+    })
+
   }
 
-  public removeStorage(key: string): any {
-    if(this.platform.is("cordova")){
-          this.storage.ready().then(
-              () => {
-                  this.storage.remove(key);
-          });
-    }else{
-      localStorage.removeItem(key)
-    }
+      public removeStorage(key: string): any {
+        if(this.platform.is("cordova")){
+              this.storage.ready().then(
+                  () => {
+                      this.storage.remove(key);
+                      console.log("removing key:"+key);
+              });
+        }else{
+          localStorage.removeItem(key)
+        }
   }
 
 }

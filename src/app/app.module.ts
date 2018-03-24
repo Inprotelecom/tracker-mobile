@@ -16,6 +16,7 @@ import { MyApp } from './app.component';
 import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage} from '../pages/login/login';
 import { ProjectPage} from '../pages/project/project';
+import { CasesPage} from '../pages/cases/cases';
 
 
 //Servicios
@@ -34,6 +35,8 @@ import { StorageProvider } from '../providers/storage/storage';
 
 import { UserAreaRepository} from '../providers/repository/user-area';
 import { ProjectSubprojectRepository} from '../providers/repository/project-subproject';
+import { CasesRepository} from '../providers/repository/cases';
+import { CasesProvider } from '../providers/cases/cases';
 
 
 
@@ -42,6 +45,7 @@ import { ProjectSubprojectRepository} from '../providers/repository/project-subp
     MyApp,
     TabsPage,
     LoginPage,
+    CasesPage,
     PendientesComponent,
     TerminadosComponent,
     ProjectPage,
@@ -59,6 +63,7 @@ import { ProjectSubprojectRepository} from '../providers/repository/project-subp
     MyApp,
     TabsPage,
     LoginPage,
+    CasesPage,
     ProjectPage,
     PendientesComponent,
     TerminadosComponent,
@@ -80,7 +85,8 @@ import { ProjectSubprojectRepository} from '../providers/repository/project-subp
     UserAreaRepository,
     ProjectProvider,
     ProjectSubprojectRepository,
-
+    CasesRepository,
+    CasesProvider
   ]
 })
 export class AppModule {}
