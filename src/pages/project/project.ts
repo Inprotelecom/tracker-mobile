@@ -24,15 +24,23 @@ export class ProjectPage implements OnInit{
     this.getLocalProjects();
   }
 
-  getRemoteProjects(){
-    this.projectService.getAllRemoteProjectSubProject().then(projects => {
-      this.projectList=projects;
-      this.projectListResp=projects;
-    }).catch( error => {
-      console.error( error );
-      this.projectList=[];
-      this.projectListResp=[];
-    });
+  getRemoteProjects(refresher){
+
+    setTimeout(() => {
+      this.projectService.getAllRemoteProjectSubProject().then(projects => {
+        this.projectList=projects;
+        this.projectListResp=projects;
+        refresher.complete();
+      }).catch( error => {
+        console.error( error );
+        this.projectList=[];
+        this.projectListResp=[];
+        refresher.complete();
+      });
+
+    }, 500);
+
+
   }
 
   getLocalProjects(){
@@ -64,6 +72,7 @@ export class ProjectPage implements OnInit{
   }
 
   onProjectSelect(project:ProjectSubproject){
+
     console.log("Selected Item", JSON.stringify(project));
     let modal=this.modalCtrl.create(CasesPage,{project:project});
     modal.present();

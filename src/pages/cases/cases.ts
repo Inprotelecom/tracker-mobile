@@ -3,6 +3,7 @@ import { NavController, NavParams,ViewController} from 'ionic-angular';
 import { ProjectSubproject} from '../../app/clases/entities/project-subproject';
 import { CasesProvider} from '../../providers/cases/cases';
 import { Cases } from '../../app/clases/entities/cases';
+import { ItemSliding } from 'ionic-angular';
 
 @Component({
   selector: 'page-cases',
@@ -24,16 +25,24 @@ export class CasesPage {
   }
 
 
-  getRemoteCases(){
-    this.casesService.getAllRemoteProjectSubProject(this.projectSubproject.subprojectId)
-        .then(list=>{
-          this.cases=list;
-          this.casesResp=list;
-        }).catch(error=>{
-          console.error( error );
-          this.cases=[];
-          this.casesResp=[];
-        })
+  getRemoteCases(refresher){
+
+    setTimeout(() => {
+      this.casesService.getAllRemoteProjectSubProject(this.projectSubproject.subprojectId)
+          .then(list=>{
+            this.cases=list;
+            this.casesResp=list;
+            refresher.complete();
+          }).catch(error=>{
+            console.error( error );
+            this.cases=[];
+            this.casesResp=[];
+            refresher.complete();
+      })
+
+    }, 500);
+
+
 
   }
 
@@ -64,6 +73,13 @@ export class CasesPage {
     }
   }
 
+share(slidingItem:ItemSliding,cases:Cases){
+  slidingItem.close();
+}
+
+delete(slidingItem:ItemSliding,cases:Cases){
+  slidingItem.close();
+}
 
  dismiss() {
    this.viewCtrl.dismiss();

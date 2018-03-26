@@ -1,26 +1,43 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title center>Cases</ion-title>
     <ion-buttons start>
       <button ion-button (click)="dismiss()">
-        <span ion-text color="primary">Cancel</span>
+        <span ion-text color="light">Cancel</span>
       </button>
     </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
+<ion-content padding>
+  <ion-refresher (ionRefresh)="getRemoteCases($event)">
+    <ion-refresher-content></ion-refresher-content>
+</ion-refresher>
 
 <ion-content padding>
-  <button ion-button block (click)="getRemoteCases()">
-    Sync
-  </button>
   <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
   <ion-list>
-    <button ion-item *ngFor="let item of cases">
-      {{ item.number }}
-    </button>
+     <ion-item-sliding #item>
+        <button ion-item *ngFor="let item of cases">
+          {{ item.number }}
+        </button>
+            <ion-item-options side="left" (ionSwipe)="share(item)">
+              <button ion-button color="primary" (click)="share(item)">
+                <ion-icon name="archive"></ion-icon>
+                Share
+              </button>
+            </ion-item-options>
+
+            <ion-item-options side="right" (ionSwipe)="delete(item)">
+              <button ion-button color="danger" (click)="delete(item)">
+                <ion-icon name="trash"></ion-icon>
+                Delete
+              </button>
+
+            </ion-item-options>
+     </ion-item-sliding>
   </ion-list>
 
 
