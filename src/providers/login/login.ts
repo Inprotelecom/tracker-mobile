@@ -11,6 +11,7 @@ import { AlertController, Platform} from "ionic-angular";
 import { UserAreaRepository} from "../repository/user-area";
 import { UserArea} from '../../app/clases/entities/user-area';
 import { UserRole} from '../../app/clases/entities/user-role';
+import { DbManagerProvider} from '../../providers/db-manager/db-manager';
 
 @Injectable()
 export class LoginProvider {
@@ -21,13 +22,15 @@ export class LoginProvider {
   constructor(public http: Http,
               private alertCrtl:AlertController,
               private storageService:StorageProvider,
-              private userAreaRepository:UserAreaRepository) {
+              private userAreaRepository:UserAreaRepository,
+              private dbManager:DbManagerProvider) {
     console.log('Hello LoginProvider Provider');
     //this.storageService.getStorage("userId");
   }
 
   login(username:string,password:string){
-
+    this.dbManager.removeDatabase();
+    this.dbManager.createDatabase();
     let data=new URLSearchParams();
 
     data.append("user",username);
@@ -43,6 +46,7 @@ export class LoginProvider {
                       if(data_resp.code!=0){
                           this.id_user=data_resp.userid;
                           this.storageService.saveStorage("userId",this.id_user);
+                          this.storageService.saveStorage("areaId",data_resp.area);
                           let userArea=new UserArea(data_resp.userid,data_resp.area,"");
                           this.userAreaRepository.insert(userArea);
 
@@ -85,6 +89,7 @@ export class LoginProvider {
                   solve(false);
 
               })
+
       });
 
     }

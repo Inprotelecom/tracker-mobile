@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams,ViewController} from 'ionic-angular';
+import { NavController, NavParams,ViewController,AlertController,ToastController} from 'ionic-angular';
 import { ProjectSubproject} from '../../app/clases/entities/project-subproject';
 import { CasesProvider} from '../../providers/cases/cases';
+import { WorkitemFlowProvider} from '../../providers/workitem-flow/workitem-flow';
 import { Cases } from '../../app/clases/entities/cases';
 import { ItemSliding } from 'ionic-angular';
 
@@ -14,31 +15,51 @@ export class CasesPage {
   projectSubproject:ProjectSubproject;
   cases:Cases[]=[];
   casesResp:Cases[]=[];
+  areaId:number;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public viewCtrl:ViewController,
-              private casesService:CasesProvider) {
+              private casesService:CasesProvider,
+              private workitemFlowProvider:WorkitemFlowProvider,
+              private alertCrtl:AlertController,
+              private toastCtrl:ToastController) {
 
         this.projectSubproject=this.navParams.get("project");
+        this.areaId=this.navParams.get("areaId");
         this.getLocalCases();
   }
+
+  showMessage(message:string) {
+  let toast = this.toastCtrl.create({
+    message: message,
+    duration: 2000,
+  });
+  toast.present();
+}
 
 
   getRemoteCases(refresher){
 
     setTimeout(() => {
       this.casesService.getAllRemoteProjectSubProject(this.projectSubproject.subprojectId)
-          .then(list=>{
+          .subscribe(list=>{
             this.cases=list;
             this.casesResp=list;
             refresher.complete();
-          }).catch(error=>{
+
+
+          },error=>{
             console.error( error );
             this.cases=[];
             this.casesResp=[];
             refresher.complete();
-      })
+            this.alertCrtl.create({
+            title:"Connection Error",
+            subTitle:"Connection Error",
+            buttons:["OK"]
+            }).present();
+          });
 
     }, 500);
 
@@ -74,6 +95,21 @@ export class CasesPage {
   }
 
 share(slidingItem:ItemSliding,cases:Cases){
+  console.log("item sliding:"+JSON.stringify(cases),this.areaId);
+    this.workitemFlowProvider.shareCases(cases,this.areaId).then((resp:any)=>{
+      console.log("Sharing response:"+resp);
+      let hasError:any=resp.filter(v=>!v);
+
+      if(hasError.length==0){
+        this.showMessage("Succesfull share");
+      }else{
+        this.showMessage("Error trying to share");
+      }
+
+  }).catch(error=>{
+    this.showMessage("Error trying to share");
+  })
+
   slidingItem.close();
 }
 

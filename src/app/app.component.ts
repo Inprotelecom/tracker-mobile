@@ -37,8 +37,6 @@ export class MyApp {
                   console.log("User logged");
                   this.dbManager.createDatabase();
                 }else{
-                  this.dbManager.removeDatabase();
-                  this.dbManager.createDatabase();
                   this.rootPage=LoginPage;
                   console.log("User Not logged");
 

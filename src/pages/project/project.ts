@@ -3,6 +3,7 @@ import { NavController, NavParams,ModalController,ViewController } from 'ionic-a
 import { ProjectSubproject} from '../../app/clases/entities/project-subproject';
 import { ProjectProvider} from '../../providers/project/project';
 import { CasesPage} from '../cases/cases';
+import { StorageProvider } from '../../providers/storage/storage';
 
 @Component({
   selector: 'page-project',
@@ -12,16 +13,25 @@ export class ProjectPage implements OnInit{
 
   projectList:ProjectSubproject [];
   projectListResp:ProjectSubproject [];
+  areaId:number;
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private projectService:ProjectProvider,
               public modalCtrl: ModalController,
-              public viewCtrl:ViewController) {
+              public viewCtrl:ViewController,
+              private storageService:StorageProvider) {
 
   }
 
   ngOnInit() {
-
+    this.storageService.storageGet("areaId",null).then(res=>{
+      if(res!=null){
+        this.areaId=res;
+      }
+    }).catch(error=>{
+        console.log("Error getting storage variable "+error);
+    })
     this.getLocalProjects();
+
   }
 
   getRemoteProjects(refresher){
@@ -74,7 +84,7 @@ export class ProjectPage implements OnInit{
   onProjectSelect(project:ProjectSubproject){
 
     console.log("Selected Item", JSON.stringify(project));
-    let modal=this.modalCtrl.create(CasesPage,{project:project});
+    let modal=this.modalCtrl.create(CasesPage,{project:project,areaId:this.areaId});
     modal.present();
   }
 

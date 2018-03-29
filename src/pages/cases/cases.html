@@ -19,19 +19,19 @@
 <ion-content padding>
   <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
   <ion-list>
-     <ion-item-sliding #item>
-        <button ion-item *ngFor="let item of cases">
+     <ion-item-sliding *ngFor="let item of cases" #SlidingItem>
+        <button ion-item >
           {{ item.number }}
         </button>
-            <ion-item-options side="left" (ionSwipe)="share(item)">
-              <button ion-button color="primary" (click)="share(item)">
+            <ion-item-options side="left">
+              <button ion-button color="primary" (click)="share(SlidingItem,item)">
                 <ion-icon name="archive"></ion-icon>
                 Share
               </button>
             </ion-item-options>
 
-            <ion-item-options side="right" (ionSwipe)="delete(item)">
-              <button ion-button color="danger" (click)="delete(item)">
+            <ion-item-options side="right">
+              <button ion-button color="danger" (click)="delete(SlidingItem,item)">
                 <ion-icon name="trash"></ion-icon>
                 Delete
               </button>

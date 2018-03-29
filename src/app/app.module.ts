@@ -32,11 +32,15 @@ import { LoginProvider } from '../providers/login/login';
 import { StorageProvider } from '../providers/storage/storage';
 
 //Repositories
-
+import { CasesProvider } from '../providers/cases/cases';
+import { WorkitemFlowProvider } from '../providers/workitem-flow/workitem-flow';
 import { UserAreaRepository} from '../providers/repository/user-area';
 import { ProjectSubprojectRepository} from '../providers/repository/project-subproject';
 import { CasesRepository} from '../providers/repository/cases';
-import { CasesProvider } from '../providers/cases/cases';
+import { WorkItemElementRepository } from '../providers/repository/workitem-element';
+import { ElementTypeConfigAttributeRepository} from '../providers/repository/element-type-config-attributes';
+
+
 
 
 
@@ -86,7 +90,10 @@ import { CasesProvider } from '../providers/cases/cases';
     ProjectProvider,
     ProjectSubprojectRepository,
     CasesRepository,
-    CasesProvider
+    ElementTypeConfigAttributeRepository,
+    CasesProvider,
+    WorkitemFlowProvider,
+    WorkItemElementRepository
   ]
 })
 export class AppModule {}
