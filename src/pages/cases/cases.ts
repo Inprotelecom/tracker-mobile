@@ -70,6 +70,7 @@ export class CasesPage {
   getLocalCases(){
     this.casesService.getAllLocalProjectSubProject(this.projectSubproject.subprojectElementId)
         .then(list=> {
+          //console.info("Local find cases:"+JSON.stringify(list));
           this.cases=list;
           this.casesResp=list;
         }).catch(error=>{
@@ -96,7 +97,7 @@ export class CasesPage {
 
 share(slidingItem:ItemSliding,cases:Cases){
   console.log("item sliding:"+JSON.stringify(cases),this.areaId);
-    this.workitemFlowProvider.shareCases(cases,this.areaId).then((resp:any)=>{
+    this.workitemFlowProvider.shareCases(cases,this.areaId).subscribe((resp:any)=>{
       console.log("Sharing response:"+resp);
       let hasError:any=resp.filter(v=>!v);
 
@@ -106,9 +107,9 @@ share(slidingItem:ItemSliding,cases:Cases){
         this.showMessage("Error trying to share");
       }
 
-  }).catch(error=>{
+  },err=>{
     this.showMessage("Error trying to share");
-  })
+  });
 
   slidingItem.close();
 }

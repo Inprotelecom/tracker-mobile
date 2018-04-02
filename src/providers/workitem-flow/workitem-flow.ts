@@ -1,5 +1,6 @@
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { Observable } from 'rxjs';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { Platform } from 'ionic-angular';
@@ -23,32 +24,34 @@ export class WorkitemFlowProvider {
 
   }
 
-  public shareCases(cases:Cases,areaId:number){
+  public shareCases(cases:Cases,areaId:number):Observable<any>{
     this.workitemflow=[];
     let isCorrect=false;
     let correct:boolean []=[];
+    let response:boolean []=[];
     let url=URL_TRACKER_SERVICE+WORKITEMS_FLOW+"?elementId="+cases.elementId
         +"&caseId="+cases.caseId+"&areaId="+areaId;
-        return new Promise((resolve,reject)=>{
+        return Observable.create(observer=>{
                       this.http.get(url).subscribe(resp=>{
                         let data_resp= resp.json();
                         if(data_resp!=null){
-                        Promise.all([this.processEtypeConfig(data_resp.elementTypeConfigAttribute),this.processWiElement(data_resp.workFlow)])
-                                .then(resolvedData => {
-                                    console.log("Resolved data:"+resolvedData);
-                                    resolve(resolvedData);
 
-                            }).catch((error)=>{
-                              console.log("Error processing all promises:"+error);
-                              reject(error);
-                            });
+                          Observable.forkJoin(this.processEtypeConfig(data_resp.elementTypeConfigAttribute),this.processWiElement(data_resp.workFlow))
+                                .subscribe(resp => {
+                                   console.log("Resp fork all observables:"+resp+" ");
+                                  observer.next(resp);
+                                  observer.complete();
 
+                          }, err=>{
+                               console.log("Error processing all observables:"+err);
+                               observer.error(err);
+                            })
 
                         }
 
                         },(error) => {
                             console.log(error.status);
-                          reject(error);
+                          observer.error(error);
                   })
             })
 
@@ -56,61 +59,77 @@ export class WorkitemFlowProvider {
 
 
 
-  private processWiElement(list:any){
-return new Promise((resolve,reject)=>{
-    list.forEach(data=>{
-      let wi=new WorkitemElement();
-      console.log("WIElement:"+JSON.stringify(data));
-      wi.caseId=data.caseId;
-      wi.elementId=data.elementId;
-      wi.elementTypeConfigId=data.elementTypeConfigId;
-      wi.notes=data.notes;
-      wi.order=data.order;
-      wi.parent=data.parent;
-      wi.sequencial=data.sequencial;
-      wi.workItemStatus=data.workItemStatus;
-      wi.workItemStatusId=data.workItemStatusId;
-      wi.workitemElementId=data.workitemElementId;
-      wi.workitemTemplate=data.workitemTemplate;
-      wi.workitemTemplateId=data.workitemTemplateId;
-      this.workitemflow.push(wi);
-        if(this.platform.is(CORDOVA)){
-        this.workItemElementRepository.insert(wi);
-        }
-      })
-      resolve(true);
-    });
-  }
+  private processWiElement(list:any):Promise<boolean>{
+  return Observable.create(observer=>{
+      let response:boolean=true;
+      let listObservables:Observable<boolean>[]=[];
+      list.forEach(data=>{
+        let wi=new WorkitemElement();
+        console.log("WIElement:"+JSON.stringify(data));
+        wi.caseId=data.caseId;
+        wi.elementId=data.elementId;
+        wi.elementTypeConfigId=data.elementTypeConfigId;
+        wi.notes=data.notes;
+        wi.order=data.order;
+        wi.parent=data.parent;
+        wi.sequencial=data.sequencial;
+        wi.workItemStatus=data.workItemStatus;
+        wi.workItemStatusId=data.workItemStatusId;
+        wi.workitemElementId=data.workitemElementId;
+        wi.workitemTemplate=data.workitemTemplate;
+        wi.workitemTemplateId=data.workitemTemplateId;
+        this.workitemflow.push(wi);
+        listObservables.push(this.workItemElementRepository.insert(wi));
 
-  private processEtypeConfig(list:any):Promise<boolean>{
-    let response:boolean=true;
-    let listPromises:Promise<boolean>[]=[];
-    return new Promise((resolve,reject)=>{
-    for(var i =0; i< list.length;i++){
-      console.log("Etype: "+JSON.stringify(list[i]));
-      let etype=new ElementTypeConfigAttribute();
-      etype.attributeId=list[i].caseId;
-      etype.attributeTypeId=list[i].elementId;
-      etype.comboCategoryId=list[i].elementTypeConfigId;
-      etype.elementTypeConfigId=list[i].notes;
-      etype.mandatory=list[i].order;
-      this.etypeList.push(etype);
-      if(this.platform.is(CORDOVA)){
+        })
 
-        listPromises.push(this.elementTypeConfigAttributeRepository.insert(etype));
+      if(this.platform.is(CORDOVA)&&listObservables.length){
+        Observable.forkJoin(listObservables).subscribe(resolvedData => {
+                  console.log("Observables wi:"+resolvedData);
+                  response=resolvedData.filter(resp=>!resp).length==0;
+            console.log("Resolve value"+response)
+            observer.next(response);
+            observer.complete();
+
+          }, err=>{console.error(err)});
+      }else{
+        observer.next(response);
+        observer.complete();
       }
 
-
+      });
   }
 
-    if(this.platform.is(CORDOVA)){
-      Promise.all(listPromises)
-            .then(resolvedData => {
-                console.log("Resolved data:"+resolvedData);
-                resolve(resolvedData.filter(resp=>!resp).length==0);
-          console.log("Resolve value"+response)
-          resolve(response);
-        });
+  private processEtypeConfig(list:any):Observable<boolean>{
+    let response:boolean=true;
+    let listObservables:Observable<boolean>[]=[];
+    return Observable.create(observer=>{
+    list.forEach(data=>{
+      console.log("Element Type: "+JSON.stringify(data));
+      let etype=new ElementTypeConfigAttribute();
+      etype.attributeId=data.attributeId;
+      etype.attributeTypeId=data.attributeTypeId;
+      etype.comboCategoryId=data.comboCategoryId;
+      etype.elementTypeConfigId=data.elementTypeConfigId;
+      etype.mandatory=data.mandatory;
+      this.etypeList.push(etype);
+      listObservables.push(this.elementTypeConfigAttributeRepository.insert(etype));
+    });
+
+    if(this.platform.is(CORDOVA)&&listObservables.length){
+
+      Observable.forkJoin(listObservables).subscribe(resolvedData => {
+                console.log("Observables etype:"+resolvedData);
+                response=resolvedData.filter(resp=>!resp).length==0;
+
+          console.log("Resolve value"+response);
+          observer.next(response);
+          observer.complete();
+
+        }, err=>{console.error(err)});
+    }else{
+      observer.next(response);
+      observer.complete();
     }
 
 

@@ -48,9 +48,9 @@ export class CasesRepository {
                            for(var i =0; i< res.rows.length;i++){
                              let row=new Cases();
                              row.caseId=res.rows.item(i).ID_CASE;
-                             row.caseStatusId=res.rows.item(i).ID_ELEMENT;
-                             row.elementId=res.rows.item(i).ID_ELEMENT_TYPE;
-                             row.elementTypeId=res.rows.item(i).ID_CASE_STATUS;
+                             row.caseStatusId=res.rows.item(i).ID_CASE_STATUS;
+                             row.elementId=res.rows.item(i).ID_ELEMENT;
+                             row.elementTypeId=res.rows.item(i).ID_ELEMENT_TYPE;
                              row.number=res.rows.item(i).NR_CASE;
                              resList.push(row);
                            }

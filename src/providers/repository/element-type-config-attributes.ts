@@ -4,6 +4,7 @@ import { ElementTypeConfigAttribute } from '../../app/clases/entities/element-ty
 import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
+import { Observable } from 'rxjs';
 
 
 @Injectable()
@@ -17,72 +18,88 @@ export class ElementTypeConfigAttributeRepository {
 
   }
 
-  public insert(entity: ElementTypeConfigAttribute):Promise<boolean>{
-    return  new Promise((resolve,reject)=>{
+  public insert(entity: ElementTypeConfigAttribute):Observable<boolean>{
+    return Observable.create(observer=>{
        this.platform.ready().then(() => {
                 this.sqlite = new SQLite();
                 this.sqlite.create(DB_CONFIG).then((db) => {
-                  let sql = 'INSERT INTO ETYPE_CONFIG_ATTRIBUTE (ID_ATTRIBUTE, ID_ELEMENT_TYPE_CONFIG, ID_ATTRIBUTE_TYPE,ID_COMBO_CATEGORY,FG_MANDATORY VALUES (?,?,?,?,?)';
-                  return db.executeSql(sql, [entity.attributeId,entity.elementTypeConfigId, entity.attributeTypeId,entity.comboCategoryId,entity.mandatory]).then(res=>{
-                    resolve(true);
-                  }).catch(error=>{
-                    console.info("Error inserting: " + JSON.stringify(error));
+                    let sql = 'INSERT INTO ETYPE_CONFIG_ATTRIBUTE (ID_ATTRIBUTE, ID_ELEMENT_TYPE_CONFIG, ID_ATTRIBUTE_TYPE,ID_COMBO_CATEGORY,FG_MANDATORY) VALUES (?,?,?,?,?)';
+                    //  console.info("going to insert etype:"+JSON.stringify(entity));
 
-                  })
-                    }, (error) => {
-                        console.info("Unable to execute sql " + JSON.stringify(error));
+                          db.executeSql(sql, [entity.attributeId,entity.elementTypeConfigId, entity.attributeTypeId,entity.comboCategoryId,entity.mandatory])
+                          .then(res=>{
+                            console.log('Executed SQL');
+                            observer.next(true);
+                            observer.complete();
+                          }).catch(e=>{
+                               console.log("Error inserting 1:"+JSON.stringify(e));
+                               let message:string=e.message;
+                               message=message.toUpperCase();
+                               if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
+                                 console.log("UNIQUE CONSTRAINT FAILED");
 
+                                  this.update(entity).subscribe(resp=>{
+                                    console.log("Observable resp update:"+resp);
+                                  });
+                                  observer.next(true);
+                                  observer.complete();
 
-                    })
-             }, (err) => {
-                    console.info("Error opening database: " + err);
+                               }else{
+                                 observer.next(false);
+                                 observer.complete();
+                               }
 
+                          });
 
-            });
-            resolve(false);
-            });
+                        }).catch(e=>{
+                                console.log("Error inserting 2:"+JSON.stringify(e));
+                                observer.next(false);
+                                observer.complete();
+                        });
+
+                    }).catch(e => {
+                              console.info("Error opening database: " + JSON.stringify(e));
+                              observer.next(false);
+                              observer.complete();
+                    });
+
+                  });
     }
 
-  /* public update(entity: ProjectSubproject){
-        let sql = 'UPDATE PROJECT_SUBPROJECT SET NM_PROJECT_OF=?, NM_SUBPROJECT=? WHERE ID=?';
-        return this.db.executeSql(sql, [entity.projectName,entity.subprojectName]);
-   }*/
-
-   findByCaseId():any{
-     let resList:ElementTypeConfigAttribute []=[];
-     return new Promise((resolve,reject)=>{
+    public update(entity: ElementTypeConfigAttribute):Observable<boolean>{
+        return Observable.create(observer=>{
           this.platform.ready().then(() => {
-                this.sqlite = new SQLite();
-                this.sqlite.create(DB_CONFIG).then((db) => {
+                   this.sqlite = new SQLite();
+                   this.sqlite.create(DB_CONFIG).then((db) => {
+                       let sql = 'UPDATE ETYPE_CONFIG_ATTRIBUTE SET ID_ATTRIBUTE_TYPE=?,ID_COMBO_CATEGORY=?,FG_MANDATORY=? WHERE ID_ATTRIBUTE=? AND ID_ELEMENT_TYPE_CONFIG=?';
+                       //  console.info("going to insert etype:"+JSON.stringify(entity));
 
-                  let sql = 'SELECT ID_ATTRIBUTE, ID_ELEMENT_TYPE_CONFIG, FG_MANDATORY,ID_ATTRIBUTE_TYPE,ID_COMBO_CATEGORY '
-                           +'FROM ETYPE_CONFIG_ATTRIBUTE';
-                    db.executeSql(sql, {}).then(res => {
-                       //console.log("query-item"+JSON.stringify(res));
-                           for(var i =0; i< res.rows.length;i++){
+                             db.executeSql(sql, [entity.attributeTypeId,entity.comboCategoryId,entity.mandatory,entity.attributeId,entity.elementTypeConfigId])
+                             .then(res=>{
+                               console.log('Executed SQL update');
+                               observer.next(true);
+                               observer.complete();
+                             }).catch(e=>{
+                                  console.log("Error updating:"+JSON.stringify(e));
 
-                             let row=new ElementTypeConfigAttribute();
-                             row.attributeId=res.rows.item(i).ID_ATTRIBUTE;
-                             row.elementTypeConfigId=res.rows.item(i).ID_ELEMENT_TYPE_CONFIG;
-                             row.mandatory=res.rows.item(i).FG_MANDATORY;
-                             row.attributeTypeId=res.rows.item(i).ID_ATTRIBUTE_TYPE;
-                             row.comboCategoryId=res.rows.item(i).ID_COMBO_CATEGORY;
-                             resList.push(row);
-                           }
-                         resolve(resList);
-                     })
-               }, (error) => {
-                        console.info("Unable to execute sql " + JSON.stringify(error));
-                        reject(error)
-                    })
-             }, (err) => {
-                    console.info("Error opening database: " + err);
-                    reject(err)
-            });
-     })
+                                    observer.next(true);
+                                    observer.complete();
+                             });
+
+                           }).catch(e=>{
+                                   console.log("Error inserting 2:"+JSON.stringify(e));
+                                   observer.next(false);
+                                   observer.complete();
+                           });
+
+                       }).catch(e => {
+                                 console.info("Error opening database: " + JSON.stringify(e));
+                                 observer.next(false);
+                                 observer.complete();
+                       });
 
 
-
+        });
 
      }
 
