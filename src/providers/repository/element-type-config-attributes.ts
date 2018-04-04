@@ -66,6 +66,40 @@ export class ElementTypeConfigAttributeRepository {
                   });
     }
 
+    public delete(entity: ElementTypeConfigAttribute):Observable<boolean>{
+      return Observable.create(observer=>{
+         this.platform.ready().then(() => {
+                  this.sqlite = new SQLite();
+                  this.sqlite.create(DB_CONFIG).then((db) => {
+                      let sql = 'DELETE FROM ETYPE_CONFIG_ATTRIBUTE WHERE ID_ATTRIBUTE=? AND ID_ELEMENT_TYPE_CONFIG=?';
+                            db.executeSql(sql, [entity.attributeId,entity.elementTypeConfigId])
+                            .then(res=>{
+                              console.log('Executed SQL');
+                              observer.next(true);
+                              observer.complete();
+                            }).catch(e=>{
+                              console.log("Error deleting:"+JSON.stringify(e));
+                              observer.next(false);
+                              observer.complete();
+
+
+                            });
+
+                          }).catch(e=>{
+                                  console.log("Error inserting 2:"+JSON.stringify(e));
+                                  observer.next(false);
+                                  observer.complete();
+                          });
+
+                      }).catch(e => {
+                                console.info("Error opening database: " + JSON.stringify(e));
+                                observer.next(false);
+                                observer.complete();
+                      });
+
+                    });
+      }
+
     public update(entity: ElementTypeConfigAttribute):Observable<boolean>{
         return Observable.create(observer=>{
           this.platform.ready().then(() => {

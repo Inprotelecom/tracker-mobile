@@ -4,6 +4,8 @@ export class Cases{
   elementTypeId:number;
   caseStatusId:number;
   number:string;
+  shared:number;
+  sharedDate:string;
 
   constructor(){
   }

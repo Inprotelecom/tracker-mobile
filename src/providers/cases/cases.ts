@@ -79,6 +79,10 @@ public getAllRemoteProjectSubProject(subprojectId:number):Observable<Cases[]>{
 
   }
 
+  public updateCase(){
+    
+  }
+
     /*public getAllRemoteProjectSubProject(subprojectId:number):any{
     let casesList:Cases[]=[];
     let url=URL_TRACKER_SERVICE+CASES+"?subprojectId="+subprojectId;

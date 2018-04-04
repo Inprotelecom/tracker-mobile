@@ -8,9 +8,13 @@ import { CORDOVA} from '../../config/app-constants';
 import { URL_TRACKER_SERVICE,WORKITEMS_FLOW} from '../../config/url.services';
 import { Cases} from '../../app/clases/entities/cases';
 import { WorkItemElementRepository} from '../repository/workitem-element';
+import { CasesRepository} from '../repository/cases';
 import { ElementTypeConfigAttributeRepository} from '../repository/element-type-config-attributes';
 import { WorkitemElement} from '../../app/clases/entities/workitem-element';
 import { ElementTypeConfigAttribute} from '../../app/clases/entities/element-type-config-attributes';
+import dateFormat from 'dateformat';
+import { DT_FORMAT } from '../../config/app-constants';
+import * as _ from "lodash";
 
 @Injectable()
 export class WorkitemFlowProvider {
@@ -20,26 +24,34 @@ export class WorkitemFlowProvider {
   constructor(private http: Http,
               private platform:Platform,
               private workItemElementRepository:WorkItemElementRepository,
-              private elementTypeConfigAttributeRepository:ElementTypeConfigAttributeRepository) {
+              private elementTypeConfigAttributeRepository:ElementTypeConfigAttributeRepository,
+              private casesRepository:CasesRepository) {
 
   }
 
   public shareCases(cases:Cases,areaId:number):Observable<any>{
-    this.workitemflow=[];
-    let isCorrect=false;
-    let correct:boolean []=[];
-    let response:boolean []=[];
-    let url=URL_TRACKER_SERVICE+WORKITEMS_FLOW+"?elementId="+cases.elementId
-        +"&caseId="+cases.caseId+"&areaId="+areaId;
+    let caseItem=_.cloneDeep(cases);
+    let url=URL_TRACKER_SERVICE+WORKITEMS_FLOW+"?elementId="+caseItem.elementId
+        +"&caseId="+caseItem.caseId+"&areaId="+areaId;
+        caseItem.shared=1;
+        caseItem.sharedDate=''+dateFormat(new Date(),DT_FORMAT,true);
         return Observable.create(observer=>{
                       this.http.get(url).subscribe(resp=>{
                         let data_resp= resp.json();
                         if(data_resp!=null){
 
-                          Observable.forkJoin(this.processEtypeConfig(data_resp.elementTypeConfigAttribute),this.processWiElement(data_resp.workFlow))
+                          Observable.forkJoin([this.processEtypeConfig(data_resp.elementTypeConfigAttribute),
+                                              this.processWiElement(data_resp.workFlow),
+                                              this.casesRepository.update(caseItem)])
                                 .subscribe(resp => {
                                    console.log("Resp fork all observables:"+resp+" ");
-                                  observer.next(resp);
+                                   let boolean=resp[0]&&resp[1];
+                                   if(resp[2]){
+                                     observer.next([boolean,caseItem]);
+                                   }else{
+                                     observer.next([boolean,cases]);
+                                   }
+
                                   observer.complete();
 
                           }, err=>{
@@ -57,7 +69,31 @@ export class WorkitemFlowProvider {
 
   }
 
+  public deleteCases(cases:Cases):Observable<any>{
+        let caseItem=_.cloneDeep(cases);
+        caseItem.shared=0;
+    return Observable.create(observer=>{
+              Observable.forkJoin(
+                [this.workItemElementRepository.deleteByCaseId(caseItem.caseId),
+                 this.casesRepository.update(caseItem)])
+                      .subscribe(resp => {
+                      console.log("Resp fork all observables:"+resp+" ");
+                      let boolean=resp[0]&&resp[1];
+                      if(boolean){
+                        observer.next([boolean,caseItem]);
+                      }else{
+                        observer.next([boolean,cases]);
+                      }
 
+                      observer.complete();
+                      }, err=>{
+                               console.log("Error processing all observables:"+err);
+                               observer.error(err);
+                      })
+
+
+                  })
+  }
 
   private processWiElement(list:any):Promise<boolean>{
   return Observable.create(observer=>{

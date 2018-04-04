@@ -1,16 +1,22 @@
-import { Component } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { NavController, NavParams,ViewController,AlertController,ToastController} from 'ionic-angular';
 import { ProjectSubproject} from '../../app/clases/entities/project-subproject';
 import { CasesProvider} from '../../providers/cases/cases';
 import { WorkitemFlowProvider} from '../../providers/workitem-flow/workitem-flow';
 import { Cases } from '../../app/clases/entities/cases';
 import { ItemSliding } from 'ionic-angular';
+import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'page-cases',
   templateUrl: 'cases.html',
 })
-export class CasesPage {
+export class CasesPage implements OnInit {
+
+  private itemSlidingSubject=new Subject();
+  itemSlidingSubject$=this.itemSlidingSubject.asObservable;
 
   projectSubproject:ProjectSubproject;
   cases:Cases[]=[];
@@ -28,6 +34,11 @@ export class CasesPage {
         this.projectSubproject=this.navParams.get("project");
         this.areaId=this.navParams.get("areaId");
         this.getLocalCases();
+  }
+
+  ngOnInit() {
+
+
   }
 
   showMessage(message:string) {
@@ -95,27 +106,40 @@ export class CasesPage {
     }
   }
 
-share(slidingItem:ItemSliding,cases:Cases){
+share(slidingItem:ItemSliding,cases:Cases,idx:number){
   console.log("item sliding:"+JSON.stringify(cases),this.areaId);
     this.workitemFlowProvider.shareCases(cases,this.areaId).subscribe((resp:any)=>{
-      console.log("Sharing response:"+resp);
-      let hasError:any=resp.filter(v=>!v);
-
-      if(hasError.length==0){
+      console.log("Sharing response:"+JSON.stringify(resp));
+      //let hasError:any=resp.filter(v=>!v);
+      if(resp[0]){
         this.showMessage("Succesfull share");
       }else{
         this.showMessage("Error trying to share");
       }
-
+      this.cases.splice(idx,1,resp[1]);
+      slidingItem.close();
   },err=>{
     this.showMessage("Error trying to share");
+     slidingItem.close();
   });
-
-  slidingItem.close();
 }
 
-delete(slidingItem:ItemSliding,cases:Cases){
-  slidingItem.close();
+delete(slidingItem:ItemSliding,cases:Cases,idx:number){
+  console.log("item sliding:"+JSON.stringify(cases),this.areaId);
+    this.workitemFlowProvider.deleteCases(cases).subscribe((resp:any)=>{
+      console.log("Delete case response:"+JSON.stringify(resp));
+      //let hasError:any=resp.filter(v=>!v);
+      if(resp[0]){
+        this.showMessage("Case items has been successfully removed");
+      }else{
+        this.showMessage("Error trying to delete");
+      }
+      this.cases.splice(idx,1,resp[1]);
+      slidingItem.close();
+  },err=>{
+    this.showMessage("Error trying to delete");
+     slidingItem.close();
+  });
 }
 
  dismiss() {

@@ -4,6 +4,8 @@ import { Cases} from '../../app/clases/entities/cases';
 import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
+import { Observable } from 'rxjs';
+
 
 @Injectable()
 export class CasesRepository {
@@ -16,15 +18,52 @@ export class CasesRepository {
 
   }
 
+  public update(entity: Cases):Observable<boolean>{
+      console.log("Update Case")
+    return  Observable.create(observer=>{
+         this.platform.ready().then(() => {
+         this.sqlite = new SQLite();
+         this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+                let sql = 'UPDATE CASES SET ID_ELEMENT=?, ID_ELEMENT_TYPE=?, ID_CASE_STATUS=? ,NR_CASE=?, FG_SHARED=?,DT_SHARED=?'
+                          +'WHERE ID_CASE=?';
+                      db.executeSql(sql, [entity.elementId, entity.elementTypeId,entity.caseStatusId, entity.number,
+                                          entity.shared,entity.sharedDate,entity.caseId])
+                      .then(()=>{
+                        console.info('Executed SQL');
+                           observer.next(true);
+                           observer.complete();
+                       }).catch(e=> {
+                         console.log("Error updating:"+JSON.stringify(e));
+                           observer.next(false);
+                           observer.complete();
+                        });
+
+               }).catch(e=>{
+                    console.error("Error inserting 2:"+JSON.stringify(e));
+                    observer.next(false);
+                    observer.complete();
+                  });
+
+           }).catch(e => {
+                  console.error("Error opening database: " + JSON.stringify(e));
+                  observer.next(false);
+                  observer.complete();
+          });
+
+          });
+
+
+  }
+
   public insert(entity: Cases){
        this.platform.ready().then(() => {
                 this.sqlite = new SQLite();
                 this.sqlite.create(DB_CONFIG).then((db) => {
-                  let sql = 'INSERT INTO CASES (ID_CASE,ID_ELEMENT, ID_ELEMENT_TYPE, ID_CASE_STATUS, NR_CASE) '
-                                              +'VALUES(?,?,?,?,?)';
+                  let sql = 'INSERT INTO CASES (ID_CASE,ID_ELEMENT, ID_ELEMENT_TYPE, ID_CASE_STATUS, NR_CASE,FG_SHARED) '
+                                              +'VALUES(?,?,?,?,?,?)';
                         //console.info("Objeto " + entity);
                   return db.executeSql(sql, [entity.caseId,entity.elementId, entity.elementTypeId,entity.caseStatusId,
-                                      entity.number]);
+                                      entity.number,0]);
                     }, (error) => {
                         console.info("Unable to execute sql " + JSON.stringify(error));
                     })
@@ -41,7 +80,7 @@ export class CasesRepository {
                 this.sqlite = new SQLite();
                 this.sqlite.create(DB_CONFIG).then((db) => {
 
-                  let sql = 'SELECT ID_CASE,ID_ELEMENT, ID_ELEMENT_TYPE, ID_CASE_STATUS,NR_CASE '
+                  let sql = 'SELECT ID_CASE,ID_ELEMENT, ID_ELEMENT_TYPE, ID_CASE_STATUS,NR_CASE,FG_SHARED,DT_SHARED '
                            +'FROM CASES WHERE ID_ELEMENT=?';
                     db.executeSql(sql, [elementId]).then(res => {
                       //console.info("Res query " + JSON.stringify(res)+"- elementId="+elementId);
@@ -52,6 +91,8 @@ export class CasesRepository {
                              row.elementId=res.rows.item(i).ID_ELEMENT;
                              row.elementTypeId=res.rows.item(i).ID_ELEMENT_TYPE;
                              row.number=res.rows.item(i).NR_CASE;
+                             row.shared=res.rows.item(i).FG_SHARED;
+                             row.sharedDate=res.rows.item(i).DT_SHARED;
                              resList.push(row);
                            }
                          resolve(resList);

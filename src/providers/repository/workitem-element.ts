@@ -65,6 +65,42 @@ public insert(entity: WorkitemElement):Observable<boolean>{
 
   }
 
+  public deleteByCaseId(caseId: number):Observable<boolean>{
+        console.log("Inser WI")
+      return  Observable.create(observer=>{
+           this.platform.ready().then(() => {
+           this.sqlite = new SQLite();
+           this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+                  let sql = 'DELETE FROM WORKITEM_ELEMENT WHERE ID_CASE=?';
+                        db.executeSql(sql, [caseId])
+                        .then(()=>{
+                          console.info('Executed SQL');
+                          observer.next(true);
+                          observer.complete();
+                         }).catch(e=> {
+                           console.log("Error DELETING:"+JSON.stringify(e));
+                             observer.next(false);
+                             observer.complete();
+                        });
+
+                 }).catch(e=>{
+                      console.error("Error inserting 2:"+JSON.stringify(e));
+                      observer.next(false);
+                      observer.complete();
+                    });
+
+             }).catch(e => {
+                    console.error("Error opening database: " + JSON.stringify(e));
+                    observer.next(false);
+                    observer.complete();
+            });
+
+            });
+
+
+    }
+
+
   public update(entity: WorkitemElement):Observable<boolean>{
       return Observable.create(observer=>{
         this.platform.ready().then(() => {
