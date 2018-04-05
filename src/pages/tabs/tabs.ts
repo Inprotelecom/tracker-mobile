@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, ViewController, ModalController} from 'ionic-angular';
-
-import { UploadList } from '../upload/upload-list';
-import { PendientesComponent } from '../pendientes/pendientes.component';
-import { TerminadosComponent } from '../terminados/terminados.component';
 import { LoginPage } from '../login/login';
 import { LoginProvider} from '../../providers/login/login';
-
+import { ProjectLocalPage } from '../project-local/project-local';
 import { ProjectPage } from '../project/project';
+import { CatalogsPage } from '../catalogs/catalogs';
 
 @Component({
   templateUrl: 'tabs.html'
@@ -15,12 +12,11 @@ import { ProjectPage } from '../project/project';
 export class TabsPage {
 
   tab1Root = ProjectPage;
-  tab2Root = UploadList;
-  tab3Root = LoginPage;
+  tab2Root = ProjectLocalPage;
+  tab3Root = CatalogsPage;
 
   constructor(private navCtrl:NavController,
               private loginService:LoginProvider) {
-
   }
 
   closeSession(){

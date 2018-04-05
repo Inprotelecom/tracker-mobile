@@ -1,0 +1,28 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title center>Cases</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
+  <ion-list>
+     <ion-item-sliding *ngFor="let item of cases;let i=index" #SlidingItem>
+        <button ion-item (click)="onCaseSelect(item)">
+          {{ item.number }}
+        </button>
+
+            <ion-item-options side="right">
+              <button ion-button color="primary" (click)="sync(SlidingItem,item,i)">
+                <ion-icon name="sync"></ion-icon>
+                Sync to Server
+              </button>
+
+            </ion-item-options>
+     </ion-item-sliding>
+  </ion-list>
+
+
+</ion-content>

@@ -12,7 +12,6 @@ export class WorkItemElementRepository {
 public sqlite: SQLite;
 
 db: SQLiteObject = null;
-private dbReady = new BehaviorSubject<boolean>(false);
 constructor(private platform:Platform) {
 
 }
@@ -153,7 +152,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
               this.sqlite.create(DB_CONFIG).then((db) => {
 
                 let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL,NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES '
-                         +'FROM PROJECT_SUBPROJECT';
+                         +'FROM WORKITEM_ELEMENT';
                   db.executeSql(sql, {}).then(res => {
                      //console.log("query-item"+JSON.stringify(res));
                          for(var i =0; i< res.rows.length;i++){
@@ -183,11 +182,50 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                   reject(err)
           });
    })
-
-
-
-
    }
+
+   public findWiByCaseId(caseId:number):Observable<WorkitemElement []>{
+     let resList:WorkitemElement []=[];
+     return  Observable.create(observer=>{
+         this.platform.ready().then(() => {
+         this.sqlite = new SQLite();
+         this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+
+                  let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL, '
+                           +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES FROM WORKITEM_ELEMENT WHERE ID_CASE='+ caseId+' ORDER BY NR_SEQUENCIAL';
+                    db.executeSql(sql, {}).then(res => {
+                       //console.info('Executed SQL'+JSON.stringify(res)+'-caseId'+caseId);
+                           for(var i =0; i< res.rows.length;i++){
+                             let row=new WorkitemElement();
+                             row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
+                             row.elementId=res.rows.item(i).ID_ELEMENT;
+                             row.elementTypeConfigId=res.rows.item(i).ID_ELEMENT_TYPE_CONFIG;
+                             row.workItemStatusId=res.rows.item(i).ID_WORK_ITEM_STATUS;
+                             row.parent=res.rows.item(i).ID_PARENT;
+                             row.sequencial=res.rows.item(i).NR_SEQUENCIAL;
+                             row.workitemTemplate=res.rows.item(i).NM_WORKITEM_TEMPLATE;
+                             row.workItemStatus=res.rows.item(i).NM_WORKITEM_STATUS;
+                             row.notes=res.rows.item(i).DE_NOTES;
+                             resList.push(row);
+                           }
+                          observer.next(resList);
+                          observer.complete();
+                       }).catch(e=>{
+                     console.error("Error querying:"+JSON.stringify(e));
+                     observer.next(false);
+                     observer.complete();
+                   });
+
+            }).catch(e => {
+                   console.error("Error opening database: " + JSON.stringify(e));
+                   observer.next(false);
+                   observer.complete();
+           });
+
+           });
+
+     })
+  }
 
 
 }

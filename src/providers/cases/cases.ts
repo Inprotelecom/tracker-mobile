@@ -79,8 +79,8 @@ public getAllRemoteProjectSubProject(subprojectId:number):Observable<Cases[]>{
 
   }
 
-  public updateCase(){
-    
+  public findSharedCasesByElement(elementId:number):Observable<Cases []>{
+     return this.casesRepository.findSharedCasesByElement(elementId);
   }
 
     /*public getAllRemoteProjectSubProject(subprojectId:number):any{

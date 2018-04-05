@@ -17,6 +17,13 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage} from '../pages/login/login';
 import { ProjectPage} from '../pages/project/project';
 import { CasesPage} from '../pages/cases/cases';
+import { ProjectLocalPage} from '../pages/project-local/project-local';
+import { CatalogsPage} from '../pages/catalogs/catalogs';
+import { CasesLocalPage} from '../pages/cases-local/cases-local';
+import { WorkitemPage} from '../pages/workitem/workitem';
+import { WorkitemEditPage} from '../pages/workitem/workitem-edit';
+import { WorkitemImagesPage} from '../pages/workitem/workitem-images';
+
 
 
 //Servicios
@@ -39,6 +46,8 @@ import { ProjectSubprojectRepository} from '../providers/repository/project-subp
 import { CasesRepository} from '../providers/repository/cases';
 import { WorkItemElementRepository } from '../providers/repository/workitem-element';
 import { ElementTypeConfigAttributeRepository} from '../providers/repository/element-type-config-attributes';
+import { ProjectLocalProvider } from '../providers/project-local/project-local';
+import { WorkitemProvider } from '../providers/workitem/workitem';
 
 
 
@@ -53,8 +62,14 @@ import { ElementTypeConfigAttributeRepository} from '../providers/repository/ele
     PendientesComponent,
     TerminadosComponent,
     ProjectPage,
+    ProjectLocalPage,
+    CatalogsPage,
     Upload,
-    UploadList
+    UploadList,
+    CasesLocalPage,
+    WorkitemPage,
+    WorkitemEditPage,
+    WorkitemImagesPage
   ],
   imports: [
     BrowserModule,
@@ -72,7 +87,13 @@ import { ElementTypeConfigAttributeRepository} from '../providers/repository/ele
     PendientesComponent,
     TerminadosComponent,
     Upload,
-    UploadList
+    UploadList,
+    ProjectLocalPage,
+    CatalogsPage,
+    CasesLocalPage,
+    WorkitemPage,
+    WorkitemEditPage,
+    WorkitemImagesPage
   ],
   providers: [
     StatusBar,
@@ -93,7 +114,9 @@ import { ElementTypeConfigAttributeRepository} from '../providers/repository/ele
     ElementTypeConfigAttributeRepository,
     CasesProvider,
     WorkitemFlowProvider,
-    WorkItemElementRepository
+    WorkItemElementRepository,
+    ProjectLocalProvider,
+    WorkitemProvider
   ]
 })
 export class AppModule {}

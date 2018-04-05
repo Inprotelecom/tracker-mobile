@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage} from '@ionic/storage';
-import { AlertController, Platform} from "ionic-angular";
+import { Platform} from "ionic-angular";
 
 @Injectable()
 export class StorageProvider {

@@ -9,9 +9,7 @@ import { DB_CONFIG} from '../../config/app-constants';
 export class UserAreaRepository {
 
   public sqlite: SQLite;
-
   db: SQLiteObject = null;
-  private dbReady = new BehaviorSubject<boolean>(false);
   constructor(private platform:Platform) {
 
   }

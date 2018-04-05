@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title center>WorkItem</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
+  <ion-list>
+     <ion-item-sliding *ngFor="let item of workItemList;let i=index" #SlidingItem>
+        <button ion-item (click)="onWiSelect(item)">
+          {{ item.workitemTemplate }}
+        </button>
+
+            <ion-item-options side="right">
+              <button ion-button color="primary" (click)="onWiEdit(SlidingItem,item,i)">
+                <ion-icon name="create"></ion-icon>
+                Edit
+              </button>
+              <button ion-button color="secondary" (click)="onWiImages(SlidingItem,item,i)">
+                <ion-icon name="image"></ion-icon>
+                Images
+              </button>
+
+            </ion-item-options>
+     </ion-item-sliding>
+  </ion-list>
+
+
+</ion-content>

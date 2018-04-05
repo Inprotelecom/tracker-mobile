@@ -4,13 +4,12 @@ import 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import { Observable } from 'rxjs/Observable';
 import { StorageProvider } from '../storage/storage';
-import { HttpModule,Http,URLSearchParams} from '@angular/http';
+import { Http,URLSearchParams} from '@angular/http';
 import { Injectable } from '@angular/core';
 import { URL_TRACKER_SERVICE,LOGIN} from '../../config/url.services';
-import { AlertController, Platform} from "ionic-angular";
+import { AlertController} from "ionic-angular";
 import { UserAreaRepository} from "../repository/user-area";
 import { UserArea} from '../../app/clases/entities/user-area';
-import { UserRole} from '../../app/clases/entities/user-role';
 import { DbManagerProvider} from '../../providers/db-manager/db-manager';
 
 @Injectable()
@@ -24,8 +23,7 @@ export class LoginProvider {
               private storageService:StorageProvider,
               private userAreaRepository:UserAreaRepository,
               private dbManager:DbManagerProvider) {
-    console.log('Hello LoginProvider Provider');
-    //this.storageService.getStorage("userId");
+
   }
 
   login(username:string,password:string){

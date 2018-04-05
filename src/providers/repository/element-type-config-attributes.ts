@@ -13,7 +13,6 @@ export class ElementTypeConfigAttributeRepository {
   public sqlite: SQLite;
 
   db: SQLiteObject = null;
-  private dbReady = new BehaviorSubject<boolean>(false);
   constructor(private platform:Platform) {
 
   }

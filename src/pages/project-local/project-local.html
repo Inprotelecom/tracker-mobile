@@ -1,12 +1,21 @@
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>project-local</ion-title>
+<ion-navbar color="primary">
+    <ion-title>Projects</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
+<!--<button ion-button block (click)="getRemoteProjects()">
+  Sync
+</button>-->
 <ion-content padding>
+<ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
+<ion-list>
+  <button ion-item *ngFor="let item of projectList" (click)="onProjectSelect(item)">
+    {{ item.projectName }} -
+    {{ item.subprojectName }}
+  </button>
+</ion-list>
 
 </ion-content>

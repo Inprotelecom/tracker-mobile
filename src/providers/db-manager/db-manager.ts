@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { SQLiteObject } from '@ionic-native/sqlite';
 import { SQLite } from '@ionic-native/sqlite';
 import { DB_CONFIG} from '../../config/app-constants';
 
