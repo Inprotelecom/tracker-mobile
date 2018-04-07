@@ -1,20 +1,30 @@
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/concat';
+import 'rxjs/add/operator/merge';
+import { combineLatest } from 'rxjs/observable/combineLatest';
+import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { CORDOVA} from '../../config/app-constants';
-import { URL_TRACKER_SERVICE,WORKITEMS_FLOW} from '../../config/url.services';
-import { Cases} from '../../app/clases/entities/cases';
-import { WorkItemElementRepository} from '../repository/workitem-element';
-import { CasesRepository} from '../repository/cases';
-import { ElementTypeConfigAttributeRepository} from '../repository/element-type-config-attributes';
-import { WorkitemElement} from '../../app/clases/entities/workitem-element';
+import { URL_TRACKER_SERVICE,WORKITEMS_FLOW,ATTRIBUTES,WI_ATTRIBUTTES} from '../../config/url.services';
 import { ElementTypeConfigAttribute} from '../../app/clases/entities/element-type-config-attributes';
 import dateFormat from 'dateformat';
 import { DT_FORMAT } from '../../config/app-constants';
 import * as _ from "lodash";
+import { WorkitemElement} from '../../app/clases/entities/workitem-element';
+import { Cases} from '../../app/clases/entities/cases';
+import { Attribute} from '../../app/clases/entities/attribute';
+import { ComboCategory} from '../../app/clases/entities/combo-category';
+import { WiElementAttribute} from '../../app/clases/entities/wi-element-attribute';
+import { ElementTypeConfigAttributeRepository} from '../repository/element-type-config-attributes';
+import { WorkItemElementRepository} from '../repository/workitem-element';
+import { CasesRepository} from '../repository/cases';
+import { AttributeRepository} from '../repository/attribute';
+import { ComboCategoryRepository} from '../repository/combo-category';
+import { WiElementAttributeRepository} from '../repository/wi-element-attribute';
 
 @Injectable()
 export class WorkitemFlowProvider {
@@ -25,49 +35,70 @@ export class WorkitemFlowProvider {
               private platform:Platform,
               private workItemElementRepository:WorkItemElementRepository,
               private elementTypeConfigAttributeRepository:ElementTypeConfigAttributeRepository,
-              private casesRepository:CasesRepository) {
+              private casesRepository:CasesRepository,
+              private attributeRepository:AttributeRepository,
+              private comboCategoryRepository:ComboCategoryRepository,
+              private wiElementAttributeRepository:WiElementAttributeRepository) {
 
   }
+
 
   public shareCases(cases:Cases,areaId:number):Observable<any>{
     let caseItem=_.cloneDeep(cases);
-    let url=URL_TRACKER_SERVICE+WORKITEMS_FLOW+"?elementId="+caseItem.elementId
+    let urlWi=URL_TRACKER_SERVICE+WORKITEMS_FLOW+"?elementId="+caseItem.elementId
         +"&caseId="+caseItem.caseId+"&areaId="+areaId;
-        caseItem.shared=1;
-        caseItem.sharedDate=''+dateFormat(new Date(),DT_FORMAT,true);
-        return Observable.create(observer=>{
-                      this.http.get(url).subscribe(resp=>{
-                        let data_resp= resp.json();
-                        if(data_resp!=null){
+    let urlAttributes=URL_TRACKER_SERVICE+ATTRIBUTES;
 
-                          Observable.forkJoin([this.processEtypeConfig(data_resp.elementTypeConfigAttribute),
-                                              this.processWiElement(data_resp.workFlow),
-                                              this.casesRepository.update(caseItem)])
-                                .subscribe(resp => {
-                                   console.log("Resp fork all observables:"+resp+" ");
-                                   let boolean=resp[0]&&resp[1];
-                                   if(resp[2]){
-                                     observer.next([boolean,caseItem]);
-                                   }else{
-                                     observer.next([boolean,cases]);
-                                   }
+      return Observable.forkJoin([this.getRestResponse(urlWi),this.getRestResponse(urlAttributes)])
+               .map((resp:any[])=>{
+                      console.log('map fork http:'+resp);
+                      return resp;
+                  }).flatMap(data=>{
+                    WI_ATTRIBUTTES
 
-                                  observer.complete();
+                    let wiList= _(data[0])
+                               .flatMapDeep(_.values)
+                               .map(item=>item.workitemElementId)
+                               .value()
+                               .filter(item=>item!=undefined)
+                               .join(',');
 
-                          }, err=>{
-                               console.log("Error processing all observables:"+err);
-                               observer.error(err);
-                            })
+                    let urlWiAttribute=URL_TRACKER_SERVICE+WI_ATTRIBUTTES
+                                    +'?wiElementList='+wiList;
+                        //consulta el servicio de wiAttribute con base a los wi recibidos
+                        //de la primera consulta dentro del forkJoin y regresa los tre resultados
+                        return this.getRestResponse(urlWiAttribute).map(resp=>{
+                          return [data[0],data[1],resp];
+                        });
+                  }).flatMap(data=>{
+                    console.log("http forkjoin:"+JSON.stringify(data[2]));
+                    caseItem.shared=1;
+                    caseItem.sharedDate=''+dateFormat(new Date(),DT_FORMAT,true);
+                    return Observable.forkJoin([this.processEtypeConfig(data[0].elementTypeConfigAttribute),
+                                         this.processWiElement(data[0].workFlow),
+                                         this.processAttribute(data[1].attribute),
+                                         this.processComboCategory(data[1].combo),
+                                         this.processWiElementAttribute(data[2]),
+                                         this.casesRepository.update(caseItem)])
 
-                        }
-
-                        },(error) => {
-                            console.log(error.status);
-                          observer.error(error);
+                           .map(resp => {
+                             console.log("resp forkjoin insert:"+JSON.stringify(resp));
+                             let boolean=resp[0]&&resp[1]&&resp[2]&&resp[3]&&resp[4];
+                             if(resp[5]){
+                               return([boolean,caseItem]);
+                             }else{
+                               return([boolean,cases]);
+                             }
                   })
-            })
+
+               })
 
   }
+
+  private getRestResponse(url:string):Observable<any>{
+     return this.http.get(url).map((resp:any)=> resp.json());
+  }
+
 
   public deleteCases(cases:Cases):Observable<any>{
         let caseItem=_.cloneDeep(cases);
@@ -168,6 +199,113 @@ export class WorkitemFlowProvider {
       observer.complete();
     }
 
+
+  })
+
+}
+
+  private processAttribute(list:any):Observable<boolean>{
+    let response:boolean=true;
+    let listObservables:Observable<boolean>[]=[];
+    return Observable.create(observer=>{
+    list.forEach(data=>{
+      console.log("Attribute: "+JSON.stringify(data));
+      let attribute=new Attribute();
+      attribute.attributeId=data.attributeId;
+      attribute.attributeTypeId=data.attributeTypeId;
+      attribute.attributeTypeJavaType=data.attributeTypeJavaType;
+      attribute.attributeTypeName=data.attributeTypeName;
+      attribute.attributeTypeWebComponent=data.attributeTypeWebComponent;
+      attribute.code=data.code;
+      attribute.comboCategoryId=data.comboCategoryId;
+      attribute.name=data.name;
+      attribute.sizeAttribute=data.sizeAttribute;
+      listObservables.push(this.attributeRepository.insert(attribute));
+    });
+
+    if(this.platform.is(CORDOVA)&&listObservables.length){
+
+      Observable.forkJoin(listObservables).subscribe(resolvedData => {
+                console.log("Observables attribute:"+resolvedData);
+                response=resolvedData.filter(resp=>!resp).length==0;
+
+          console.log("Resolve value"+response);
+          observer.next(response);
+          observer.complete();
+
+        }, err=>{console.error(err)});
+    }else{
+      observer.next(response);
+      observer.complete();
+    }
+
+
+  })
+
+}
+
+private processComboCategory(list:any):Observable<boolean>{
+  let response:boolean=true;
+  let listObservables:Observable<boolean>[]=[];
+  return Observable.create(observer=>{
+  list.forEach(data=>{
+    console.log("Combo category: "+JSON.stringify(data));
+    let comboCategory=new ComboCategory();
+    comboCategory.comboCategoryId=data.comboCategoryId;
+    comboCategory.name=data.name;
+    listObservables.push(this.comboCategoryRepository.insert(comboCategory));
+  });
+
+  if(this.platform.is(CORDOVA)&&listObservables.length){
+
+    Observable.forkJoin(listObservables).subscribe(resolvedData => {
+              console.log("Observables combo-category:"+resolvedData);
+              response=resolvedData.filter(resp=>!resp).length==0;
+
+        console.log("Resolve value"+response);
+        observer.next(response);
+        observer.complete();
+
+      }, err=>{console.error(err)});
+  }else{
+    observer.next(response);
+    observer.complete();
+  }
+
+  })
+
+}
+
+
+private processWiElementAttribute(list:any):Observable<boolean>{
+  let response:boolean=true;
+  let listObservables:Observable<boolean>[]=[];
+  return Observable.create(observer=>{
+  list.forEach(data=>{
+    console.log("wI attribute: "+JSON.stringify(data));
+    let wiAttribute=new WiElementAttribute();
+    wiAttribute.attributeId=data.attributeId;
+    wiAttribute.value=data.value;
+    wiAttribute.wiElementAttributeId=data.wiElementAttributeId;
+    wiAttribute.workitemElementId=data.workitemElementId;
+    listObservables.push(this.wiElementAttributeRepository.insert(wiAttribute));
+  });
+
+  if(this.platform.is(CORDOVA)&&listObservables.length){
+
+    Observable.forkJoin(listObservables).subscribe(resolvedData => {
+              console.log("Observables combo-category:"+resolvedData);
+              response=resolvedData.filter(resp=>!resp).length==0;
+
+        console.log("Resolve value"+response);
+        observer.next(response);
+        observer.complete();
+
+      }, err=>{console.error(err)});
+  }else{
+    observer.next(response);
+    observer.complete();
+  }
 
   })
 

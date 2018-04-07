@@ -14,4 +14,38 @@
 
 <ion-content padding>
 
+<ion-list *ngFor="let item of wiAttributeList">
+  <ion-item-group [ngSwitch]="item.attribute.attributeTypeWebComponent">
+  <ion-item *ngSwitchCase="webComponentTypeEnum.CALENDAR">
+      <ion-label>{{item.attribute.name}}</ion-label>
+      <ion-datetime displayFormat="MMM DD YYYY" [(ngModel)]="item.value"></ion-datetime>
+  </ion-item>
+  <ion-item *ngSwitchCase="webComponentTypeEnum.CHECKBOX">
+    <ion-label>{{item.attribute.name}}</ion-label>
+    <ion-toggle [(ngModel)]="item.value" ></ion-toggle>
+  </ion-item>
+  <ion-item *ngSwitchCase="webComponentTypeEnum.SELECT">
+  <ion-label>{{item.attribute.name}}</ion-label>
+    <ion-select [(ngModel)]="item.value">
+      <ion-option value="nes">NES</ion-option>
+      <ion-option value="n64">Nintendo64</ion-option>
+      <ion-option value="ps">PlayStation</ion-option>
+      <ion-option value="genesis">Sega Genesis</ion-option>
+      <ion-option value="saturn">Sega Saturn</ion-option>
+      <ion-option value="snes">SNES</ion-option>
+    </ion-select>
+</ion-item>
+<ion-item *ngSwitchCase="webComponentTypeEnum.INPUT">
+  <ion-label floating>{{item.attribute.name}}</ion-label>
+  <ion-input type="text" [(ngModel)]="item.value"></ion-input>
+</ion-item>
+<ion-item *ngSwitchCase="webComponentTypeEnum.INPUT_AREA">
+    <ion-label floating>{{item.attribute.name}}</ion-label>
+    <ion-textarea #myInput id="myInput_{{item.attributeId}}" rows="1"
+    maxLength="500" [(ngModel)]="item.value"></ion-textarea>
+</ion-item>
+</ion-item-group>
+
+</ion-list>
+
 </ion-content>

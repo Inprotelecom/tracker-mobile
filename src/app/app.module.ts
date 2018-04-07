@@ -37,17 +37,21 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { DbManagerProvider } from '../providers/db-manager/db-manager';
 import { LoginProvider } from '../providers/login/login';
 import { StorageProvider } from '../providers/storage/storage';
-
-//Repositories
 import { CasesProvider } from '../providers/cases/cases';
 import { WorkitemFlowProvider } from '../providers/workitem-flow/workitem-flow';
+import { ProjectLocalProvider } from '../providers/project-local/project-local';
+import { WorkitemProvider } from '../providers/workitem/workitem';
+//Repositories
+
 import { UserAreaRepository} from '../providers/repository/user-area';
 import { ProjectSubprojectRepository} from '../providers/repository/project-subproject';
 import { CasesRepository} from '../providers/repository/cases';
 import { WorkItemElementRepository } from '../providers/repository/workitem-element';
 import { ElementTypeConfigAttributeRepository} from '../providers/repository/element-type-config-attributes';
-import { ProjectLocalProvider } from '../providers/project-local/project-local';
-import { WorkitemProvider } from '../providers/workitem/workitem';
+import { AttributeRepository } from '../providers/repository/attribute';
+import { ComboCategoryRepository} from '../providers/repository/combo-category';
+import { WiElementAttributeRepository} from '../providers/repository/wi-element-attribute';
+
 
 
 
@@ -116,7 +120,10 @@ import { WorkitemProvider } from '../providers/workitem/workitem';
     WorkitemFlowProvider,
     WorkItemElementRepository,
     ProjectLocalProvider,
-    WorkitemProvider
+    WorkitemProvider,
+    AttributeRepository,
+    ComboCategoryRepository,
+    WiElementAttributeRepository
   ]
 })
 export class AppModule {}

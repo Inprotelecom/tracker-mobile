@@ -4,3 +4,5 @@ export const LOGIN="/login";
 export const PROJECT_SUBPROJECT="/loadProjectSubprojects";
 export const CASES="/loadCases";
 export const WORKITEMS_FLOW="/loadWorkItemsFlow";
+export const ATTRIBUTES="/loadAttributes";
+export const WI_ATTRIBUTTES="/loadWiElementAttribute";

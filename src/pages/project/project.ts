@@ -84,8 +84,7 @@ export class ProjectPage implements OnInit{
   onProjectSelect(project:ProjectSubproject){
 
     console.log("Selected Item", JSON.stringify(project));
-    let modal=this.modalCtrl.create(CasesPage,{project:project,areaId:this.areaId});
-    modal.present();
+    this.navCtrl.push(CasesPage,{project:project,areaId:this.areaId});
   }
 
 
