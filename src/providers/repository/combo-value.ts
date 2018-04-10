@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
-import { ComboCategory} from '../../app/clases/entities/combo-category';
+import { ComboValue} from '../../app/clases/entities/combo-value';
+import { WiElementAttribute} from '../../app/clases/entities/wi-element-attribute';
 import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class ComboCategoryRepository {
+export class ComboValueRepository {
 
 public sqlite: SQLite;
 
@@ -16,14 +17,14 @@ constructor(private platform:Platform) {
 
 }
 
-public insert(entity: ComboCategory):Observable<boolean>{
-      console.log("Inser ComboCategory")
+public insert(entity: ComboValue):Observable<boolean>{
+      console.log("Inser ComboValue")
     return  Observable.create(observer=>{
          this.platform.ready().then(() => {
          this.sqlite = new SQLite();
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
-                let sql = 'INSERT INTO COMBO_CATEGORY (ID_COMBO_CATEGORY, NM_COMBO_CATEGORY) VALUES(?,?)';
-                      db.executeSql(sql, [entity.comboCategoryId,entity.name])
+                let sql = 'INSERT INTO COMBO_VALUE (ID_COMBO_VALUE,ID_COMBO_CATEGORY, NM_LABEL,NM_VALUE) VALUES(?,?,?,?)';
+                      db.executeSql(sql, [entity.comboValueId,entity.comboCategoryId,entity.label,entity.value])
                       .then(()=>{
                         console.info('Executed SQL');
                         observer.next(true);
@@ -56,21 +57,20 @@ public insert(entity: ComboCategory):Observable<boolean>{
                   observer.next(false);
                   observer.complete();
           });
-
           });
 
 
   }
 
-  public update(entity: ComboCategory):Observable<boolean>{
+  public update(entity: ComboValue):Observable<boolean>{
       return Observable.create(observer=>{
         this.platform.ready().then(() => {
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
-                     let sql = 'UPDATE COMBO_CATEGORY SET NM_COMBO_CATEGORY=? WHERE ID_COMBO_CATEGORY=?';
+                     let sql = 'UPDATE COMBO_VALUE SET ID_COMBO_CATEGORY=?,NM_LABEL=?,NM_VALUE=? WHERE ID_COMBO_VALUE=?';
                      //  console.info("going to insert etype:"+JSON.stringify(entity));
 
-                           db.executeSql(sql, [entity.comboCategoryId, entity.name])
+                           db.executeSql(sql, [entity.comboCategoryId,entity.label, entity.value])
                            .then(res=>{
                              console.log('Executed SQL wi update');
                              observer.next(true);
@@ -99,22 +99,24 @@ public insert(entity: ComboCategory):Observable<boolean>{
 
    }
 
-   public findById(comboCategoryId:number):Observable<ComboCategory>{
-     let comboCategory:ComboCategory =null;
+   public findByComboCategoryId(comboCategoryId:number):Observable<ComboValue[]>{
+     let comboValue:ComboValue =null;
      return  Observable.create(observer=>{
          this.platform.ready().then(() => {
          this.sqlite = new SQLite();
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-                  let sql = 'SELECT ID_COMBO_CATEGORY, NM_COMBO_CATEGORY FROM COMBO_CATEGORY WHERE ID_COMBO_CATEGORY='+ comboCategoryId;
+                  let sql = 'SELECT ID_COMBO_VALUE,ID_COMBO_CATEGORY, NM_LABEL,NM_VALUE FROM COMBO_VALUE WHERE ID_COMBO_CATEGORY='+ comboCategoryId;
                     db.executeSql(sql, {}).then(res => {
                        //console.info('Executed SQL'+JSON.stringify(res)+'-caseId'+caseId);
                            if(res.rows.length>0){
-                             comboCategory=new ComboCategory();
-                             comboCategory.comboCategoryId=res.rows.item(0).ID_ATTRIBUTE;
-                             comboCategory.name=res.rows.item(0).CD_ATTRIBUTE;
+                             comboValue=new ComboValue();
+                             comboValue.comboValueId=res.rows.item(0).ID_COMBO_VALUE;
+                             comboValue.comboCategoryId=res.rows.item(0).ID_COMBO_CATEGORY;
+                             comboValue.label=res.rows.item(0).NM_LABEL;
+                             comboValue.value=res.rows.item(0).NM_VALUE;
                             }
-                          observer.next(comboCategory);
+                          observer.next(comboValue);
                           observer.complete();
                        }).catch(e=>{
                      console.error("Error querying:"+JSON.stringify(e));
@@ -132,6 +134,44 @@ public insert(entity: ComboCategory):Observable<boolean>{
 
      })
   }
+
+  public findComboValuesToWiElementbyComboCategory(wiAttribute:WiElementAttribute):Observable<WiElementAttribute>{
+    let comboValue:ComboValue =null;
+    return  Observable.create(observer=>{
+        this.platform.ready().then(() => {
+        this.sqlite = new SQLite();
+        this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+
+                 let sql = 'SELECT ID_COMBO_VALUE,ID_COMBO_CATEGORY, NM_LABEL,NM_VALUE FROM COMBO_VALUE WHERE ID_COMBO_CATEGORY='+ wiAttribute.attribute.comboCategoryId;
+                   db.executeSql(sql, {}).then(res => {
+                      //console.info('Executed SQL'+JSON.stringify(res)+'-caseId'+caseId);
+                          if(res.rows.length>0){
+                            comboValue=new ComboValue();
+                            comboValue.comboValueId=res.rows.item(0).ID_COMBO_VALUE;
+                            comboValue.comboCategoryId=res.rows.item(0).ID_COMBO_CATEGORY;
+                            comboValue.label=res.rows.item(0).NM_LABEL;
+                            comboValue.value=res.rows.item(0).NM_VALUE;
+                            comboValue.valueString=''+comboValue.value;
+                            wiAttribute.comboValue=comboValue;
+                           }
+                         observer.next(wiAttribute);
+                         observer.complete();
+                      }).catch(e=>{
+                    console.error("Error querying:"+JSON.stringify(e));
+                    observer.next(false);
+                    observer.complete();
+                  });
+
+           }).catch(e => {
+                  console.error("Error opening database: " + JSON.stringify(e));
+                  observer.next(false);
+                  observer.complete();
+          });
+
+          });
+
+    })
+ }
 
 
 }

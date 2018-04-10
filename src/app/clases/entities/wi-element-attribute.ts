@@ -1,4 +1,5 @@
 import {Attribute} from './attribute';
+import {ComboValue} from './combo-value';
 
 export class WiElementAttribute{
 
@@ -7,6 +8,7 @@ export class WiElementAttribute{
   value:number;
   workitemElementId:number;
   attribute:Attribute;
+  comboValue:ComboValue;
 
   constructor(){
   }

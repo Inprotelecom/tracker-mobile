@@ -17,13 +17,13 @@ import * as _ from "lodash";
 import { WorkitemElement} from '../../app/clases/entities/workitem-element';
 import { Cases} from '../../app/clases/entities/cases';
 import { Attribute} from '../../app/clases/entities/attribute';
-import { ComboCategory} from '../../app/clases/entities/combo-category';
+import { ComboValue} from '../../app/clases/entities/combo-value';
 import { WiElementAttribute} from '../../app/clases/entities/wi-element-attribute';
 import { ElementTypeConfigAttributeRepository} from '../repository/element-type-config-attributes';
 import { WorkItemElementRepository} from '../repository/workitem-element';
 import { CasesRepository} from '../repository/cases';
 import { AttributeRepository} from '../repository/attribute';
-import { ComboCategoryRepository} from '../repository/combo-category';
+import { ComboValueRepository} from '../repository/combo-value';
 import { WiElementAttributeRepository} from '../repository/wi-element-attribute';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class WorkitemFlowProvider {
               private elementTypeConfigAttributeRepository:ElementTypeConfigAttributeRepository,
               private casesRepository:CasesRepository,
               private attributeRepository:AttributeRepository,
-              private comboCategoryRepository:ComboCategoryRepository,
+              private comboValueRepository:ComboValueRepository,
               private wiElementAttributeRepository:WiElementAttributeRepository) {
 
   }
@@ -73,7 +73,7 @@ export class WorkitemFlowProvider {
                   }).flatMap(data=>{
                     console.log("http forkjoin:"+JSON.stringify(data[2]));
                     caseItem.shared=1;
-                    caseItem.sharedDate=''+dateFormat(new Date(),DT_FORMAT,true);
+                      caseItem.sharedDate=''+dateFormat(new Date(),DT_FORMAT,true);
                     return Observable.forkJoin([this.processEtypeConfig(data[0].elementTypeConfigAttribute),
                                          this.processWiElement(data[0].workFlow),
                                          this.processAttribute(data[1].attribute),
@@ -150,7 +150,7 @@ export class WorkitemFlowProvider {
 
         })
 
-      if(this.platform.is(CORDOVA)&&listObservables.length){
+      if(this.platform.is(CORDOVA)&&listObservables.length>0){
         Observable.forkJoin(listObservables).subscribe(resolvedData => {
                   console.log("Observables wi:"+resolvedData);
                   response=resolvedData.filter(resp=>!resp).length==0;
@@ -183,7 +183,7 @@ export class WorkitemFlowProvider {
       listObservables.push(this.elementTypeConfigAttributeRepository.insert(etype));
     });
 
-    if(this.platform.is(CORDOVA)&&listObservables.length){
+    if(this.platform.is(CORDOVA)&&listObservables.length>0){
 
       Observable.forkJoin(listObservables).subscribe(resolvedData => {
                 console.log("Observables etype:"+resolvedData);
@@ -223,7 +223,7 @@ export class WorkitemFlowProvider {
       listObservables.push(this.attributeRepository.insert(attribute));
     });
 
-    if(this.platform.is(CORDOVA)&&listObservables.length){
+    if(this.platform.is(CORDOVA)&&listObservables.length>0){
 
       Observable.forkJoin(listObservables).subscribe(resolvedData => {
                 console.log("Observables attribute:"+resolvedData);
@@ -249,17 +249,19 @@ private processComboCategory(list:any):Observable<boolean>{
   let listObservables:Observable<boolean>[]=[];
   return Observable.create(observer=>{
   list.forEach(data=>{
-    console.log("Combo category: "+JSON.stringify(data));
-    let comboCategory=new ComboCategory();
-    comboCategory.comboCategoryId=data.comboCategoryId;
-    comboCategory.name=data.name;
-    listObservables.push(this.comboCategoryRepository.insert(comboCategory));
+    console.log("Combo value: "+JSON.stringify(data));
+    let comboValue=new ComboValue();
+    comboValue.comboValueId=data.comboValueId;
+    comboValue.comboCategoryId=data.comboCategoryId;
+    comboValue.label=data.label;
+    comboValue.value=data.value;
+    listObservables.push(this.comboValueRepository.insert(comboValue));
   });
 
-  if(this.platform.is(CORDOVA)&&listObservables.length){
+  if(this.platform.is(CORDOVA)&&listObservables.length>0){
 
     Observable.forkJoin(listObservables).subscribe(resolvedData => {
-              console.log("Observables combo-category:"+resolvedData);
+              console.log("Observables combo-value:"+resolvedData);
               response=resolvedData.filter(resp=>!resp).length==0;
 
         console.log("Resolve value"+response);
@@ -291,10 +293,10 @@ private processWiElementAttribute(list:any):Observable<boolean>{
     listObservables.push(this.wiElementAttributeRepository.insert(wiAttribute));
   });
 
-  if(this.platform.is(CORDOVA)&&listObservables.length){
+  if(this.platform.is(CORDOVA)&&listObservables.length>0){
 
     Observable.forkJoin(listObservables).subscribe(resolvedData => {
-              console.log("Observables combo-category:"+resolvedData);
+              console.log("Observables Wi Element Attribute:"+resolvedData);
               response=resolvedData.filter(resp=>!resp).length==0;
 
         console.log("Resolve value"+response);

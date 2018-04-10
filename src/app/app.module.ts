@@ -49,7 +49,7 @@ import { CasesRepository} from '../providers/repository/cases';
 import { WorkItemElementRepository } from '../providers/repository/workitem-element';
 import { ElementTypeConfigAttributeRepository} from '../providers/repository/element-type-config-attributes';
 import { AttributeRepository } from '../providers/repository/attribute';
-import { ComboCategoryRepository} from '../providers/repository/combo-category';
+import { ComboValueRepository} from '../providers/repository/combo-value';
 import { WiElementAttributeRepository} from '../providers/repository/wi-element-attribute';
 
 
@@ -122,7 +122,7 @@ import { WiElementAttributeRepository} from '../providers/repository/wi-element-
     ProjectLocalProvider,
     WorkitemProvider,
     AttributeRepository,
-    ComboCategoryRepository,
+    ComboValueRepository,
     WiElementAttributeRepository
   ]
 })
