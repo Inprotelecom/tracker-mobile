@@ -5,4 +5,5 @@ export const DB_CONFIG={
 
 export const CORDOVA='cordova';
 
-export const DT_FORMAT='dd/mm/yyyy HH:MM:ss';
+export const DT_FORMAT_WEB='dd/mm/yyyy HH:MM:ss.l';
+export const DT_FORMAT_IONIC='yyyy-mm-dd';

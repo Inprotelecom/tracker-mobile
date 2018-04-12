@@ -12,7 +12,7 @@ import { CORDOVA} from '../../config/app-constants';
 import { URL_TRACKER_SERVICE,WORKITEMS_FLOW,ATTRIBUTES,WI_ATTRIBUTTES} from '../../config/url.services';
 import { ElementTypeConfigAttribute} from '../../app/clases/entities/element-type-config-attributes';
 import dateFormat from 'dateformat';
-import { DT_FORMAT } from '../../config/app-constants';
+import { DT_FORMAT_WEB } from '../../config/app-constants';
 import * as _ from "lodash";
 import { WorkitemElement} from '../../app/clases/entities/workitem-element';
 import { Cases} from '../../app/clases/entities/cases';
@@ -73,7 +73,7 @@ export class WorkitemFlowProvider {
                   }).flatMap(data=>{
                     console.log("http forkjoin:"+JSON.stringify(data[2]));
                     caseItem.shared=1;
-                      caseItem.sharedDate=''+dateFormat(new Date(),DT_FORMAT,true);
+                      caseItem.sharedDate=''+dateFormat(new Date(),DT_FORMAT_WEB,true);
                     return Observable.forkJoin([this.processEtypeConfig(data[0].elementTypeConfigAttribute),
                                          this.processWiElement(data[0].workFlow),
                                          this.processAttribute(data[1].attribute),
@@ -290,6 +290,7 @@ private processWiElementAttribute(list:any):Observable<boolean>{
     wiAttribute.value=data.value;
     wiAttribute.wiElementAttributeId=data.wiElementAttributeId;
     wiAttribute.workitemElementId=data.workitemElementId;
+    wiAttribute.synced=true;
     listObservables.push(this.wiElementAttributeRepository.insert(wiAttribute));
   });
 

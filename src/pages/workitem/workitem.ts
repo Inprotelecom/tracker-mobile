@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams,ModalController } from 'ionic-angular';
+import { NavController, NavParams,ModalController } from 'ionic-angular';
 import { ItemSliding } from 'ionic-angular';
 import { WorkitemProvider} from '../../providers/workitem/workitem';
 import { Cases} from '../../app/clases/entities/cases';
@@ -59,12 +59,15 @@ export class WorkitemPage {
 
 onWiEdit(slidingItem:ItemSliding,workitem:WorkitemElement,idx:number){
   console.log("Selected Item", JSON.stringify(workitem));
+  slidingItem.close();
   let modal=this.modalCtrl.create(WorkitemEditPage,{workitem:workitem});
   modal.present();
+
 }
 
 onWiImages(slidingItem:ItemSliding,workitem:WorkitemElement,idx:number){
   console.log("Selected Item", JSON.stringify(workitem));
+  slidingItem.close();
   let modal=this.modalCtrl.create(WorkitemImagesPage,{workitem:workitem});
   modal.present();
 }

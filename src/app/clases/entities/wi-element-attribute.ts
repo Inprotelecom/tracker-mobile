@@ -5,10 +5,11 @@ export class WiElementAttribute{
 
   wiElementAttributeId:number;
   attributeId:number;
-  value:number;
+  value:string;
   workitemElementId:number;
+  synced:boolean;
   attribute:Attribute;
-  comboValue:ComboValue;
+  comboValue:ComboValue[];
 
   constructor(){
   }

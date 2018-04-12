@@ -24,7 +24,9 @@ import { WorkitemPage} from '../pages/workitem/workitem';
 import { WorkitemEditPage} from '../pages/workitem/workitem-edit';
 import { WorkitemImagesPage} from '../pages/workitem/workitem-images';
 
+//PipesModule
 
+import {PipeComboValuePipe} from '../pipes/pipe-combo-value-pipe-ts/pipe-combo-value-pipe';
 
 //Servicios
 import { ListaDeseosService } from './services/lista-deseos.service';
@@ -41,6 +43,8 @@ import { CasesProvider } from '../providers/cases/cases';
 import { WorkitemFlowProvider } from '../providers/workitem-flow/workitem-flow';
 import { ProjectLocalProvider } from '../providers/project-local/project-local';
 import { WorkitemProvider } from '../providers/workitem/workitem';
+import { SyncProvider } from '../providers/sync/sync';
+
 //Repositories
 
 import { UserAreaRepository} from '../providers/repository/user-area';
@@ -51,6 +55,13 @@ import { ElementTypeConfigAttributeRepository} from '../providers/repository/ele
 import { AttributeRepository } from '../providers/repository/attribute';
 import { ComboValueRepository} from '../providers/repository/combo-value';
 import { WiElementAttributeRepository} from '../providers/repository/wi-element-attribute';
+import {WorkItemStatusRepository} from "../providers/repository/workitem-status";
+import {EtypeConfigWiStatusRepository} from "../providers/repository/etype-config-wi-status";
+
+
+import {HttpClientModule} from "@angular/common/http";
+
+
 
 
 
@@ -73,13 +84,15 @@ import { WiElementAttributeRepository} from '../providers/repository/wi-element-
     CasesLocalPage,
     WorkitemPage,
     WorkitemEditPage,
-    WorkitemImagesPage
+    WorkitemImagesPage,
+    PipeComboValuePipe
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
-    HttpModule
+    HttpModule,
+    HttpClientModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -123,7 +136,10 @@ import { WiElementAttributeRepository} from '../providers/repository/wi-element-
     WorkitemProvider,
     AttributeRepository,
     ComboValueRepository,
-    WiElementAttributeRepository
+    WiElementAttributeRepository,
+    WorkItemStatusRepository,
+    EtypeConfigWiStatusRepository,
+    SyncProvider
   ]
 })
 export class AppModule {}

@@ -6,9 +6,13 @@ import { ComboValue} from '../../app/clases/entities/combo-value';
 import { WorkItemElementRepository} from '../repository/workitem-element';
 import { WiElementAttributeRepository} from '../repository/wi-element-attribute';
 import { ComboValueRepository} from '../repository/combo-value';
+import dateFormat from 'dateformat';
+import {DT_FORMAT_WEB} from "../../config/app-constants";
+import {WebComponentType} from "../../app/enums/web-component-type";
 
 @Injectable()
 export class WorkitemProvider {
+  webComponentTypeEnum=WebComponentType;
 
   constructor(private workItemElementRepository:WorkItemElementRepository,
               private wiElementAttributeRepository:WiElementAttributeRepository,
@@ -29,9 +33,7 @@ export class WorkitemProvider {
                      comboValueObservables.push(this.comboValueRepository.findComboValuesToWiElementbyComboCategory(o));
                  });
                  return Observable.forkJoin(comboValueObservables).map(resp=>{
-                   console.info("wiattribute original:"+JSON.stringify(data));
-                   console.info("wiattribute combo:"+JSON.stringify(resp));
-                    return data;
+                      return data;
                  });
          })
   }
@@ -43,6 +45,11 @@ export class WorkitemProvider {
   saveWiAttributes(wiElementAttributeList:WiElementAttribute[]){
     let wiAttributeObservable:Observable<Boolean>[]=[];
     wiElementAttributeList.forEach(item=>{
+        item.synced=false;
+        if(item.attribute.attributeTypeWebComponent==this.webComponentTypeEnum.CALENDAR && item.value!=''){
+          console.log('Date from web:'+item.value);
+          item.value=dateFormat(new Date(item.value),DT_FORMAT_WEB,true);
+        }
         wiAttributeObservable.push(this.wiElementAttributeRepository.insert(item));
     });
     return Observable.forkJoin(wiAttributeObservable);

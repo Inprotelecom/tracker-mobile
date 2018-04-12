@@ -1,11 +1,13 @@
 import { Component,OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController,ToastController } from 'ionic-angular';
+import { NavController, NavParams, ViewController,ToastController } from 'ionic-angular';
 import { WiElementAttribute} from '../../app/clases/entities/wi-element-attribute';
 import { WorkitemElement} from '../../app/clases/entities/workitem-element';
-import { Attribute} from '../../app/clases/entities/attribute';
 import { WorkitemProvider} from '../../providers/workitem/workitem';
 import { WebComponentType} from '../../app/enums/web-component-type';
 import * as _ from 'lodash';
+import dateFormat from 'dateformat';
+import {DT_FORMAT_IONIC} from "../../config/app-constants";
+
 
 @Component({
   selector: 'page-workitem-edit',
@@ -23,7 +25,7 @@ export class WorkitemEditPage implements OnInit{
               private workitemProvider:WorkitemProvider,
               private toastCtrl:ToastController) {
 
-          this.workItemElement=this.navParams.get("workitem");
+          this.workItemElement=_.cloneDeep(this.navParams.get("workitem"));
   }
 
   ngOnInit(){
@@ -43,10 +45,18 @@ export class WorkitemEditPage implements OnInit{
   }
 
   getWiAttributtes(){
+
     this.workitemProvider.findWiElementAttributeByWiElement(this.workItemElement.workitemElementId)
         .subscribe(resp=>{
-          console.log('Wi Attributes search:'+JSON.stringify(resp));
-          this.wiAttributeList=resp;
+          //console.log('Wi Attributes search:'+JSON.stringify(resp));
+          this.wiAttributeList=_.cloneDeep(resp);
+
+          this.wiAttributeList.filter(o=> o.attribute.attributeTypeWebComponent==this.webComponentTypeEnum.CALENDAR&& o.value!='')
+              .map(o=>{
+                let dateString:string [] = (o.value.slice(0,10)).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+                let date=new Date(Number(dateString[3]), Number(dateString[2])-1, Number(dateString[1]));
+                o.value=dateFormat(date,DT_FORMAT_IONIC,true);
+              });
           this.wiAttributeListResp=_.cloneDeep(this.wiAttributeList);
         },e=>{
           this.wiAttributeList=[];

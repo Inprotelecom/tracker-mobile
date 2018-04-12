@@ -27,9 +27,10 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                let localId:string=''+entity.attributeId+new Date().getTime();
                entity.wiElementAttributeId=parseInt(localId)*-1;
               }
-              let sql = 'INSERT INTO WI_ELEMENT_ATTRIBUTE (ID_WI_ELEMENT_ATTRIBUTE, ID_ATTRIBUTE, VL_ATTRIBUTE,ID_WORK_ITEM_ELEMENT) '
-                          +'VALUES(?,?,?,?)';
-                      db.executeSql(sql, [entity.wiElementAttributeId,entity.attributeId, entity.value,entity.workitemElementId])
+              let sql = 'INSERT INTO WI_ELEMENT_ATTRIBUTE (ID_WI_ELEMENT_ATTRIBUTE, ID_ATTRIBUTE, VL_ATTRIBUTE,ID_WORK_ITEM_ELEMENT,FG_SYNCED) '
+                          +'VALUES(?,?,?,?,?)';
+                      db.executeSql(sql, [entity.wiElementAttributeId,entity.attributeId,
+                        entity.value,entity.workitemElementId,entity.synced?1:0])
                       .then(()=>{
                         console.info('Executed SQL');
                         observer.next(true);
@@ -73,8 +74,9 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
         this.platform.ready().then(() => {
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
-                     let sql = 'UPDATE WI_ELEMENT_ATTRIBUTE SET ID_WI_ELEMENT_ATTRIBUTE=?, VL_ATTRIBUTE=? WHERE ID_ATTRIBUTE=? AND ID_WORK_ITEM_ELEMENT=?';
-                           db.executeSql(sql, [entity.wiElementAttributeId,entity.value,entity.attributeId, entity.workitemElementId])
+                     let sql = 'UPDATE WI_ELEMENT_ATTRIBUTE SET ID_WI_ELEMENT_ATTRIBUTE=?, VL_ATTRIBUTE=?, FG_SYNCED=? WHERE ID_ATTRIBUTE=? AND ID_WORK_ITEM_ELEMENT=?';
+                           db.executeSql(sql, [entity.wiElementAttributeId,entity.value,(entity.synced)?1:0,entity.attributeId,
+                             entity.workitemElementId])
                            .then(res=>{
                              console.log('Executed SQL wi update');
                              observer.next(true);
@@ -110,7 +112,7 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
          this.sqlite = new SQLite();
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-                  let sql = 'SELECT WA.ID_WI_ELEMENT_ATTRIBUTE, E.ID_ATTRIBUTE, WA.VL_ATTRIBUTE,W.ID_WORK_ITEM_ELEMENT,'
+                  let sql = 'SELECT WA.ID_WI_ELEMENT_ATTRIBUTE, E.ID_ATTRIBUTE, WA.VL_ATTRIBUTE,W.ID_WORK_ITEM_ELEMENT,WA.FG_SYNCED,'
                             +'A.ID_ATTRIBUTE_TYPE,A.VL_ATTRIBUTE_TYPE,A.NM_WEB_COMPONENT,A.NM_ATTRIBUTE,A.ID_COMBO_CATEGORY '
                             +'FROM ETYPE_CONFIG_ATTRIBUTE E JOIN WORKITEM_ELEMENT W '
                             +'ON E.ID_ELEMENT_TYPE_CONFIG=W.ID_ELEMENT_TYPE_CONFIG '
@@ -130,6 +132,7 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                              row.attributeId=res.rows.item(i).ID_ATTRIBUTE;
                              row.value=res.rows.item(i).VL_ATTRIBUTE;
                              row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
+                             row.synced=(res.rows.item(i).ID_WORK_ITEM_ELEMENT)==1;
                              row.attribute=new Attribute();
                              row.attribute.attributeTypeId=res.rows.item(i).ID_ATTRIBUTE_TYPE;
                              row.attribute.attributeTypeJavaType=res.rows.item(i).VL_ATTRIBUTE_TYPE;
@@ -156,6 +159,51 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
 
      })
   }
+
+
+  public findWiAttributeByCaseIdAndSynced(caseId:number,synced:boolean):Observable<WiElementAttribute[]>{
+      let resList:WiElementAttribute []=[];
+      return  Observable.create(observer=>{
+          this.platform.ready().then(() => {
+          this.sqlite = new SQLite();
+          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+
+                   let sql = 'SELECT WA.ID_WI_ELEMENT_ATTRIBUTE, WA.ID_ATTRIBUTE, WA.VL_ATTRIBUTE,WA.ID_WORK_ITEM_ELEMENT,WA.FG_SYNCED '
+                             +'FROM WORKITEM_ELEMENT W JOIN WI_ELEMENT_ATTRIBUTE WA '
+                             +'ON W.ID_WORK_ITEM_ELEMENT=WA.ID_WORK_ITEM_ELEMENT '
+                             +'WHERE W.ID_CASE='+caseId
+                             +' AND WA.FG_SYNCED='+(synced?1:0);
+                        //console.info('Query info WiElementAttribute'+sql);
+                     db.executeSql(sql, {}).then(res => {
+                           //console.info('WiElementAttributes query:'+sql);
+                            for(var i =0; i< res.rows.length;i++){
+                              //console.info('Executed SQL WiElementAttribute'+JSON.stringify(res.rows.item(i)));
+                              let row=new WiElementAttribute();
+                              row.wiElementAttributeId=res.rows.item(i).ID_WI_ELEMENT_ATTRIBUTE;
+                              row.attributeId=res.rows.item(i).ID_ATTRIBUTE;
+                              row.value=res.rows.item(i).VL_ATTRIBUTE;
+                              row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
+                              row.synced=(res.rows.item(i).ID_WORK_ITEM_ELEMENT)==1;
+                              resList.push(row);
+                            }
+                           observer.next(resList);
+                           observer.complete();
+                        }).catch(e=>{
+                      console.error("Error querying:"+JSON.stringify(e));
+                      observer.next(resList);
+                      observer.complete();
+                    });
+
+             }).catch(e => {
+                    console.error("Error opening database: " + JSON.stringify(e));
+                    observer.next(resList);
+                    observer.complete();
+            });
+
+            });
+
+      })
+   }
 
 
 }

@@ -194,7 +194,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                   let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL, '
                            +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES FROM WORKITEM_ELEMENT WHERE ID_CASE='+ caseId+' ORDER BY NR_SEQUENCIAL';
                     db.executeSql(sql, {}).then(res => {
-                       //console.info('Executed SQL'+JSON.stringify(res)+'-caseId'+caseId);
+                       console.info('Executed SQL'+JSON.stringify(res)+'-caseId'+caseId);
                            for(var i =0; i< res.rows.length;i++){
                              let row=new WorkitemElement();
                              row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;

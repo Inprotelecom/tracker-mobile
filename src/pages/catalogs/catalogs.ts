@@ -11,7 +11,7 @@ export class CatalogsPage implements OnInit{
   }
 
   ngOnInit(){
-    
+
   }
 
 

@@ -86,7 +86,7 @@ export class ProjectSubprojectRepository {
            this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
                     let sql = 'SELECT PS.ID_PROJECT_OF,PS.ID_ELEMENT_PROJECT_OF, PS.ID_ELEMENT_STATUS_PROJECT_OF, PS.ID_SUBPROJECT, PS.ID_ELEMENT_SUBPROJECT,PS.ID_ELEMENT_STATUS_SUBPROJECT,PS.NM_PROJECT_OF,PS.NM_SUBPROJECT '
-                             +'FROM PROJECT_SUBPROJECT PS JOIN CASES CAS WHERE CAS.ID_ELEMENT =PS.ID_ELEMENT_SUBPROJECT';
+                             +'FROM PROJECT_SUBPROJECT PS JOIN CASES CAS WHERE CAS.ID_ELEMENT =PS.ID_ELEMENT_SUBPROJECT AND CAS.FG_SHARED=1';
                       db.executeSql(sql, {}).then(res => {
                          console.info('Executed SQL');
                              for(var i =0; i< res.rows.length;i++){

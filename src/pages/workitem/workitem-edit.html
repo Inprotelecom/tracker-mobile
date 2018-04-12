@@ -20,31 +20,28 @@
 <ion-list *ngFor="let item of wiAttributeList;let i=index">
   <ion-item-group [ngSwitch]="item.attribute.attributeTypeWebComponent">
   <ion-item *ngSwitchCase="webComponentTypeEnum.CALENDAR">
-      <ion-label>{{item.attribute.name}}</ion-label>
-      <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD/MM/YYYY" [(ngModel)]="item.value"></ion-datetime>
+      <ion-label stacked color="primary" >{{item.attribute.name}}</ion-label>
+      <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MM YYYY" [(ngModel)]="item.value"></ion-datetime>
   </ion-item>
   <ion-item *ngSwitchCase="webComponentTypeEnum.CHECKBOX">
-    <ion-label>{{item.attribute.name}}</ion-label>
+    <ion-label stacked color="primary" >{{item.attribute.name}}</ion-label>
     <ion-toggle [(ngModel)]="item.value" ></ion-toggle>
   </ion-item>
   <ion-item *ngSwitchCase="webComponentTypeEnum.SELECT">
-  <ion-label>{{item.attribute.name}}</ion-label>
-    <ion-select [(ngModel)]="item.value" [multiple]="false" formControlName="item">
-      <ion-option [value]="null">
-        None
-    </ion-option>
-    <ion-option *ngFor="let itemSelect of item.comboValue" [value]="itemSelect.label">
+  <ion-label stacked color="primary" >{{item.attribute.name}}</ion-label>
+    <ion-select [(ngModel)]="item.value" [multiple]="false">
+      <ion-option *ngFor="let itemSelect of item.comboValue" [value]="itemSelect.valueString">
         {{itemSelect.label}}
     </ion-option>
     </ion-select>
 </ion-item>
 <ion-item *ngSwitchCase="webComponentTypeEnum.INPUT">
-  <ion-label floating>{{item.attribute.name}}</ion-label>
-  <ion-input type="text" [(ngModel)]="item.value"></ion-input>
+  <ion-label stacked color="primary" >{{item.attribute.name}}</ion-label>
+  <ion-input class="input input-ios" type="text" [(ngModel)]="item.value"></ion-input>
 </ion-item>
 <ion-item *ngSwitchCase="webComponentTypeEnum.INPUT_AREA">
-    <ion-label floating>{{item.attribute.name}}</ion-label>
-    <ion-textarea rows="1" maxLength="500" [(ngModel)]="item.value"></ion-textarea>
+    <ion-label stacked color="primary" >{{item.attribute.name}}</ion-label>
+    <ion-textarea class="input input-ios" [(ngModel)]="item.value"></ion-textarea>
 </ion-item>
 </ion-item-group>
 

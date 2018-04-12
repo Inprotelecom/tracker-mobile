@@ -115,9 +115,10 @@ export class CasesRepository {
            this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
              let sql = 'SELECT ID_CASE,ID_ELEMENT, ID_ELEMENT_TYPE, ID_CASE_STATUS,NR_CASE,FG_SHARED,DT_SHARED '
-                      +'FROM CASES WHERE ID_ELEMENT=?';
-               db.executeSql(sql, [elementId]).then(res => {
-                 //console.info("Res query " + JSON.stringify(res)+"- elementId="+elementId);
+                      +'FROM CASES WHERE FG_SHARED=1 AND ID_ELEMENT='+elementId;
+                 console.info("SharedCases query " + sql);
+               db.executeSql(sql, []).then(res => {
+                 console.info("Res query " + JSON.stringify(res)+"- elementId="+elementId);
                       for(var i =0; i< res.rows.length;i++){
                             let row=new Cases();
                             row.caseId=res.rows.item(i).ID_CASE;

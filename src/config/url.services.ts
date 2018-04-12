@@ -6,3 +6,5 @@ export const CASES="/loadCases";
 export const WORKITEMS_FLOW="/loadWorkItemsFlow";
 export const ATTRIBUTES="/loadAttributes";
 export const WI_ATTRIBUTTES="/loadWiElementAttribute";
+export const SAVE_WI_ATTRIBUTTES="/saveWiElementAttributes";
+export const SAVE_WI_ELEMENT="/saveWiElement";

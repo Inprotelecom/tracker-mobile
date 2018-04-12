@@ -22,6 +22,9 @@ export class CasesPage implements OnInit {
   cases:Cases[]=[];
   casesResp:Cases[]=[];
   areaId:number;
+  loading = this.loadingCtrl.create({
+    content: 'Please wait...'
+  });
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -29,7 +32,8 @@ export class CasesPage implements OnInit {
               private casesService:CasesProvider,
               private workitemFlowProvider:WorkitemFlowProvider,
               private alertCrtl:AlertController,
-              private toastCtrl:ToastController) {
+              private toastCtrl:ToastController,
+              private loadingCtrl:LoadingController) {
 
         this.projectSubproject=this.navParams.get("project");
         this.areaId=this.navParams.get("areaId");
@@ -107,6 +111,7 @@ export class CasesPage implements OnInit {
   }
 
 share(slidingItem:ItemSliding,cases:Cases,idx:number){
+  this.loading.present();
   console.log("item sliding:"+JSON.stringify(cases),this.areaId);
     this.workitemFlowProvider.shareCases(cases,this.areaId).subscribe((resp:any)=>{
       console.log("Sharing response:"+JSON.stringify(resp));
@@ -118,13 +123,16 @@ share(slidingItem:ItemSliding,cases:Cases,idx:number){
       }
       this.cases.splice(idx,1,resp[1]);
       slidingItem.close();
+      this.loading.dismiss();
   },err=>{
     this.showMessage("Error trying to share");
-     slidingItem.close();
+      slidingItem.close();
+      this.loading.dismiss();
   });
 }
 
 delete(slidingItem:ItemSliding,cases:Cases,idx:number){
+  this.loading.present();
   console.log("item sliding:"+JSON.stringify(cases),this.areaId);
     this.workitemFlowProvider.deleteCases(cases).subscribe((resp:any)=>{
       console.log("Delete case response:"+JSON.stringify(resp));
@@ -136,9 +144,11 @@ delete(slidingItem:ItemSliding,cases:Cases,idx:number){
       }
       this.cases.splice(idx,1,resp[1]);
       slidingItem.close();
+      this.loading.dismiss();
   },err=>{
-    this.showMessage("Error trying to delete");
-     slidingItem.close();
+      this.showMessage("Error trying to delete");
+      slidingItem.close();
+      this.loading.dismiss();
   });
 }
 

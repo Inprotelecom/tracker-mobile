@@ -8,7 +8,7 @@ import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class ComboValueRepository {
+export class EtypeConfigWiStatusRepository {
 
 public sqlite: SQLite;
 
