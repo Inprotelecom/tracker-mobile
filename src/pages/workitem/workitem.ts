@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams,ModalController } from 'ionic-angular';
+import {NavController, NavParams, ModalController, LoadingController} from 'ionic-angular';
 import { ItemSliding } from 'ionic-angular';
 import { WorkitemProvider} from '../../providers/workitem/workitem';
 import { Cases} from '../../app/clases/entities/cases';
@@ -21,24 +21,32 @@ export class WorkitemPage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               private modalCtrl:ModalController,
-              private workitemProvider:WorkitemProvider) {
+              private workitemProvider:WorkitemProvider,
+              public loadingCtrl: LoadingController) {
 
               this.cases=this.navParams.get("cases");
   }
 
+  loading = this.loadingCtrl.create({
+    content: 'Loading ...'
+  });
+
   ionViewWillEnter(){
-    this.findAllWorkitems();
+     this.findAllWorkitems();
   }
 
   findAllWorkitems(){
+    this.loading.present();
     this.workitemProvider.findWorkitemByCaseId(this.cases.caseId)
         .subscribe(resp=>{
           this.workItemListResp=resp;
           this.workItemList=_.cloneDeep(this.workItemListResp);
+          this.loading.dismiss();
         },e=>{
           console.error(e);
           this.workItemListResp=[];
           this.workItemList==[];
+          this.loading.dismiss();
         })
   }
 

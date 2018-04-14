@@ -1,13 +1,15 @@
 import { Component,OnInit } from '@angular/core';
-import { NavController, NavParams,ViewController,AlertController,ToastController} from 'ionic-angular';
+import {
+  NavController, NavParams, ViewController, AlertController, ToastController,
+  LoadingController
+} from 'ionic-angular';
 import { ProjectSubproject} from '../../app/clases/entities/project-subproject';
 import { CasesProvider} from '../../providers/cases/cases';
 import { WorkitemFlowProvider} from '../../providers/workitem-flow/workitem-flow';
 import { Cases } from '../../app/clases/entities/cases';
 import { ItemSliding } from 'ionic-angular';
-import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+
 
 @Component({
   selector: 'page-cases',

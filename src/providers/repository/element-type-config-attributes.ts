@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { ElementTypeConfigAttribute } from '../../app/clases/entities/element-type-config-attributes';
 import { Platform } from 'ionic-angular';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
 
@@ -27,18 +26,18 @@ export class ElementTypeConfigAttributeRepository {
 
                           db.executeSql(sql, [entity.attributeId,entity.elementTypeConfigId, entity.attributeTypeId,entity.comboCategoryId,entity.mandatory])
                           .then(res=>{
-                            console.log('Executed SQL');
+                            //console.log('Executed SQL');
                             observer.next(true);
                             observer.complete();
                           }).catch(e=>{
-                               console.log("Error inserting 1:"+JSON.stringify(e));
+                               //console.log("Error inserting 1:"+JSON.stringify(e));
                                let message:string=e.message;
                                message=message.toUpperCase();
                                if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
-                                 console.log("UNIQUE CONSTRAINT FAILED");
+                                 //console.log("UNIQUE CONSTRAINT FAILED");
 
                                   this.update(entity).subscribe(resp=>{
-                                    console.log("Observable resp update:"+resp);
+                                    //console.log("Observable resp update:"+resp);
                                   });
                                   observer.next(true);
                                   observer.complete();
@@ -109,7 +108,7 @@ export class ElementTypeConfigAttributeRepository {
 
                              db.executeSql(sql, [entity.attributeTypeId,entity.comboCategoryId,entity.mandatory,entity.attributeId,entity.elementTypeConfigId])
                              .then(res=>{
-                               console.log('Executed SQL update');
+                               //console.log('Executed SQL update');
                                observer.next(true);
                                observer.complete();
                              }).catch(e=>{

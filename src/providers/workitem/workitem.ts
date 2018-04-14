@@ -9,6 +9,8 @@ import { ComboValueRepository} from '../repository/combo-value';
 import dateFormat from 'dateformat';
 import {DT_FORMAT_WEB} from "../../config/app-constants";
 import {WebComponentType} from "../../app/enums/web-component-type";
+import {EtypeConfigWiStatusRepository} from "../repository/etype-config-wi-status";
+import {EtypeConfigWiStatus} from "../../app/clases/entities/etype-config-wi-status";
 
 @Injectable()
 export class WorkitemProvider {
@@ -16,7 +18,8 @@ export class WorkitemProvider {
 
   constructor(private workItemElementRepository:WorkItemElementRepository,
               private wiElementAttributeRepository:WiElementAttributeRepository,
-              private comboValueRepository:ComboValueRepository) {
+              private comboValueRepository:ComboValueRepository,
+              private etypeConfigWiStatusRepository:EtypeConfigWiStatusRepository) {
   }
 
   findWorkitemByCaseId(caseId:number):Observable<WorkitemElement[]>{
@@ -26,15 +29,16 @@ export class WorkitemProvider {
   findWiElementAttributeByWiElement(elementId:number):Observable<WiElementAttribute[]>{
       return this.wiElementAttributeRepository.findWorkitemElementId(elementId)
          .flatMap((data:WiElementAttribute[])=>{
+                  console.info('Resp seach wiAttributes'+JSON.stringify(data));
                   let comboValueObservables:Observable<WiElementAttribute>[]=[];
                   data
                  .filter(w=>w.attribute.comboCategoryId!=null)
                  .forEach(o=>{
                      comboValueObservables.push(this.comboValueRepository.findComboValuesToWiElementbyComboCategory(o));
                  });
-                 return Observable.forkJoin(comboValueObservables).map(resp=>{
-                      return data;
-                 });
+                 return (comboValueObservables.length>0)
+                   ?Observable.forkJoin(comboValueObservables).map(resp=> data)
+                   :Observable.of('').map(resp=> data);
          })
   }
 
@@ -42,8 +46,9 @@ export class WorkitemProvider {
      return this.comboValueRepository.findByComboCategoryId(comboCategoryId);
   }
 
-  saveWiAttributes(wiElementAttributeList:WiElementAttribute[]){
+  saveWiAttributes(wiElementAttributeList:WiElementAttribute[],workItemElement:WorkitemElement){
     let wiAttributeObservable:Observable<Boolean>[]=[];
+    wiAttributeObservable.push(this.workItemElementRepository.updateStatusAndNotes(workItemElement));
     wiElementAttributeList.forEach(item=>{
         item.synced=false;
         if(item.attribute.attributeTypeWebComponent==this.webComponentTypeEnum.CALENDAR && item.value!=''){
@@ -53,6 +58,14 @@ export class WorkitemProvider {
         wiAttributeObservable.push(this.wiElementAttributeRepository.insert(item));
     });
     return Observable.forkJoin(wiAttributeObservable);
+  }
+
+  findEtypeConfigWiStatusByElementTypeConfigId(elementTypeConfigId:number):Observable<EtypeConfigWiStatus[]>{
+    return this.etypeConfigWiStatusRepository.findByElementTypeConfigId(elementTypeConfigId);
+  }
+
+  findWiElementById(id:number):Observable<WorkitemElement>{
+    return this.workItemElementRepository.findWiElementById(id);
   }
 
 }

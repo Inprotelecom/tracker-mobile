@@ -16,6 +16,7 @@ import {Http,URLSearchParams} from "@angular/http";
 @Injectable()
 export class SyncProvider {
 
+
   constructor(public http: Http,
               private platform:Platform,
               private storageProvider:StorageProvider,

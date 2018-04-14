@@ -8,3 +8,4 @@ export const ATTRIBUTES="/loadAttributes";
 export const WI_ATTRIBUTTES="/loadWiElementAttribute";
 export const SAVE_WI_ATTRIBUTTES="/saveWiElementAttributes";
 export const SAVE_WI_ELEMENT="/saveWiElement";
+export const ETYPE_CONFIG_WI_STATUS="/loadEtypeConfigWiStatus";

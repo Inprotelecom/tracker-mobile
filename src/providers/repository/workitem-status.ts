@@ -3,6 +3,7 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from 'ionic-angular';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
+import {WorkItemStatus} from "../../app/clases/entities/workitem-status";
 
 @Injectable()
 export class WorkItemStatusRepository {
@@ -21,7 +22,7 @@ public insert(entity: WorkItemStatus):Observable<boolean>{
          this.sqlite = new SQLite();
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
                 let sql = 'INSERT INTO WORK_ITEM_STATUS (ID_WORK_ITEM_STATUS,NM_WORK_ITEM_STATUS) VALUES(?,?)';
-                      db.executeSql(sql, [entity.comboValueId,entity.comboCategoryId,entity.label,entity.value])
+                      db.executeSql(sql, [entity.workitemStatusId,entity.name])
                       .then(()=>{
                         console.info('Executed SQL');
                         observer.next(true);
@@ -67,7 +68,7 @@ public insert(entity: WorkItemStatus):Observable<boolean>{
                      let sql = 'UPDATE WORK_ITEM_STATUS SET NM_WORK_ITEM_STATUS=? WHERE ID_WORK_ITEM_STATUS=?';
                      //  console.info("going to insert etype:"+JSON.stringify(entity));
 
-                           db.executeSql(sql, [entity.comboCategoryId,entity.label, entity.value])
+                           db.executeSql(sql, [entity.name,entity.workitemStatusId])
                            .then(res=>{
                              console.log('Executed SQL WorkItemStatus');
                              observer.next(true);

@@ -1,0 +1,29 @@
+<!--
+  Generated template for the TreeNode component.
+
+  See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
+  for more info on Angular 2 Components.
+-->
+<div *ngFor="let n of nodes" class="divitem" >
+  <button ion-item detail-none no-lines  (click)="clickNode(n)" 
+          [ngClass]="{active: isSelected(n)}" icon-left>
+    <ion-grid >
+      <ion-row>
+        <ion-col width-10>
+          <span item-left *ngIf="n.sub" >
+            <ion-icon [color]="isSelected(n) ? 'primary' : 'gray'" [name]="isSelected(n) ? 'ios-arrow-down' : 'ios-arrow-forward'"></ion-icon>
+          </span> 
+        </ion-col>
+        <ion-col width-10>
+            <ion-icon [name]="getIcon(n)" color="dark"></ion-icon>              
+        </ion-col>
+        <ion-col width-80>
+            {{n.title}} 
+        </ion-col>
+      </ion-row>
+    </ion-grid>                              
+  </button>
+  <!-- Recursive call to draw the next level o the node-->
+  <tree-folder [nodes]="n.sub"  *ngIf="n.sub" [hidden]="!isSelected(n)" ></tree-folder>   
+</div>
+

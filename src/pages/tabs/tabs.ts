@@ -5,6 +5,7 @@ import { LoginProvider} from '../../providers/login/login';
 import { ProjectLocalPage } from '../project-local/project-local';
 import { ProjectPage } from '../project/project';
 import { CatalogsPage } from '../catalogs/catalogs';
+import {WorkitemFilesPage} from "../workitem/workitem-files";
 
 @Component({
   templateUrl: 'tabs.html'
@@ -13,7 +14,7 @@ export class TabsPage {
 
   tab1Root = ProjectPage;
   tab2Root = ProjectLocalPage;
-  tab3Root = CatalogsPage;
+  tab3Root = WorkitemFilesPage;
 
   constructor(private navCtrl:NavController,
               private loginService:LoginProvider) {

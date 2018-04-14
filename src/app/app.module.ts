@@ -23,6 +23,8 @@ import { CasesLocalPage} from '../pages/cases-local/cases-local';
 import { WorkitemPage} from '../pages/workitem/workitem';
 import { WorkitemEditPage} from '../pages/workitem/workitem-edit';
 import { WorkitemImagesPage} from '../pages/workitem/workitem-images';
+import {TreeFolderComponent} from "../pages/tree-folder/tree-folder";
+import {WorkitemFilesPage} from "../pages/workitem/workitem-files";
 
 //PipesModule
 
@@ -68,6 +70,7 @@ import {HttpClientModule} from "@angular/common/http";
 
 
 
+
 @NgModule({
   declarations: [
     MyApp,
@@ -85,7 +88,9 @@ import {HttpClientModule} from "@angular/common/http";
     WorkitemPage,
     WorkitemEditPage,
     WorkitemImagesPage,
-    PipeComboValuePipe
+    PipeComboValuePipe,
+    TreeFolderComponent,
+    WorkitemFilesPage
   ],
   imports: [
     BrowserModule,
@@ -110,7 +115,9 @@ import {HttpClientModule} from "@angular/common/http";
     CasesLocalPage,
     WorkitemPage,
     WorkitemEditPage,
-    WorkitemImagesPage
+    WorkitemImagesPage,
+    TreeFolderComponent,
+    WorkitemFilesPage
   ],
   providers: [
     StatusBar,

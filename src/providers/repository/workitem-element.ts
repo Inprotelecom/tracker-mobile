@@ -27,11 +27,11 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                       db.executeSql(sql, [entity.workitemElementId,entity.elementId, entity.caseId,entity.elementTypeConfigId,entity.workItemStatusId,
                                     entity.parent,entity.order,entity.sequencial,entity.workitemTemplate,entity.notes])
                       .then(()=>{
-                        console.info('Executed SQL');
+                        //console.info('Executed SQL');
                         observer.next(true);
                         observer.complete();
                        }).catch(e=> {
-                         console.log("Error inserting 1:"+JSON.stringify(e));
+                         //console.log("Error inserting 1:"+JSON.stringify(e));
                          let message:string=e.message;
                          message=message.toUpperCase();
                          if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
@@ -73,7 +73,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                   let sql = 'DELETE FROM WORKITEM_ELEMENT WHERE ID_CASE=?';
                         db.executeSql(sql, [caseId])
                         .then(()=>{
-                          console.info('Executed SQL');
+                          //console.info('Executed SQL');
                           observer.next(true);
                           observer.complete();
                          }).catch(e=> {
@@ -106,11 +106,11 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
                      let sql = 'UPDATE WORKITEM_ELEMENT SET ID_ELEMENT=?, ID_CASE=?,ID_ELEMENT_TYPE_CONFIG=?, ID_WORK_ITEM_STATUS=?,ID_PARENT=?,NR_ORDER=?,'
-                     +        'NR_SEQUENCIAL=?,NM_WORKITEM_TEMPLATE=?,NM_WORKITEM_STATUS=?,DE_NOTES=? WHERE ID_WORK_ITEM_ELEMENT=?';
-                     //  console.info("going to insert etype:"+JSON.stringify(entity));
+                     +        'NR_SEQUENCIAL=?,NM_WORKITEM_TEMPLATE=?,NM_WORKITEM_STATUS=?,DE_NOTES=? WHERE ID_WORK_ITEM_ELEMENT='+entity.workitemElementId;
+                     console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
 
                            db.executeSql(sql, [entity.elementId, entity.caseId,entity.elementTypeConfigId,entity.workItemStatusId,
-                                         entity.parent,entity.order,entity.sequencial,entity.workitemTemplate,entity.notes,entity.workitemElementId])
+                                         entity.parent,entity.order,entity.sequencial,entity.workitemTemplate,entity.workItemStatus,entity.notes])
                            .then(res=>{
                              console.log('Executed SQL wi update');
                              observer.next(true);
@@ -138,6 +138,43 @@ public insert(entity: WorkitemElement):Observable<boolean>{
       });
 
    }
+
+  public updateStatusAndNotes(entity: WorkitemElement):Observable<boolean>{
+    return Observable.create(observer=>{
+      this.platform.ready().then(() => {
+        this.sqlite = new SQLite();
+        this.sqlite.create(DB_CONFIG).then((db) => {
+          let sql = 'UPDATE WORKITEM_ELEMENT SET ID_WORK_ITEM_STATUS=?,DE_NOTES=? WHERE ID_WORK_ITEM_ELEMENT=?';
+          console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
+
+          db.executeSql(sql, [entity.workItemStatusId,entity.notes,entity.workitemElementId])
+            .then(res=>{
+              //console.log('Executed SQL wi update');
+              observer.next(true);
+              observer.complete();
+            }).catch(e=>{
+            console.log("Error updating:"+JSON.stringify(e));
+
+            observer.next(true);
+            observer.complete();
+          });
+
+        }).catch(e=>{
+          console.log("Error inserting 2:"+JSON.stringify(e));
+          observer.next(false);
+          observer.complete();
+        });
+
+      }).catch(e => {
+        console.info("Error opening database: " + JSON.stringify(e));
+        observer.next(false);
+        observer.complete();
+      });
+
+
+    });
+
+  }
 
 /* public update(entity: ProjectSubproject){
       let sql = 'UPDATE PROJECT_SUBPROJECT SET NM_PROJECT_OF=?, NM_SUBPROJECT=? WHERE ID=?';
@@ -183,6 +220,48 @@ public insert(entity: WorkitemElement):Observable<boolean>{
           });
    })
    }
+
+  public findWiElementById(id:number):Observable<WorkitemElement>{
+    let row:WorkitemElement=null
+    return  Observable.create(observer=>{
+      this.platform.ready().then(() => {
+        this.sqlite = new SQLite();
+        this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+
+          let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL, '
+            +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES FROM WORKITEM_ELEMENT WHERE ID_WORK_ITEM_ELEMENT='+ id;
+
+          db.executeSql(sql, {}).then(res => {
+            if(res.rows.length>0){
+              row=new WorkitemElement();
+              row.workitemElementId=res.rows.item(0).ID_WORK_ITEM_ELEMENT;
+              row.elementId=res.rows.item(0).ID_ELEMENT;
+              row.elementTypeConfigId=res.rows.item(0).ID_ELEMENT_TYPE_CONFIG;
+              row.workItemStatusId=res.rows.item(0).ID_WORK_ITEM_STATUS;
+              row.parent=res.rows.item(0).ID_PARENT;
+              row.sequencial=res.rows.item(0).NR_SEQUENCIAL;
+              row.workitemTemplate=res.rows.item(0).NM_WORKITEM_TEMPLATE;
+              row.workItemStatus=res.rows.item(0).NM_WORKITEM_STATUS;
+              row.notes=res.rows.item(0).DE_NOTES;
+            }
+            observer.next(row);
+            observer.complete();
+          }).catch(e=>{
+            console.error("Error querying:"+JSON.stringify(e));
+            observer.next(false);
+            observer.complete();
+          });
+
+        }).catch(e => {
+          console.error("Error opening database: " + JSON.stringify(e));
+          observer.next(false);
+          observer.complete();
+        });
+
+      });
+
+    })
+  }
 
    public findWiByCaseId(caseId:number):Observable<WorkitemElement []>{
      let resList:WorkitemElement []=[];
