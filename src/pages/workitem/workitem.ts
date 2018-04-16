@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import {NavController, NavParams, ModalController, LoadingController} from 'ionic-angular';
 import { ItemSliding } from 'ionic-angular';
 import { WorkitemProvider} from '../../providers/workitem/workitem';
@@ -12,7 +12,7 @@ import {WorkitemFilesPage} from "./workitem-files";
   selector: 'page-workitem',
   templateUrl: 'workitem.html',
 })
-export class WorkitemPage {
+export class WorkitemPage implements OnInit{
 
   workItemList:WorkitemElement[]=[];
   workItemListResp:WorkitemElement[]=[];
@@ -31,7 +31,7 @@ export class WorkitemPage {
     content: 'Loading ...'
   });
 
-  ionViewWillEnter(){
+  ngOnInit(){
      this.findAllWorkitems();
   }
 
