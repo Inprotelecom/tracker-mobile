@@ -132,7 +132,7 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                              row.attributeId=res.rows.item(i).ID_ATTRIBUTE;
                              row.value=res.rows.item(i).VL_ATTRIBUTE;
                              row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
-                             row.synced=(res.rows.item(i).ID_WORK_ITEM_ELEMENT)==1;
+                             row.synced=(res.rows.item(i).FG_SYNCED)==1;
                              row.attribute=new Attribute();
                              row.attribute.attributeTypeId=res.rows.item(i).ID_ATTRIBUTE_TYPE;
                              row.attribute.attributeTypeJavaType=res.rows.item(i).VL_ATTRIBUTE_TYPE;
@@ -173,9 +173,9 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                              +'ON W.ID_WORK_ITEM_ELEMENT=WA.ID_WORK_ITEM_ELEMENT '
                              +'WHERE W.ID_CASE='+caseId
                              +' AND WA.FG_SYNCED='+(synced?1:0);
-                        //console.info('Query info WiElementAttribute'+sql);
+                        console.info('Query info WiElementAttribute'+sql);
                      db.executeSql(sql, {}).then(res => {
-                           //console.info('WiElementAttributes query:'+sql);
+                           console.info('WiElementAttributes query:'+sql);
                             for(var i =0; i< res.rows.length;i++){
                               //console.info('Executed SQL WiElementAttribute'+JSON.stringify(res.rows.item(i)));
                               let row=new WiElementAttribute();
@@ -183,13 +183,13 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                               row.attributeId=res.rows.item(i).ID_ATTRIBUTE;
                               row.value=res.rows.item(i).VL_ATTRIBUTE;
                               row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
-                              row.synced=(res.rows.item(i).ID_WORK_ITEM_ELEMENT)==1;
+                              row.synced=(res.rows.item(i).FG_SYNCED)==1;
                               resList.push(row);
                             }
                            observer.next(resList);
                            observer.complete();
                         }).catch(e=>{
-                      console.error("Error querying:"+JSON.stringify(e));
+                      console.error("Error querying WiElementAttributes:"+JSON.stringify(e));
                       observer.next(resList);
                       observer.complete();
                     });

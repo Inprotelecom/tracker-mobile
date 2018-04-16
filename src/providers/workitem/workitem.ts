@@ -11,6 +11,8 @@ import {DT_FORMAT_WEB} from "../../config/app-constants";
 import {WebComponentType} from "../../app/enums/web-component-type";
 import {EtypeConfigWiStatusRepository} from "../repository/etype-config-wi-status";
 import {EtypeConfigWiStatus} from "../../app/clases/entities/etype-config-wi-status";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {ETYPE_CONFIG_DOCS, URL_TRACKER_SERVICE} from "../../config/url.services";
 
 @Injectable()
 export class WorkitemProvider {
@@ -19,7 +21,8 @@ export class WorkitemProvider {
   constructor(private workItemElementRepository:WorkItemElementRepository,
               private wiElementAttributeRepository:WiElementAttributeRepository,
               private comboValueRepository:ComboValueRepository,
-              private etypeConfigWiStatusRepository:EtypeConfigWiStatusRepository) {
+              private etypeConfigWiStatusRepository:EtypeConfigWiStatusRepository,
+              private http:HttpClient) {
   }
 
   findWorkitemByCaseId(caseId:number):Observable<WorkitemElement[]>{
@@ -67,5 +70,18 @@ export class WorkitemProvider {
   findWiElementById(id:number):Observable<WorkitemElement>{
     return this.workItemElementRepository.findWiElementById(id);
   }
+
+  findElementTypeConfigDocumentsStructure(workitemElement:WorkitemElement){
+    return this.createGetResponse(URL_TRACKER_SERVICE+ETYPE_CONFIG_DOCS,
+      new HttpParams().set('elementTypeConfigId',''+workitemElement.elementTypeConfigId)
+      .set('workItemElementId',''+workitemElement.workitemElementId));
+  }
+
+  private createGetResponse(url:string,params:any):Observable<any>{
+    return this.http.get(url,{params:params});
+  }
+
+
+
 
 }

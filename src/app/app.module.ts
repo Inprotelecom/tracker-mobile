@@ -46,6 +46,8 @@ import { WorkitemFlowProvider } from '../providers/workitem-flow/workitem-flow';
 import { ProjectLocalProvider } from '../providers/project-local/project-local';
 import { WorkitemProvider } from '../providers/workitem/workitem';
 import { SyncProvider } from '../providers/sync/sync';
+import { FilesProvider } from '../providers/files/files';
+
 
 //Repositories
 
@@ -59,9 +61,11 @@ import { ComboValueRepository} from '../providers/repository/combo-value';
 import { WiElementAttributeRepository} from '../providers/repository/wi-element-attribute';
 import {WorkItemStatusRepository} from "../providers/repository/workitem-status";
 import {EtypeConfigWiStatusRepository} from "../providers/repository/etype-config-wi-status";
-
+import {WiElementAttachmentRepository} from "../providers/repository/wi-element-attachment";
 
 import {HttpClientModule} from "@angular/common/http";
+
+
 
 
 
@@ -146,7 +150,9 @@ import {HttpClientModule} from "@angular/common/http";
     WiElementAttributeRepository,
     WorkItemStatusRepository,
     EtypeConfigWiStatusRepository,
-    SyncProvider
+    SyncProvider,
+    FilesProvider,
+    WiElementAttachmentRepository,
   ]
 })
 export class AppModule {}

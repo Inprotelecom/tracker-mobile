@@ -5,8 +5,8 @@ import { WorkitemProvider} from '../../providers/workitem/workitem';
 import { Cases} from '../../app/clases/entities/cases';
 import { WorkitemElement} from '../../app/clases/entities/workitem-element';
 import { WorkitemEditPage} from '../../pages/workitem/workitem-edit';
-import { WorkitemImagesPage} from '../../pages/workitem/workitem-images';
 import * as _ from "lodash";
+import {WorkitemFilesPage} from "./workitem-files";
 
 @Component({
   selector: 'page-workitem',
@@ -73,11 +73,11 @@ onWiEdit(slidingItem:ItemSliding,workitem:WorkitemElement,idx:number){
 
 }
 
-onWiImages(slidingItem:ItemSliding,workitem:WorkitemElement,idx:number){
+onWiImages(slidingItem:ItemSliding,workitem:WorkitemElement,idx:number) {
   console.log("Selected Item", JSON.stringify(workitem));
   slidingItem.close();
-  let modal=this.modalCtrl.create(WorkitemImagesPage,{workitem:workitem});
-  modal.present();
+  let modal = this.navCtrl.push(WorkitemFilesPage, {workitem: workitem});
+
 }
 
 }

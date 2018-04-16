@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { NavController, NavParams, Platform } from 'ionic-angular';
+import {ModalController, NavController, NavParams, Platform} from 'ionic-angular';
+import {WorkitemImagesPage} from "../workitem/workitem-images";
 
 @Component({
   selector: 'tree-folder',
@@ -9,20 +10,25 @@ export class TreeFolderComponent {
   @Input('nodes') nodes; //nodes structure to draw
   shownGroup:any; //ACTUALLY EXPANDED NODE
 
-  constructor(public platform: Platform, public nav: NavController, public navParams: NavParams) {
+  constructor(public platform: Platform,
+              public nav: NavController,
+              public navParams: NavParams,
+              private modalCtrl:ModalController) {
 
   }
   //NODE CLICK FUNCTION: If the node is a child (it has the component property)
   clickNode(node) {
-    if(!(node.component)){
+    if((node.folder)){
       //NODE IS A FOLDER --> expand childs
       this.showChild(node);
     }else{
       //NODE IS A FILE --> open Page Component in data model, passing the node such as parameter.
       this.shownGroup = null;
-      this.nav.push(node.component, {node: node});
+      let modal=this.modalCtrl.create(WorkitemImagesPage, {node: node});
+      modal.present();
     }
   }
+
   //FUNCTION TO CHANGE THE NODE WHICH IS ACTUALLY EXPANDED.
   showChild(node){
     if (this.isSelected(node)) {
@@ -40,15 +46,7 @@ export class TreeFolderComponent {
   //FUNCTION TO GET THE ICON TO SHOW in each node
   getIcon(node){
 
-   if(node.sub){
-      if(this.shownGroup === node){
-        //folder open
-        return 'ios-folder-open-outline';
-      }
-    }else{
-      return 'ios-document';
-    }
-    return 'ios-folder';
+   return node.icon;
 
   }
 

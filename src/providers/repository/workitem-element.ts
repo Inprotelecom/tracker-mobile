@@ -290,7 +290,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                           observer.next(resList);
                           observer.complete();
                        }).catch(e=>{
-                     console.error("Error querying:"+JSON.stringify(e));
+                     console.error("Error querying WorkItemElementRepository:"+JSON.stringify(e));
                      observer.next(false);
                      observer.complete();
                    });

@@ -6,6 +6,7 @@ import { ProjectLocalPage } from '../project-local/project-local';
 import { ProjectPage } from '../project/project';
 import { CatalogsPage } from '../catalogs/catalogs';
 import {WorkitemFilesPage} from "../workitem/workitem-files";
+import {WorkitemImagesPage} from "../workitem/workitem-images";
 
 @Component({
   templateUrl: 'tabs.html'
