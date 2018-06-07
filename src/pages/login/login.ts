@@ -25,6 +25,8 @@ export class LoginPage implements OnInit{
       this.modalCtrl.create(TabsPage);
     }*/
 
+    console.info("test");
+
   }
 
 

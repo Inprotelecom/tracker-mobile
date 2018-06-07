@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Platform,MenuController } from 'ionic-angular';
+import { Component ,ViewChild} from '@angular/core';
+import { Nav, ViewController, ModalController,Platform,MenuController,NavController} from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -13,8 +13,10 @@ import { LoginProvider} from '../providers/login/login';
 })
 export class MyApp {
   rootPage:any;
+  @ViewChild(Nav) nav: Nav;
 
-  constructor(platform: Platform,
+  constructor(
+    platform: Platform,
     statusBar: StatusBar,
     splashScreen: SplashScreen,
     private menuCtrl:MenuController,
@@ -47,14 +49,13 @@ export class MyApp {
     });
   }
 
-  ionViewWillEnter(){
-
-  }
-
   logOut(){
     this.loginService.closeSession();
     this.rootPage=LoginPage;
     this.menuCtrl.close();
+    this.nav.setRoot(LoginPage);
+    //this.nav.setRoot(this.rootPage);
+    //this.navCtrl.setRoot(this.rootPage);
   }
 
 }
