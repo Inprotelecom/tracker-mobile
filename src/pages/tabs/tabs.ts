@@ -23,6 +23,7 @@ export class TabsPage {
 
   closeSession(){
     this.loginService.closeSession();
-    this.navCtrl.setRoot(LoginPage,{},{animate:true,direction:'forward'})
+    this.navCtrl.setRoot(LoginPage);
+    
   }
 }
