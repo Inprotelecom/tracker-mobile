@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {
   IonicPage, NavController, NavParams, ModalController, ViewController, ToastController,
-  LoadingController
+  LoadingController,Platform
 } from 'ionic-angular';
 import {CasesProvider} from '../../providers/cases/cases';
 import {Cases} from '../../app/clases/entities/cases';
@@ -11,6 +11,8 @@ import {ItemSliding} from 'ionic-angular';
 import {SyncProvider} from '../../providers/sync/sync';
 import * as _ from "lodash";
 import {Observable} from "rxjs/Observable";
+import {CORDOVA} from "../../config/app-constants";
+
 
 
 @Component({
@@ -34,14 +36,15 @@ export class CasesLocalPage {
               private viewCtrl: ViewController,
               public navParams: NavParams,
               private casesProvider: CasesProvider,
-              private syncProvider: SyncProvider) {
+              private syncProvider: SyncProvider,
+              private platform:Platform) {
 
     this.projectSubproject = this.navParams.get("project");
 
   }
 
   ionViewWillEnter() {
-    this.getLocalCases();
+    this.getCases();
   }
 
   showMessage(message: string) {
@@ -50,6 +53,14 @@ export class CasesLocalPage {
       duration: 2000,
     });
     toast.present();
+  }
+
+  getCases(){
+      if(this.platform.is(CORDOVA)){
+          this.getLocalCases();
+      }else{
+          this.getRemoteCases();
+      }
   }
 
   getLocalCases() {
@@ -61,6 +72,20 @@ export class CasesLocalPage {
         this.casesResp = [];
         this.cases = [];
       });
+  }
+
+  getRemoteCases(){
+
+      this.casesProvider.getAllRemoteProjectSubProject(this.projectSubproject.subprojectId)
+          .subscribe(list=>{
+            this.casesResp=list;
+            this.cases=_.cloneDeep(this.casesResp);;
+          },error=>{
+            console.error( error );
+            this.cases=[];
+            this.casesResp=[];
+          });
+
   }
 
   filterElements(ev: any) {

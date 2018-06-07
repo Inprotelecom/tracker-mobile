@@ -6,6 +6,7 @@ import {WiElementAttachment} from "../../app/clases/entities/wi-element-attachme
 import {WiElementAttachmentRepository} from "../../providers/repository/wi-element-attachment";
 import {WorkitemElement} from "../../app/clases/entities/workitem-element";
 import * as _ from 'lodash';
+import {FilesSegmentEnum} from "../../app/enums/files_segment_enum";
 
 @Component({
   selector: 'page-workitem-images',
@@ -13,6 +14,8 @@ import * as _ from 'lodash';
 })
 export class WorkitemImagesPage {
 
+  segment=FilesSegmentEnum;
+  segmentSelected:string=FilesSegmentEnum.FORM;
   wiElementAttachment:WiElementAttachment;
   wiElementAttachmentResp:WiElementAttachment;
   workitemElement:WorkitemElement;
@@ -34,6 +37,10 @@ export class WorkitemImagesPage {
 
     //this.workitemElement=this.navParams.get("wiElement");
     this.initWiElementAttribute();
+  }
+
+  segmentChanged(event){
+
   }
 
   initWiElementAttribute(){

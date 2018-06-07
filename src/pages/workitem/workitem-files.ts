@@ -1,14 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {TreeFolderComponent} from "../tree-folder/tree-folder";
-import {NavController, NavParams, ToastController, ViewController} from "ionic-angular";
+import {NavController, NavParams, Platform, ToastController, ViewController} from "ionic-angular";
 import {WorkitemProvider} from "../../providers/workitem/workitem";
 import {WorkitemElement} from "../../app/clases/entities/workitem-element";
+import {CORDOVA} from "../../config/app-constants";
+import {FilesSegmentEnum} from "../../app/enums/files_segment_enum";
 
 @Component({
   selector: 'page-workitem-files',
   templateUrl: 'workitem-files.html',
 })
 export class WorkitemFilesPage implements OnInit{
+
 
   shownGroup: any;
   isLoggedIn: boolean = false;
@@ -17,6 +20,7 @@ export class WorkitemFilesPage implements OnInit{
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
+              private platform:Platform,
               private workitemProvider: WorkitemProvider,
               private toastCtrl: ToastController) {
 
@@ -25,9 +29,13 @@ export class WorkitemFilesPage implements OnInit{
     console.log("wi main:"+ this.workItemElement);
   }
 
+
+
   ngOnInit(){
     console.log('wokitem files');
-    this.getDocumentsStructure();
+    if(this.platform.is(CORDOVA)) {
+      this.getDocumentsStructure();
+    }
   }
 
   getDocumentsStructure(){

@@ -65,12 +65,14 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
         this.platform.ready().then(() => {
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
-                     let sql = 'UPDATE WI_ELEMENT_ATTACHMENT SET ID_WI_ELEMENT_ATTACHMENT=?, FG_SYNCED=? WHERE ID_WI_ELEMENT_ATTACHMENT=?';
-                           db.executeSql(sql, [wiElementAttachmentIdRemote,(synced)?1:0,wiElementAttachmentIdLocal])
+                     let sql = 'UPDATE WI_ELEMENT_ATTACHMENT SET ID_WI_ELEMENT_ATTACHMENT=?, FG_SYNCED=? WHERE ID_WI_ELEMENT_ATTACHMENT='+wiElementAttachmentIdLocal;
+                         console.log('Wi Attachment:'+sql);
+                         db.executeSql(sql, [wiElementAttachmentIdRemote,(synced)?1:0])
                            .then(res=>{
                              observer.next(true);
                              observer.complete();
                            }).catch(e=>{
+                                  console.error('Error updating:'+e);
                                   observer.next(false);
                                   observer.complete();
                            });

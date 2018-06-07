@@ -93,18 +93,19 @@ export class SyncProvider {
 
   private getWiAttachmentPostResponse(url:string,params:any):Observable<any>{
      return this.http.post(url,params).map((resp:any)=>{
-       resp.json()
+       return resp.json();
 
-       if(resp.error){
-         return false;
+     }).flatMap((data:any)=>{
+       if(data.error){
+         return Observable.of('').map(resp=>false);
        }else{
+         console.log(JSON.stringify(data));
          return this.wiElementAttachmentRepository.updateSyncedAndWiElementAttachmentId(
-            resp.wiElementAttachmentRequest,
-            resp.wiElementAttachmentResponse,
-            true)
+           data.wiElementAttachmentRequest,
+           data.wiElementAttachmentResponse,
+           !data.error);
        }
-
-     });
+     })
   }
 
   private processWiElementAttribute(list:any):Observable<Boolean>{

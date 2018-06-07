@@ -8,48 +8,64 @@
       </button>
     </ion-buttons>
   </ion-navbar>
+  <ion-segment [(ngModel)]="segmentSelected" color="primary" (ionChange)="segmentChanged($event)">
+    <ion-segment-button [value]="segment.FORM">
+      Tree
+    </ion-segment-button>
+    <ion-segment-button [value]="segment.LOCAL_FILES">
+      Local Files
+    </ion-segment-button>
+    <ion-segment-button [value]="segment.REMOTE_FILES">
+      Remote Files
+    </ion-segment-button>
+  </ion-segment>
 
 </ion-header>
 
 
 <ion-content padding>
-  <ion-list>
 
-    <ion-item>
-      <ion-label floating>Comments:</ion-label>
-      <ion-input type="text" [value]="comments"></ion-input>
-    </ion-item>
-    <ion-item *ngIf="imagePreview">
-      <img [src]="imagePreview"/>
-    </ion-item>
+  <div [ngSwitch]="segmentSelected">
+    <div *ngSwitchCase="segment.FORM">
+      <ion-list>
 
-  </ion-list>
+        <ion-item>
+          <ion-label floating>Comments:</ion-label>
+          <ion-input type="text" [value]="comments"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="imagePreview">
+          <img [src]="imagePreview"/>
+        </ion-item>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        <button ion-button block icon-left>
-          <ion-icon name="gallery"></ion-icon>
-          Select
-        </button>
-      </ion-col>
-      <ion-col>
-        <button ion-button block icon-left
-                (click)="showCamera()">
-          <ion-icon name="camera" ></ion-icon>
-          Camera
-        </button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <button ion-button block icon-center (click)="saveFile()">
-          Save
-        </button>
-      </ion-col>
+      </ion-list>
 
-    </ion-row>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <button ion-button block icon-left>
+              <ion-icon name="gallery"></ion-icon>
+              Select
+            </button>
+          </ion-col>
+          <ion-col>
+            <button ion-button block icon-left
+                    (click)="showCamera()">
+              <ion-icon name="camera"></ion-icon>
+              Camera
+            </button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <button ion-button block icon-center (click)="saveFile()">
+              Save
+            </button>
+          </ion-col>
 
-  </ion-grid>
+        </ion-row>
+
+      </ion-grid>
+    </div>
+  </div>
 
 </ion-content>
