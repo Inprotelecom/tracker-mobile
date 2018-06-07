@@ -4,34 +4,33 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
-
-  <ion-navbar color="primary">
-
-    <ion-title>Login</ion-title>
-  </ion-navbar>
-
-</ion-header>
 
 
-<ion-content padding>
 
-    <ion-list>
+<ion-content text-center>
+<div class="bg">
+  <img src="../../assets/imgs/logo.png" class="logo-login" />
+<div class="tagline">
+<h5>Take your business to the next level.</h5>
+</div>
+<div class="inputmenu">
+    <ion-list no-line>
 
     <ion-item>
-      <ion-label fixed>Username</ion-label>
-      <ion-input type="text" [(ngModel)]="username"></ion-input>
+        <ion-label> <ion-icon name="person"></ion-icon></ion-label>
+      <ion-input type="text" [(ngModel)]="username" placeholder="username"></ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label fixed>Password</ion-label>
-      <ion-input type="password" [(ngModel)]="password"></ion-input>
+    <ion-item class="password">
+          <ion-label> <ion-icon name="lock"></ion-icon></ion-label>
+      <ion-input type="password" [(ngModel)]="password" placeholder="password"></ion-input>
     </ion-item>
-
+    <button ion-button block (click)="login()" class="buttonlogin">
+        Login
+    </button>
   </ion-list>
-
-  <button ion-button block (click)="login()">
-      Login
-  </button>
-
+</div>
+<img src="../../assets/imgs/inpro.png" class="logofooter-login" />
+<h5 class="footerlegend">&#9400;2018.All rights Reserved. Inpro Telecom S.A. de C.V.</h5>
+</div>
 </ion-content>
