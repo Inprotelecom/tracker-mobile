@@ -8,7 +8,7 @@ background: -moz-linear-gradient(top, #f6e6b4 0%, #ed9017 100%); /* FF3.6-15 */
 background: -webkit-linear-gradient(top, #f6e6b4 0%,#ed9017 100%); /* Chrome10-25,Safari5.1-6 */
 background: linear-gradient(to bottom, #f6e6b4 0%,#ed9017 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6e6b4', endColorstr='#ed9017',GradientType=0 ); /* IE6-9 */
-background-image: url('../../assets/imgs/background-menu.png') !important;
+background-image: url('./../assets/imgs/background-menu.png') !important;
    background-size: cover !important;
 }
 img.logo-login {
@@ -50,7 +50,7 @@ img.logo-login {
 
 ion-item.password {
     margin-top: 15px;
-}
+}git config --global user.name "Mona Lisa"
 
 ion-item{
 background:transparent !important;

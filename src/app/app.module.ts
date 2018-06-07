@@ -24,6 +24,7 @@ import { WorkitemEditPage} from '../pages/workitem/workitem-edit';
 import { WorkitemImagesPage} from '../pages/workitem/workitem-images';
 import {TreeFolderComponent} from "../pages/tree-folder/tree-folder";
 import {WorkitemFilesPage} from "../pages/workitem/workitem-files";
+import { LocalFilesPage} from'../pages/local-files/local-files';
 
 //PipesModule
 
@@ -83,7 +84,8 @@ import {HttpClientModule} from "@angular/common/http";
     WorkitemImagesPage,
     PipeComboValuePipe,
     TreeFolderComponent,
-    WorkitemFilesPage
+    WorkitemFilesPage,
+    LocalFilesPage
   ],
   imports: [
     BrowserModule,
@@ -110,7 +112,8 @@ import {HttpClientModule} from "@angular/common/http";
     WorkitemEditPage,
     WorkitemImagesPage,
     TreeFolderComponent,
-    WorkitemFilesPage
+    WorkitemFilesPage,
+    LocalFilesPage
   ],
   providers: [
     StatusBar,
