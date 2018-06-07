@@ -70,8 +70,10 @@ export class SyncProvider {
 
   private syncWiAttachment(wiAttachmentAttribute,userId):Observable<any>{
     let url=URL_TRACKER_SERVICE+SAVE_FILE;
+    //console.info("syncWiAttachment" + JSON.stringify(url));
     let listObservables:Observable<boolean>[]=[];
     wiAttachmentAttribute.forEach((item:WiElementAttachment)=>{
+      //console.info("params" + JSON.stringify(item));
       let params = new URLSearchParams();
       params.set('userId',userId);
       params.set('etypeConfigDocId',''+item.etypeConfigDocId);
@@ -80,6 +82,7 @@ export class SyncProvider {
       params.set('file',item.file);
       params.set('type',item.type);
       params.set('comment',item.comments);
+      console.info("params" + JSON.stringify(params));
       listObservables.push(this.getWiAttachmentPostResponse(url,params));
     })
 
@@ -93,6 +96,7 @@ export class SyncProvider {
 
   private getWiAttachmentPostResponse(url:string,params:any):Observable<any>{
      return this.http.post(url,params).map((resp:any)=>{
+       console.info('Server response attachment sync:'+JSON.stringify(resp))
        return resp.json();
 
      }).flatMap((data:any)=>{
@@ -111,7 +115,6 @@ export class SyncProvider {
   private processWiElementAttribute(list:any):Observable<Boolean>{
     let listObservables:Observable<boolean>[]=[];
     list.forEach(data=>{
-      console.log("wI attribute: "+JSON.stringify(data));
       let wiAttribute=new WiElementAttribute();
       wiAttribute.attributeId=data.attributeId;
       wiAttribute.value=data.value;
