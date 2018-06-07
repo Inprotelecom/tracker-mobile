@@ -21,12 +21,6 @@ export class LoginPage implements OnInit{
               public dbManager:DbManagerProvider) {
   }
   ngOnInit() {
-    /*if(this.loginService.isLogged()){
-      this.modalCtrl.create(TabsPage);
-    }*/
-
-    console.info("test");
-
   }
 
 

@@ -64,16 +64,6 @@ import {WiElementAttachmentRepository} from "../providers/repository/wi-element-
 
 import {HttpClientModule} from "@angular/common/http";
 
-
-
-
-
-
-
-
-
-
-
 @NgModule({
   declarations: [
     MyApp,
