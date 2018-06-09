@@ -29,6 +29,8 @@ import { LocalFilesPage} from'../pages/local-files/local-files';
 //PipesModule
 
 import {PipeComboValuePipe} from '../pipes/pipe-combo-value-pipe-ts/pipe-combo-value-pipe';
+import {ImageStringPipe} from '../pipes/image-string/image-string';
+import {TrackerImagesPipe} from '../pipes/tracker-images/tracker-images';
 
 //Servicios
 import { ListaDeseosService } from './services/lista-deseos.service';
@@ -47,6 +49,7 @@ import { ProjectLocalProvider } from '../providers/project-local/project-local';
 import { WorkitemProvider } from '../providers/workitem/workitem';
 import { SyncProvider } from '../providers/sync/sync';
 import { FilesProvider } from '../providers/files/files';
+import { WorkitemAttachmentProvider} from '../providers/workitem-attachment/workitem-attachment';
 
 
 //Repositories
@@ -64,6 +67,7 @@ import {EtypeConfigWiStatusRepository} from "../providers/repository/etype-confi
 import {WiElementAttachmentRepository} from "../providers/repository/wi-element-attachment";
 
 import {HttpClientModule} from "@angular/common/http";
+
 
 @NgModule({
   declarations: [
@@ -83,8 +87,10 @@ import {HttpClientModule} from "@angular/common/http";
     WorkitemEditPage,
     WorkitemImagesPage,
     PipeComboValuePipe,
+    TrackerImagesPipe,
     TreeFolderComponent,
     WorkitemFilesPage,
+    ImageStringPipe,
     LocalFilesPage
   ],
   imports: [
@@ -145,6 +151,7 @@ import {HttpClientModule} from "@angular/common/http";
     SyncProvider,
     FilesProvider,
     WiElementAttachmentRepository,
+    WorkitemAttachmentProvider,
   ]
 })
 export class AppModule {}

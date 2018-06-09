@@ -7,10 +7,11 @@ import { StorageProvider } from '../storage/storage';
 import { Http,URLSearchParams} from '@angular/http';
 import { Injectable } from '@angular/core';
 import { URL_TRACKER_SERVICE,LOGIN} from '../../config/url.services';
-import { AlertController} from "ionic-angular";
+import { AlertController,Platform} from "ionic-angular";
 import { UserAreaRepository} from "../repository/user-area";
 import { UserArea} from '../../app/clases/entities/user-area';
 import { DbManagerProvider} from '../../providers/db-manager/db-manager';
+import { CORDOVA} from '../../config/app-constants';
 
 @Injectable()
 export class LoginProvider {
@@ -22,13 +23,19 @@ export class LoginProvider {
               private alertCrtl:AlertController,
               private storageService:StorageProvider,
               private userAreaRepository:UserAreaRepository,
-              private dbManager:DbManagerProvider) {
+              private dbManager:DbManagerProvider,
+              private platform:Platform) {
 
   }
 
   login(username:string,password:string){
-    this.dbManager.removeDatabase();
-    this.dbManager.createDatabase();
+
+      this.dbManager.removeDatabase();
+      this.dbManager.createDatabase();
+
+
+
+
     let data=new URLSearchParams();
 
     data.append("user",username);

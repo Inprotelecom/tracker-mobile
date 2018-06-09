@@ -25,9 +25,9 @@ export class CasesLocalPage {
   projectSubproject: ProjectSubproject;
   cases: Cases[] = [];
   casesResp: Cases[] = [];
-  loading = this.loadingCtrl.create({
+  messageConf={
     content: 'Please wait...'
-  });
+  }
 
   constructor(public navCtrl: NavController,
               private modalCtrl: ModalController,
@@ -109,7 +109,8 @@ export class CasesLocalPage {
   }
 
   sync(slidingItem: ItemSliding, cases: Cases, idx: number) {
-    this.loading.present();
+    let   loading = this.loadingCtrl.create();
+    loading.present();
     console.log("Selected Item", JSON.stringify(cases));
     Observable.forkJoin(
       this.syncProvider.syncWiElementAttributeLocalToServer(cases.caseId),
@@ -123,12 +124,12 @@ export class CasesLocalPage {
         }
 
         slidingItem.close();
-        this.loading.dismiss();
+        loading.dismiss();
       }, error => {
         this.showMessage("Error trying to sync");
         console.error("Error syncWiElementAttributeLocalToServer observable" + JSON.stringify(error));
         slidingItem.close();
-        this.loading.dismiss();
+        loading.dismiss();
       })
 
 

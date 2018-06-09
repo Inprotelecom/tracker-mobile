@@ -8,9 +8,10 @@
       </button>
     </ion-buttons>
   </ion-navbar>
+
   <ion-segment [(ngModel)]="segmentSelected" color="primary" (ionChange)="segmentChanged($event)">
     <ion-segment-button [value]="segment.FORM">
-      Tree
+      Upload Files
     </ion-segment-button>
     <ion-segment-button [value]="segment.LOCAL_FILES">
       Local Files
@@ -26,46 +27,72 @@
 <ion-content padding>
 
   <div [ngSwitch]="segmentSelected">
-    <div *ngSwitchCase="segment.FORM">
-      <ion-list>
+      <div *ngSwitchCase="segment.FORM">
 
-        <ion-item>
-          <ion-label floating>Comments:</ion-label>
-          <ion-input type="text" [value]="comments"></ion-input>
-        </ion-item>
-        <ion-item *ngIf="imagePreview">
-          <img [src]="imagePreview"/>
-        </ion-item>
+          <ion-item>
+            <ion-label floating>Comments:</ion-label>
+            <ion-input type="text" [(ngModel)]="wiElementAttachment.comments" name="Comments"></ion-input>
+          </ion-item>
+          <ion-item *ngIf="imageData">
+            <img [src]="imageData  | imageString"/>
+          </ion-item>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <button ion-button block icon-left>
+                <ion-icon name="gallery"></ion-icon>
+                Select
+              </button>
+            </ion-col>
+            <ion-col>
+              <button ion-button block icon-left
+                      (click)="showCamera()">
+                <ion-icon name="camera"></ion-icon>
+                Camera
+              </button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <button ion-button block icon-center (click)="saveFile()">
+                Save
+              </button>
+            </ion-col>
 
-      </ion-list>
+          </ion-row>
+
+        </ion-grid>
+
+
+    </div>
+    <div *ngSwitchCase="segment.LOCAL_FILES">
 
       <ion-grid>
-        <ion-row>
+        <ion-row *ngFor="let w of wiElementAttachmentList| async">
           <ion-col>
-            <button ion-button block icon-left>
-              <ion-icon name="gallery"></ion-icon>
-              Select
-            </button>
-          </ion-col>
-          <ion-col>
-            <button ion-button block icon-left
-                    (click)="showCamera()">
-              <ion-icon name="camera"></ion-icon>
-              Camera
-            </button>
+            <img [src]="w.file | imageString" *ngIf="w.file"/>
+            <p *ngIf="w.comments">
+              Comments: {{w.comments}}
+            </p>
+            <p>
+              Synced: {{w.synced}}
+            </p>
           </ion-col>
         </ion-row>
-        <ion-row>
-          <ion-col>
-            <button ion-button block icon-center (click)="saveFile()">
-              Save
-            </button>
-          </ion-col>
-
-        </ion-row>
-
       </ion-grid>
+
     </div>
+  <div *ngSwitchCase="segment.REMOTE_FILES">
+
+    <ion-grid>
+      <ion-row *ngFor="let r of wiElementAttachmentRemote| async">
+        <ion-col>
+          <img [src]="r.wiElementAttachmentId | trackerImages"/>
+          </ion-col>
+      </ion-row>
+    </ion-grid>
+
   </div>
+</div>
 
 </ion-content>

@@ -1,5 +1,6 @@
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { CORDOVA} from '../../config/app-constants';
 import {SAVE_FILE, SAVE_WI_ATTRIBUTTES, URL_TRACKER_SERVICE} from '../../config/url.services';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
@@ -82,7 +83,6 @@ export class SyncProvider {
       params.set('file',item.file);
       params.set('type',item.type);
       params.set('comment',item.comments);
-      console.info("params" + JSON.stringify(params));
       listObservables.push(this.getWiAttachmentPostResponse(url,params));
     })
 
@@ -94,16 +94,19 @@ export class SyncProvider {
     return this.http.post(url,params).map((resp:any)=> resp.json());
   }
 
-  private getWiAttachmentPostResponse(url:string,params:any):Observable<any>{
+  private getWiAttachmentPostResponse(url:string,params:URLSearchParams):Observable<any>{
+    console.info('Server request attachment sync:'+url+JSON.stringify(params));
+
+
      return this.http.post(url,params).map((resp:any)=>{
-       console.info('Server response attachment sync:'+JSON.stringify(resp))
-       return resp.json();
+         return resp.json();
 
      }).flatMap((data:any)=>{
        if(data.error){
+          console.log("Error"+JSON.stringify(data));
          return Observable.of('').map(resp=>false);
        }else{
-         console.log(JSON.stringify(data));
+
          return this.wiElementAttachmentRepository.updateSyncedAndWiElementAttachmentId(
            data.wiElementAttachmentRequest,
            data.wiElementAttachmentResponse,

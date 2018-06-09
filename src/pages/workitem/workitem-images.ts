@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ToastController, ViewController} from 'ionic-angular';
+import { Observable } from 'rxjs';
+import {IonicPage, NavController, NavParams, ToastController, ViewController,SegmentButton} from 'ionic-angular';
 import {Camera, CameraOptions} from "@ionic-native/camera";
 import {Geolocation} from "@ionic-native/geolocation";
 import {WiElementAttachment} from "../../app/clases/entities/wi-element-attachment";
 import {WiElementAttachmentRepository} from "../../providers/repository/wi-element-attachment";
+import {WorkitemAttachmentProvider} from '../../providers/workitem-attachment/workitem-attachment';
 import {WorkitemElement} from "../../app/clases/entities/workitem-element";
 import * as _ from 'lodash';
 import {FilesSegmentEnum} from "../../app/enums/files_segment_enum";
@@ -13,25 +15,30 @@ import {FilesSegmentEnum} from "../../app/enums/files_segment_enum";
   templateUrl: 'workitem-images.html',
 })
 export class WorkitemImagesPage {
-
+  node;
   segment=FilesSegmentEnum;
   segmentSelected:string=FilesSegmentEnum.FORM;
   wiElementAttachment:WiElementAttachment;
   wiElementAttachmentResp:WiElementAttachment;
   workitemElement:WorkitemElement;
-  node;
-  imagePreview:string;
+
+
   imageData:string;
-  comments:string;
   latitude:string;
   longitud:string;
+
+
+  wiElementAttachmentList:Observable<WiElementAttachment[]>;
+  wiElementAttachmentRemote:Observable<WiElementAttachment[]>;
+
 
   constructor(private viewCtrl:ViewController,
               private toastCtrl:ToastController,
               private camera:Camera,
               private geolocation: Geolocation,
               private navParams:NavParams,
-              private wiElementAttachmentRepository:WiElementAttachmentRepository) {
+              private wiElementAttachmentRepository:WiElementAttachmentRepository,
+              private workitemAttachmentProvider:WorkitemAttachmentProvider) {
 
     this.node=this.navParams.get("node");
 
@@ -39,13 +46,8 @@ export class WorkitemImagesPage {
     this.initWiElementAttribute();
   }
 
-  segmentChanged(event){
-
-  }
-
   initWiElementAttribute(){
     this.wiElementAttachment=new WiElementAttachment();
-    console.info('node:'+JSON.stringify(this.node));
     this.wiElementAttachment.etypeConfigDocId=this.node.etypeConfigDoc;
     this.wiElementAttachment.workitemElementId=this.node.workItemElementId;
     this.wiElementAttachment.synced=false;
@@ -81,7 +83,7 @@ export class WorkitemImagesPage {
       // If it's base64:
       //latitude=metadata.GPS.Latitude;
       this.imageData=imageData;
-      this.imagePreview = 'data:image/jpeg;base64,' + imageData;
+
     }, (err) => {
       console.log("Error en camera:",JSON.stringify(err));
     });
@@ -90,8 +92,10 @@ export class WorkitemImagesPage {
   }
 
   saveFile(){
-    console.log("before save:",JSON.stringify(this.wiElementAttachment));
-    this.wiElementAttachment.comments=this.comments;
+
+    if(this.imageData==null){
+      this.showMessage('File is mandatory');
+    }else{
     this.wiElementAttachment.type='jpeg';
     this.wiElementAttachment.file=this.imageData;
     this.wiElementAttachment.synced=false;
@@ -112,19 +116,18 @@ export class WorkitemImagesPage {
         this.wiElementAttachment=_.cloneDeep(this.wiElementAttachmentResp);
 
       });
-
+    }
   }
 
   private cleanFile(){
-    this.imagePreview='';
+    this.wiElementAttachment=new WiElementAttachment();
     this.imageData='';
-    this.comments='';
   }
 
   showPosition(){
 
     this.geolocation.getCurrentPosition().then((resp) => {
-      // resp.coords.latitude
+      // WiElementAttachmentRepositoryresp.coords.latitude
       // resp.coords.longitude
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -139,5 +142,23 @@ export class WorkitemImagesPage {
 
   }
 
+
+  segmentChanged(segmentButton:SegmentButton){
+    console.log(JSON.stringify(segmentButton.value+'-'+this.segmentSelected));
+    switch(this.segmentSelected){
+      case FilesSegmentEnum.FORM:
+      break;
+      case FilesSegmentEnum.LOCAL_FILES:
+      this.wiElementAttachmentList=
+        this.wiElementAttachmentRepository
+            .findWiElementAttachmentByWiElement(this.node.workItemElementId);
+      break;
+      case FilesSegmentEnum.REMOTE_FILES:
+      this.wiElementAttachmentRemote=
+              this.workitemAttachmentProvider.findRemoteWiElementAttachment(this.node.workItemElementId,this.node.etypeConfigDoc);
+      break;
+    }
+
+  }
 
 }

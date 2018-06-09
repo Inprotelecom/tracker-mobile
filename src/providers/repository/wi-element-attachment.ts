@@ -103,10 +103,10 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
           this.sqlite = new SQLite();
           this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
             console.info('WiElementAttachment start:');
-                   let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED 
-                             FROM WI_ELEMENT_ATTACHMENT 
-                             WHERE ID_WORK_ITEM_ELEMENT=${wiElementId} 
-                             AND FG_SYNCED=${(synced?1:0)} 
+                   let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED
+                             FROM WI_ELEMENT_ATTACHMENT
+                             WHERE ID_WORK_ITEM_ELEMENT=${wiElementId}
+                             AND FG_SYNCED=${(synced?1:0)}
                              AND ID_ELEMENT_TYPE_CONFIG_DOC=${etypeConfigDocId}`;
                               console.info('WiElementAttachment query:'+sql);
                      db.executeSql(sql, {}).then(res => {
@@ -138,6 +138,52 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
             });
 
       })
+   }
+
+
+   public findWiElementAttachmentByWiElement(wiElement:number):Observable<WiElementAttachment[]>{
+     let resList:WiElementAttachment []=[];
+     let row=new WiElementAttachment();
+     return  Observable.create(observer=>{
+       this.platform.ready().then(() => {
+         this.sqlite = new SQLite();
+         this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+
+           let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE '
+             +' FROM WI_ELEMENT_ATTACHMENT WA '
+             +' WHERE WA.ID_WORK_ITEM_ELEMENT='+wiElement;
+           console.info('WiElementAttachment query:'+sql);
+           db.executeSql(sql, {}).then(res => {
+
+             for(var i =0; i< res.rows.length;i++){
+               row=new WiElementAttachment();
+               row.wiElementAttachmentId=res.rows.item(i).ID_WI_ELEMENT_ATTACHMENT;
+               row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
+               row.etypeConfigDocId=res.rows.item(i).ID_ELEMENT_TYPE_CONFIG_DOC;
+               row.comments=res.rows.item(i).DE_WI_ELEMENT_ATTACHMENT;
+               row.file=res.rows.item(i).VL_FILE_B64;
+               row.synced=(res.rows.item(i).FG_SYNCED)==1;
+               row.type=res.rows.item(i).VL_TYPE;
+               resList.push(row);
+               //console.info('WiElementAttachment:'+JSON.stringify(row));
+             }
+             observer.next(resList);
+             observer.complete();
+           }).catch(e=>{
+             console.error("Error querying:"+JSON.stringify(e));
+             observer.next(resList);
+             observer.complete();
+           });
+
+         }).catch(e => {
+           console.error("Error opening database: " + JSON.stringify(e));
+           observer.next(resList);
+           observer.complete();
+         });
+
+       });
+
+     })
    }
 
   public findWiElementAttachmentByNotSyncedByCaseId(caseId:number):Observable<WiElementAttachment[]>{
