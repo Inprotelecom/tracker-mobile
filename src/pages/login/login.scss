@@ -10,6 +10,7 @@ background: linear-gradient(to bottom, #f6e6b4 0%,#ed9017 100%); /* W3C, IE10+, 
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6e6b4', endColorstr='#ed9017',GradientType=0 ); /* IE6-9 */
 background-image: url('./../assets/imgs/background-menu.png') !important;
    background-size: cover !important;
+   position:fixed !important;
 }
 img.logo-login {
     width: 80%;
@@ -103,7 +104,7 @@ img.logofooter-login {
 }
 .footerlegend {
   position: absolute;
-      bottom: 0px;
+      bottom: 5px;
       left: 50%;
       -webkit-transform: translate(-50%, -50%);
       transform: translate(-50%, -50%);
