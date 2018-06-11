@@ -4,13 +4,18 @@
       <ion-title></ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content>
+  <ion-content class="pagesidemenu">
+    <div class="imageheader">
+    <img src="./assets/imgs/logo.png" class="logomenuside" />
+    <span class="titlemenuside">Tracker Menu</span>
+    </div>
     <ion-list>
       <button ion-item (click)="openPage(loginPage)">
-        Config
+        <ion-icon name="cog"> </ion-icon> <span class="menutextside">Config</span>
+
       </button>
       <button ion-item (click)="logOut()">
-        <ion-icon name="power"> </ion-icon>
+        <ion-icon name="exit"> </ion-icon> <span class="menutextside">Log out</span>
 
       </button>
     </ion-list>
