@@ -72,6 +72,91 @@ $colors: (
 
 @import "ionic.theme.default";
 
+.toolbar-background {
+    background: #1e2e6d !important;
+    background: -moz-linear-gradient(top, #1e2e6d 0%, #2c539e 100%) !important;
+    background: -webkit-linear-gradient(top, #1e2e6d 0%,#2c539e 100%) !important;
+    background: linear-gradient(to bottom, #1e2e6d 0%,#2c539e 100%) !important;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e2e6d', endColorstr='#2c539e',GradientType=0 );
+}
+
+.toolbar-title {
+    font-family: 'Exo 2', sans-serif !important;
+    font-size: 2.5vh !important;
+    font-weight:bold !important;
+}
+
+.searchbar-input {
+    padding: 0 28px;
+    border-radius: 5px;
+    height: 3rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #000;
+    /* background-color: #e6fffd; */
+    background: #ffffff;
+    background: -moz-linear-gradient(top, #ffffff 0%, #f3f3f3 50%, #ededed 51%, #ffffff 100%)!important;
+    background: -webkit-linear-gradient(top, #ffffff 0%,#f3f3f3 50%,#ededed 51%,#ffffff 100%)!important;
+    background: linear-gradient(to bottom, #ffffff 0%,#f3f3f3 50%,#ededed 51%,#ffffff 100%)!important;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=0 ) !important;
+    border: 1px solid grey !important;
+}
+
+.searchbar {
+    background: rgba(191, 207, 226, 0.2) !important;
+}
+
+
+  .imageheader{
+    padding-top:2vh;
+    padding-bottom:2vh;
+background: #f6e6b4; /* Old browsers */
+background: -moz-linear-gradient(top, #f6e6b4 0%, #ed9017 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, #f6e6b4 0%,#ed9017 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, #f6e6b4 0%,#ed9017 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6e6b4', endColorstr='#ed9017',GradientType=0 ); /* IE6-9 */
+background-image: url('./../assets/imgs/fondo_tracker.png') !important;
+   background-size: cover !important;
+       border-top: 0.5vh solid #207ce5;
+          border-bottom: 0.5vh solid #207ce5;
+
+}
+
+.pagesidemenu {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#d6d6d6+1,a5a5a5+100 */
+  background: #d6d6d6; /* Old browsers */
+  background: -moz-linear-gradient(left, #d6d6d6 1%, #a5a5a5 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(left, #d6d6d6 1%,#a5a5a5 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to right, #d6d6d6 1%,#a5a5a5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d6d6d6', endColorstr='#a5a5a5',GradientType=1 ); /* IE6-9 */
+}
+
+span.titlemenuside {
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: white;
+    text-transform: uppercase !important;
+    text-shadow: 0px 0px 1px black;
+    font-family: 'Dosis', sans-serif !important;
+    font-size: 3vh !important;
+    font-weight:bold !important;
+    margin-bottom:2vh !important;
+}
+
+span.menutextside {
+    margin-left: 10px;
+      font-family: 'Dosis', sans-serif !important;
+      color: #1e2f6e !important;
+}
+
+.pagesidemenu ion-icon.icon {
+    color: #1e2f6e !important;
+}
+
+button.item {
+    background: #ffffff94 !important;
+}
 
 // Ionicons
 // --------------------------------------------------
@@ -86,3 +171,4 @@ $colors: (
 
 @import "roboto";
 @import "noto-sans";
+@import url('https://fonts.googleapis.com/css?family=Dosis|Encode+Sans+Semi+Condensed|Exo+2');
