@@ -30,11 +30,8 @@ export class LoginProvider {
 
   login(username:string,password:string){
 
-      this.dbManager.removeDatabase();
-      this.dbManager.createDatabase();
-
-
-
+    this.dbManager.removeDatabase();
+    this.dbManager.createDatabase();
 
     let data=new URLSearchParams();
 

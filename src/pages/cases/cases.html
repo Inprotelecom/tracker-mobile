@@ -11,7 +11,6 @@
     <ion-refresher-content></ion-refresher-content>
 </ion-refresher>
 
-<ion-content padding>
   <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
   <ion-list>
      <ion-item-sliding *ngFor="let item of cases;let i=index" #SlidingItem>

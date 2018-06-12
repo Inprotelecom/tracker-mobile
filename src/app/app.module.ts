@@ -65,6 +65,7 @@ import { WiElementAttributeRepository} from '../providers/repository/wi-element-
 import {WorkItemStatusRepository} from "../providers/repository/workitem-status";
 import {EtypeConfigWiStatusRepository} from "../providers/repository/etype-config-wi-status";
 import {WiElementAttachmentRepository} from "../providers/repository/wi-element-attachment";
+import {WiElementDocStructureRepository} from "../providers/repository/wi-element-doc-structure";
 
 import {HttpClientModule} from "@angular/common/http";
 
@@ -152,6 +153,7 @@ import {HttpClientModule} from "@angular/common/http";
     FilesProvider,
     WiElementAttachmentRepository,
     WorkitemAttachmentProvider,
+    WiElementDocStructureRepository
   ]
 })
 export class AppModule {}

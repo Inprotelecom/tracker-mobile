@@ -33,6 +33,7 @@ import {WiElementAttributeRepository} from '../repository/wi-element-attribute';
 import {WorkItemStatusRepository} from '../repository/workitem-status';
 import {EtypeConfigWiStatusRepository} from '../repository/etype-config-wi-status';
 import {EtypeConfigWiStatus} from "../../app/clases/entities/etype-config-wi-status";
+import {FilesProvider} from "../files/files";
 @Injectable()
 export class WorkitemFlowProvider {
 
@@ -48,7 +49,8 @@ export class WorkitemFlowProvider {
               private comboValueRepository: ComboValueRepository,
               private wiElementAttributeRepository: WiElementAttributeRepository,
               private workItemStatusRepository: WorkItemStatusRepository,
-              private etypeConfigWiStatusRepository: EtypeConfigWiStatusRepository) {
+              private etypeConfigWiStatusRepository: EtypeConfigWiStatusRepository,
+              private filesProvider: FilesProvider) {
 
   }
 
@@ -94,6 +96,7 @@ export class WorkitemFlowProvider {
         return Observable.forkJoin(
           this.getRestResponse(urlWiAttribute),
           this.getRestResponse(urlEtypeConfigWiStatus))
+
           .map(resp => {
             return [data[0], data[1], resp[0], resp[1]];
           });
