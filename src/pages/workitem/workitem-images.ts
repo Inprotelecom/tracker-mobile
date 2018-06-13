@@ -1,3 +1,4 @@
+import { ImagePicker,ImagePickerOptions } from '@ionic-native/image-picker';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import {IonicPage, NavController, NavParams, ToastController, ViewController,SegmentButton} from 'ionic-angular';
@@ -30,7 +31,7 @@ export class WorkitemImagesPage {
 
   wiElementAttachmentList:Observable<WiElementAttachment[]>;
   wiElementAttachmentRemote:Observable<WiElementAttachment[]>;
-
+  remoteFilesSelected:boolean=false;
 
   constructor(private viewCtrl:ViewController,
               private toastCtrl:ToastController,
@@ -38,7 +39,8 @@ export class WorkitemImagesPage {
               private geolocation: Geolocation,
               private navParams:NavParams,
               private wiElementAttachmentRepository:WiElementAttachmentRepository,
-              private workitemAttachmentProvider:WorkitemAttachmentProvider) {
+              private workitemAttachmentProvider:WorkitemAttachmentProvider,
+              private imagePicker: ImagePicker) {
 
     this.node=this.navParams.get("node");
 
@@ -47,6 +49,7 @@ export class WorkitemImagesPage {
   }
 
   initWiElementAttribute(){
+    this.remoteFilesSelected=false;
     this.wiElementAttachment=new WiElementAttachment();
     this.wiElementAttachment.etypeConfigDocId=this.node.etypeConfigDoc;
     this.wiElementAttachment.workitemElementId=this.node.workItemElementId;
@@ -90,6 +93,21 @@ export class WorkitemImagesPage {
 
 
   }
+
+  showGallery(){
+    const optionsImagePicker: ImagePickerOptions = {
+      quality: 50,
+      outputType:1,
+      maximumImagesCount:1
+    }
+    this.imagePicker.getPictures(optionsImagePicker).then((results) => {
+        for (var i = 0; i < results.length; i++) {
+            //console.log('Image URI: ' + results[i]);
+            this.imageData=results[i];
+        }
+      }, (err) => {console.error("Show Gallery",JSON.stringify(err)) });
+
+    }
 
   saveFile(){
 
@@ -154,8 +172,11 @@ export class WorkitemImagesPage {
             .findWiElementAttachmentByWiElement(this.node.workItemElementId);
       break;
       case FilesSegmentEnum.REMOTE_FILES:
-      this.wiElementAttachmentRemote=
-              this.workitemAttachmentProvider.findRemoteWiElementAttachment(this.node.workItemElementId,this.node.etypeConfigDoc);
+        if(!this.remoteFilesSelected){
+        this.wiElementAttachmentRemote=
+                this.workitemAttachmentProvider.findRemoteWiElementAttachment(this.node.workItemElementId,this.node.etypeConfigDoc);
+        this.remoteFilesSelected=true;
+        }
       break;
     }
 

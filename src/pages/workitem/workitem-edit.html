@@ -20,7 +20,7 @@
   <ion-item-group>
     <ion-item>
       <ion-label stacked color="primary">Status</ion-label>
-      <ion-select [(ngModel)]="workItemElement.workItemStatusId" [multiple]="false">
+      <ion-select [(ngModel)]="workItemElement.workItemStatusId" [multiple]="false" name="Status">
         <ion-option *ngFor="let itemSelect of etypeWorkItemStatusList" [value]="itemSelect.workitemStatusId">
           {{itemSelect.workitemStatus.name}}
         </ion-option>
@@ -28,7 +28,7 @@
     </ion-item>
     <ion-item>
       <ion-label stacked color="primary">Notes</ion-label>
-      <ion-textarea class="input input-ios" [(ngModel)]="workItemElement.notes"></ion-textarea>
+      <ion-textarea class="input input-ios" [(ngModel)]="workItemElement.notes" name="Notes"></ion-textarea>
     </ion-item>
   </ion-item-group>
 </ion-list>
@@ -37,27 +37,27 @@
   <ion-item-group [ngSwitch]="item.attribute.attributeTypeWebComponent">
     <ion-item *ngSwitchCase="webComponentTypeEnum.CALENDAR">
       <ion-label stacked color="primary">{{item.attribute.name}}</ion-label>
-      <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MM YYYY" [(ngModel)]="item.value"></ion-datetime>
+      <ion-datetime displayFormat="DD/MM/YYYY" pickerFormat="DD MM YYYY" [(ngModel)]="item.value" [name]="item.attribute.name"></ion-datetime>
     </ion-item>
     <ion-item *ngSwitchCase="webComponentTypeEnum.CHECKBOX">
       <ion-label stacked color="primary">{{item.attribute.name}}</ion-label>
-      <ion-toggle [(ngModel)]="item.value"></ion-toggle>
+      <ion-toggle [(ngModel)]="item.value" [name]="item.attribute.name"></ion-toggle>
     </ion-item>
     <ion-item *ngSwitchCase="webComponentTypeEnum.SELECT">
       <ion-label stacked color="primary">{{item.attribute.name}}</ion-label>
-      <ion-select [(ngModel)]="item.value" [multiple]="false">
-        <ion-option *ngFor="let itemSelect of item.comboValue" [value]="itemSelect.valueString">
+      <ion-select [(ngModel)]="item.value" [multiple]="false" [name]="item.attribute.name">
+        <ion-option *ngFor="let itemSelect of item.comboValue" [value]="itemSelect.valueString" >
           {{itemSelect.label}}
         </ion-option>
       </ion-select>
     </ion-item>
     <ion-item *ngSwitchCase="webComponentTypeEnum.INPUT">
       <ion-label stacked color="primary">{{item.attribute.name}}</ion-label>
-      <ion-input class="input input-ios" type="text" [(ngModel)]="item.value"></ion-input>
+      <ion-input class="input input-ios" type="text" [(ngModel)]="item.value" [name]="item.attribute.name"></ion-input>
     </ion-item>
     <ion-item *ngSwitchCase="webComponentTypeEnum.INPUT_AREA">
       <ion-label stacked color="primary">{{item.attribute.name}}</ion-label>
-      <ion-textarea class="input input-ios" [(ngModel)]="item.value"></ion-textarea>
+      <ion-textarea class="input input-ios" [(ngModel)]="item.value" [name]="item.attribute.name"></ion-textarea>
     </ion-item>
   </ion-item-group>
 

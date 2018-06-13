@@ -39,6 +39,7 @@ import { ProjectProvider } from '../providers/project/project';
 //Plugins Providers
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { Camera,CameraOptions} from '@ionic-native/camera';
+import { ImagePicker } from '@ionic-native/image-picker';
 import { Geolocation } from '@ionic-native/geolocation';
 import { DbManagerProvider } from '../providers/db-manager/db-manager';
 import { LoginProvider } from '../providers/login/login';
@@ -127,6 +128,7 @@ import {HttpClientModule} from "@angular/common/http";
     SplashScreen,
     SQLite,
     Camera,
+    ImagePicker,
     Geolocation,
     Storage,
     {provide: ErrorHandler, useClass: IonicErrorHandler},

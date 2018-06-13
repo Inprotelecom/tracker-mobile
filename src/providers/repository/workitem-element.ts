@@ -5,6 +5,7 @@ import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 @Injectable()
 export class WorkItemElementRepository {
@@ -23,9 +24,9 @@ public insert(entity: WorkitemElement):Observable<boolean>{
          this.sqlite = new SQLite();
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
                 let sql = 'INSERT INTO WORKITEM_ELEMENT (ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL,'
-                          +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES) VALUES(?,?,?,?,?,?,?,?,?,?,?)';
+                          +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES,FG_STATUS_SYNCED,FG_NOTES_SYNCED) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
                       db.executeSql(sql, [entity.workitemElementId,entity.elementId, entity.caseId,entity.elementTypeConfigId,entity.workItemStatusId,
-                                    entity.parent,entity.order,entity.sequencial,entity.workitemTemplate,entity.notes])
+                                    entity.parent,entity.order,entity.sequencial,entity.workitemTemplate,entity.workItemStatus,entity.notes,entity.statusSynced?1:0,entity.notesSynced?1:0])
                       .then(()=>{
                         //console.info('Executed SQL');
                         observer.next(true);
@@ -34,8 +35,8 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                          //console.log("Error inserting 1:"+JSON.stringify(e));
                          let message:string=e.message;
                          message=message.toUpperCase();
-                         if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
-                           console.log("UNIQUE CONSTRAINT FAILED");
+                        if(message.indexOf(UNIQUE_CONSTRAINT_FAILED_CODE) != -1){
+                           console.log(UNIQUE_CONSTRAINT_FAILED_CODE);
                            this.update(entity).subscribe(resp=>{
                              console.log("Observable resp update:"+resp);
                            });
@@ -59,7 +60,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                   observer.complete();
           });
 
-          });
+        });
 
 
   }
@@ -106,11 +107,12 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
                      let sql = 'UPDATE WORKITEM_ELEMENT SET ID_ELEMENT=?, ID_CASE=?,ID_ELEMENT_TYPE_CONFIG=?, ID_WORK_ITEM_STATUS=?,ID_PARENT=?,NR_ORDER=?,'
-                     +        'NR_SEQUENCIAL=?,NM_WORKITEM_TEMPLATE=?,NM_WORKITEM_STATUS=?,DE_NOTES=? WHERE ID_WORK_ITEM_ELEMENT='+entity.workitemElementId;
+                     +        'NR_SEQUENCIAL=?,NM_WORKITEM_TEMPLATE=?,NM_WORKITEM_STATUS=?,DE_NOTES=?,FG_STATUS_SYNCED=?,FG_NOTES_SYNCED=? WHERE ID_WORK_ITEM_ELEMENT='+entity.workitemElementId;
                      console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
 
                            db.executeSql(sql, [entity.elementId, entity.caseId,entity.elementTypeConfigId,entity.workItemStatusId,
-                                         entity.parent,entity.order,entity.sequencial,entity.workitemTemplate,entity.workItemStatus,entity.notes])
+                                         entity.parent,entity.order,entity.sequencial,entity.workitemTemplate,entity.workItemStatus,entity.notes,
+                                         entity.statusSynced?1:0,entity.notesSynced?1:0])
                            .then(res=>{
                              console.log('Executed SQL wi update');
                              observer.next(true);
@@ -145,9 +147,83 @@ public insert(entity: WorkitemElement):Observable<boolean>{
         this.sqlite = new SQLite();
         this.sqlite.create(DB_CONFIG).then((db) => {
           let sql = 'UPDATE WORKITEM_ELEMENT SET ID_WORK_ITEM_STATUS=?,DE_NOTES=? WHERE ID_WORK_ITEM_ELEMENT=?';
-          console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
+          //console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
 
           db.executeSql(sql, [entity.workItemStatusId,entity.notes,entity.workitemElementId])
+            .then(res=>{
+              //console.log('Executed SQL wi update');
+              observer.next(true);
+              observer.complete();
+            }).catch(e=>{
+            console.log("Error updating:"+JSON.stringify(e));
+
+            observer.next(true);
+            observer.complete();
+          });
+
+        }).catch(e=>{
+          console.log("Error inserting 2:"+JSON.stringify(e));
+          observer.next(false);
+          observer.complete();
+        });
+
+      }).catch(e => {
+        console.info("Error opening database: " + JSON.stringify(e));
+        observer.next(false);
+        observer.complete();
+      });
+
+
+    });
+
+  }
+
+  public updateNotes(entity: WorkitemElement):Observable<boolean>{
+    return Observable.create(observer=>{
+      this.platform.ready().then(() => {
+        this.sqlite = new SQLite();
+        this.sqlite.create(DB_CONFIG).then((db) => {
+          let sql = 'UPDATE WORKITEM_ELEMENT SET DE_NOTES=?,FG_NOTES_SYNCED=? WHERE ID_WORK_ITEM_ELEMENT=?';
+          //console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
+
+          db.executeSql(sql, [entity.notes,entity.notesSynced?1:0,entity.workitemElementId])
+            .then(res=>{
+              //console.log('Executed SQL wi update');
+              observer.next(true);
+              observer.complete();
+            }).catch(e=>{
+            console.log("Error updating:"+JSON.stringify(e));
+
+            observer.next(true);
+            observer.complete();
+          });
+
+        }).catch(e=>{
+          console.log("Error inserting 2:"+JSON.stringify(e));
+          observer.next(false);
+          observer.complete();
+        });
+
+      }).catch(e => {
+        console.info("Error opening database: " + JSON.stringify(e));
+        observer.next(false);
+        observer.complete();
+      });
+
+
+    });
+
+  }
+
+  public updateStatus(entity: WorkitemElement):Observable<boolean>{
+    return Observable.create(observer=>{
+      this.platform.ready().then(() => {
+        this.sqlite = new SQLite();
+        this.sqlite.create(DB_CONFIG).then((db) => {
+          let sql = 'UPDATE WORKITEM_ELEMENT SET ID_WORK_ITEM_STATUS=?,FG_STATUS_SYNCED=? WHERE ID_WORK_ITEM_ELEMENT=?';
+          //console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
+
+          db.executeSql(sql, [entity.workItemStatusId,entity.statusSynced?1:0,entity.workitemElementId])
             .then(res=>{
               //console.log('Executed SQL wi update');
               observer.next(true);
@@ -188,7 +264,8 @@ public insert(entity: WorkitemElement):Observable<boolean>{
               this.sqlite = new SQLite();
               this.sqlite.create(DB_CONFIG).then((db) => {
 
-                let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL,NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES '
+                let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL,'
+                          'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES,FG_STATUS_SYNCED,FG_NOTES_SYNCED '
                          +'FROM WORKITEM_ELEMENT';
                   db.executeSql(sql, {}).then(res => {
                      //console.log("query-item"+JSON.stringify(res));
@@ -206,6 +283,8 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                            row.workitemTemplate=res.rows.item(i).NM_WORKITEM_TEMPLATE;
                            row.workItemStatus=res.rows.item(i).NM_WORKITEM_STATUS;
                            row.notes=res.rows.item(i).DE_NOTES;
+                           row.statusSynced=(res.rows.item(i).FG_STATUS_SYNCED)==1;
+                           row.notesSynced=(res.rows.item(i).FG_NOTES_SYNCED)==1;
                            resList.push(row);
                          }
                        resolve(resList);
@@ -229,7 +308,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
         this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
           let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL, '
-            +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES FROM WORKITEM_ELEMENT WHERE ID_WORK_ITEM_ELEMENT='+ id;
+            +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES,FG_STATUS_SYNCED,FG_NOTES_SYNCED FROM WORKITEM_ELEMENT WHERE ID_WORK_ITEM_ELEMENT='+ id;
 
           db.executeSql(sql, {}).then(res => {
             if(res.rows.length>0){
@@ -243,6 +322,8 @@ public insert(entity: WorkitemElement):Observable<boolean>{
               row.workitemTemplate=res.rows.item(0).NM_WORKITEM_TEMPLATE;
               row.workItemStatus=res.rows.item(0).NM_WORKITEM_STATUS;
               row.notes=res.rows.item(0).DE_NOTES;
+              row.statusSynced=(res.rows.item(0).FG_STATUS_SYNCED)==1;
+              row.notesSynced=(res.rows.item(0).FG_NOTES_SYNCED)==1;
             }
             observer.next(row);
             observer.complete();
@@ -271,9 +352,9 @@ public insert(entity: WorkitemElement):Observable<boolean>{
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
                   let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL, '
-                           +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES FROM WORKITEM_ELEMENT WHERE ID_CASE='+ caseId+' ORDER BY NR_SEQUENCIAL';
+                           +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES,FG_STATUS_SYNCED,FG_NOTES_SYNCED FROM WORKITEM_ELEMENT WHERE ID_CASE='+ caseId+' ORDER BY NR_SEQUENCIAL';
                     db.executeSql(sql, {}).then(res => {
-                       console.info('Executed SQL'+JSON.stringify(res)+'-caseId'+caseId);
+                       //console.info('Executed SQL'+JSON.stringify(res)+'-caseId'+caseId);
                            for(var i =0; i< res.rows.length;i++){
                              let row=new WorkitemElement();
                              row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
@@ -285,6 +366,8 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                              row.workitemTemplate=res.rows.item(i).NM_WORKITEM_TEMPLATE;
                              row.workItemStatus=res.rows.item(i).NM_WORKITEM_STATUS;
                              row.notes=res.rows.item(i).DE_NOTES;
+                             row.statusSynced=(res.rows.item(i).FG_STATUS_SYNCED)==1;
+                             row.notesSynced=(res.rows.item(i).FG_NOTES_SYNCED)==1;
                              resList.push(row);
                            }
                           observer.next(resList);

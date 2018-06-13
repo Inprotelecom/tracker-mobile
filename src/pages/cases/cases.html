@@ -17,14 +17,14 @@
         <button ion-item >
           {{ item.number }}
         </button>
-            <ion-item-options side="left">
+            <ion-item-options side="right">
               <button ion-button color="primary" (click)="share(SlidingItem,item,i)" [disabled]="item.shared==1">
                 <ion-icon name="cloud-download"></ion-icon>
                 Save
               </button>
             </ion-item-options>
 
-            <ion-item-options side="right">
+            <ion-item-options side="left">
               <button ion-button color="danger" (click)="delete(SlidingItem,item,i)" [disabled]="item.shared!=1">
                 <ion-icon name="trash"></ion-icon>
                 Delete

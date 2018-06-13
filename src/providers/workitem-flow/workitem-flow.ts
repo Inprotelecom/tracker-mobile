@@ -34,6 +34,8 @@ import {WorkItemStatusRepository} from '../repository/workitem-status';
 import {EtypeConfigWiStatusRepository} from '../repository/etype-config-wi-status';
 import {EtypeConfigWiStatus} from "../../app/clases/entities/etype-config-wi-status";
 import {FilesProvider} from "../files/files";
+
+
 @Injectable()
 export class WorkitemFlowProvider {
 
@@ -55,7 +57,7 @@ export class WorkitemFlowProvider {
   }
 
 
-  public shareCases(cases: Cases, areaId: number): Observable<any> {
+  public shareCases(cases: Cases,areaId:number): Observable<any> {
     let caseItem = _.cloneDeep(cases);
     let urlWi = URL_TRACKER_SERVICE + WORKITEMS_FLOW + "?elementId=" + caseItem.elementId
       + "&caseId=" + caseItem.caseId + "&areaId=" + areaId;
@@ -168,9 +170,10 @@ export class WorkitemFlowProvider {
       wi.workitemElementId = data.workitemElementId;
       wi.workitemTemplate = data.workitemTemplate;
       wi.workitemTemplateId = data.workitemTemplateId;
+      wi.statusSynced=true;
+      wi.notesSynced=true;
       this.workitemflow.push(wi);
       listObservables.push(this.workItemElementRepository.insert(wi));
-
     })
 
     if (this.platform.is(CORDOVA) && listObservables.length > 0) {

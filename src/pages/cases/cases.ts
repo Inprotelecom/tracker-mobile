@@ -11,6 +11,8 @@ import { WorkitemFlowProvider} from '../../providers/workitem-flow/workitem-flow
 import { Cases } from '../../app/clases/entities/cases';
 import { ItemSliding } from 'ionic-angular';
 import { Subject } from 'rxjs';
+import { StorageProvider } from '../../providers/storage/storage';
+
 
 
 @Component({
@@ -21,11 +23,10 @@ export class CasesPage implements OnInit {
 
   private itemSlidingSubject=new Subject();
   itemSlidingSubject$=this.itemSlidingSubject.asObservable;
-
+  areaId:number;
   projectSubproject:ProjectSubproject;
   cases:Cases[]=[];
   casesResp:Cases[]=[];
-  areaId:number;
   loading = this.loadingCtrl.create({
     content: 'Please wait...'
   });
@@ -38,10 +39,17 @@ export class CasesPage implements OnInit {
               private filesProvider:FilesProvider,
               private alertCrtl:AlertController,
               private toastCtrl:ToastController,
-              private loadingCtrl:LoadingController) {
+              private loadingCtrl:LoadingController,
+              private storageService:StorageProvider) {
 
         this.projectSubproject=this.navParams.get("project");
-        this.areaId=this.navParams.get("areaId");
+        this.storageService.storageGet("areaId",0)
+            .then(resp=>{
+              this.areaId=resp;
+            },error=>{
+              this.areaId=0;
+              console.log("CasesLocalPage",error);
+            })
         this.getLocalCases();
   }
 
@@ -117,26 +125,32 @@ export class CasesPage implements OnInit {
 
 share(slidingItem:ItemSliding,cases:Cases,idx:number){
   this.loading.present();
-  console.log("item sliding:"+JSON.stringify(cases),this.areaId);
-
+  console.log("item sliding:"+JSON.stringify(cases));
 
    Observable.concat(this.workitemFlowProvider.shareCases(cases,this.areaId),
       this.filesProvider.saveWiElementDocStructureByCases(cases))
       .subscribe((resp:any)=>{
-        console.log("Sharing response:"+JSON.stringify(resp));
-        //let hasError:any=resp.filter(v=>!v);
-        if(resp[0]){
-            this.showMessage("Succesfull share");
+          console.info("Sharing response:",JSON.stringify(resp));
+        if(typeof resp === 'boolean'){
+            console.info("Sharing response boolean");
         }else{
-          this.showMessage("Error trying to share");
+          if(resp[0]){
+              this.showMessage("Succesfull share");
+          }else{
+            this.showMessage("Error trying to share");
+          }
+          this.cases.splice(idx,1,resp[1]);
+          slidingItem.close();
+          this.loading.dismiss();
         }
-        this.cases.splice(idx,1,resp[1]);
-        slidingItem.close();
-        this.loading.dismiss();
+
+        //let hasError:any=resp.filter(v=>!v);
+
     },err=>{
       this.showMessage("Error trying to share");
         slidingItem.close();
         this.loading.dismiss();
+        console.error("ShareCases",JSON.stringify(err));
     });
 
 
@@ -163,7 +177,7 @@ share(slidingItem:ItemSliding,cases:Cases,idx:number){
 
 delete(slidingItem:ItemSliding,cases:Cases,idx:number){
   this.loading.present();
-  console.log("item sliding:"+JSON.stringify(cases),this.areaId);
+  console.log("item sliding:"+JSON.stringify(cases));
     this.workitemFlowProvider.deleteCases(cases).subscribe((resp:any)=>{
 
     console.log("Delete case response:"+JSON.stringify(resp));

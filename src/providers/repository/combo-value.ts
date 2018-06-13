@@ -6,6 +6,7 @@ import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 @Injectable()
 export class ComboValueRepository {
@@ -26,15 +27,15 @@ public insert(entity: ComboValue):Observable<boolean>{
                 let sql = 'INSERT INTO COMBO_VALUE (ID_COMBO_VALUE,ID_COMBO_CATEGORY, NM_LABEL,NM_VALUE) VALUES(?,?,?,?)';
                       db.executeSql(sql, [entity.comboValueId,entity.comboCategoryId,entity.label,entity.value])
                       .then(()=>{
-                        console.info('Executed SQL');
+                        //console.info('Executed SQL');
                         observer.next(true);
                         observer.complete();
                        }).catch(e=> {
                          console.log("Error inserting 1:"+JSON.stringify(e));
                          let message:string=e.message;
                          message=message.toUpperCase();
-                         if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
-                           console.log("UNIQUE CONSTRAINT FAILED");
+                        if(message.indexOf(UNIQUE_CONSTRAINT_FAILED_CODE) != -1){
+                           console.log(UNIQUE_CONSTRAINT_FAILED_CODE);
                            this.update(entity).subscribe(resp=>{
                              console.log("Observable resp update:"+resp);
                            });

@@ -6,6 +6,7 @@ import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 @Injectable()
 export class WiElementAttributeRepository {
@@ -32,15 +33,15 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                       db.executeSql(sql, [entity.wiElementAttributeId,entity.attributeId,
                         entity.value,entity.workitemElementId,entity.synced?1:0])
                       .then(()=>{
-                        console.info('Executed SQL');
+                        //console.info('Executed SQL');
                         observer.next(true);
                         observer.complete();
                        }).catch(e=> {
                          console.log("Error inserting 1:"+JSON.stringify(e));
                          let message:string=e.message;
                          message=message.toUpperCase();
-                         if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
-                           console.log("UNIQUE CONSTRAINT FAILED");
+                         if(message.indexOf(UNIQUE_CONSTRAINT_FAILED_CODE) != -1){
+                           console.log(UNIQUE_CONSTRAINT_FAILED_CODE);
                            this.update(entity).subscribe(resp=>{
                              console.log("Observable resp update:"+resp);
                            });
@@ -126,7 +127,7 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                     db.executeSql(sql, {}).then(res => {
                           console.info('WiElementAttributes query:'+sql);
                            for(var i =0; i< res.rows.length;i++){
-                             console.info('Executed SQL WiElementAttribute'+JSON.stringify(res.rows.item(i)));
+                             //console.info('Executed SQL WiElementAttribute'+JSON.stringify(res.rows.item(i)));
                              let row=new WiElementAttribute();
                              row.wiElementAttributeId=res.rows.item(i).ID_WI_ELEMENT_ATTRIBUTE;
                              row.attributeId=res.rows.item(i).ID_ATTRIBUTE;
@@ -173,9 +174,9 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                              +'ON W.ID_WORK_ITEM_ELEMENT=WA.ID_WORK_ITEM_ELEMENT '
                              +'WHERE W.ID_CASE='+caseId
                              +' AND WA.FG_SYNCED='+(synced?1:0);
-                        console.info('Query info WiElementAttribute'+sql);
+                        //console.info('Query info WiElementAttribute'+sql);
                      db.executeSql(sql, {}).then(res => {
-                           console.info('WiElementAttributes query:'+sql);
+                           //console.info('WiElementAttributes query:'+sql);
                             for(var i =0; i< res.rows.length;i++){
                               //console.info('Executed SQL WiElementAttribute'+JSON.stringify(res.rows.item(i)));
                               let row=new WiElementAttribute();

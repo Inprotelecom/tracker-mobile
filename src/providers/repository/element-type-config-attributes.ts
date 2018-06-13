@@ -4,6 +4,7 @@ import { ElementTypeConfigAttribute } from '../../app/clases/entities/element-ty
 import { Platform } from 'ionic-angular';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 
 @Injectable()
@@ -33,8 +34,8 @@ export class ElementTypeConfigAttributeRepository {
                                //console.log("Error inserting 1:"+JSON.stringify(e));
                                let message:string=e.message;
                                message=message.toUpperCase();
-                               if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
-                                 //console.log("UNIQUE CONSTRAINT FAILED");
+                               if(message.indexOf(UNIQUE_CONSTRAINT_FAILED_CODE) != -1){
+                                  console.log(UNIQUE_CONSTRAINT_FAILED_CODE);
 
                                   this.update(entity).subscribe(resp=>{
                                     //console.log("Observable resp update:"+resp);

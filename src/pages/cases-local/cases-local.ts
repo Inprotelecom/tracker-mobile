@@ -9,11 +9,12 @@ import {ProjectSubproject} from '../../app/clases/entities/project-subproject';
 import {WorkitemPage} from '../workitem/workitem';
 import {ItemSliding} from 'ionic-angular';
 import {SyncProvider} from '../../providers/sync/sync';
+import { FilesProvider} from '../../providers/files/files';
+import { WorkitemFlowProvider} from '../../providers/workitem-flow/workitem-flow';
 import * as _ from "lodash";
 import {Observable} from "rxjs/Observable";
 import {CORDOVA} from "../../config/app-constants";
-
-
+import { StorageProvider } from '../../providers/storage/storage';
 
 @Component({
   selector: 'page-cases-local',
@@ -21,7 +22,7 @@ import {CORDOVA} from "../../config/app-constants";
 })
 export class CasesLocalPage {
 
-
+  areaId:number;
   projectSubproject: ProjectSubproject;
   cases: Cases[] = [];
   casesResp: Cases[] = [];
@@ -37,9 +38,19 @@ export class CasesLocalPage {
               public navParams: NavParams,
               private casesProvider: CasesProvider,
               private syncProvider: SyncProvider,
-              private platform:Platform) {
+              private platform:Platform,
+              private workitemFlowProvider:WorkitemFlowProvider,
+              private filesProvider:FilesProvider,
+              private storageService:StorageProvider) {
 
     this.projectSubproject = this.navParams.get("project");
+    this.storageService.storageGet("areaId",0)
+        .then(resp=>{
+          this.areaId=resp;
+        },error=>{
+          this.areaId=0;
+          console.log("CasesLocalPage",error);
+        })
 
   }
 
@@ -122,9 +133,9 @@ export class CasesLocalPage {
         } else {
           this.showMessage("Error trying to sync");
         }
+        this.updateCase(cases,loading,slidingItem);
 
-        slidingItem.close();
-        loading.dismiss();
+
       }, error => {
         this.showMessage("Error trying to sync");
         console.error("Error syncWiElementAttributeLocalToServer observable" + JSON.stringify(error));
@@ -135,9 +146,29 @@ export class CasesLocalPage {
 
   }
 
+  private updateCase(cases:Cases,loading:any,slidingItem:any){
 
-  dismiss() {
-    this.viewCtrl.dismiss();
+     Observable.concat(this.workitemFlowProvider.shareCases(cases,this.areaId),
+        this.filesProvider.saveWiElementDocStructureByCases(cases))
+        .subscribe((resp:any)=>{
+            console.info("Sharing response:",JSON.stringify(resp));
+          if(typeof resp === 'boolean'){
+              console.info("Sharing response boolean");
+              loading.dismiss();
+              slidingItem.close();
+          }else{
+            if(resp[0]){
+                console.info("Succesfull share");
+            }else{
+              console.error("Error trying to share");
+            }
+        }
+
+      },err=>{
+          console.error("ShareCases",JSON.stringify(err));
+            loading.dismiss();
+            slidingItem.close();
+      });
   }
 
 }

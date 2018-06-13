@@ -65,9 +65,8 @@ export class WorkitemPage implements OnInit{
   }
 }
 
-onWiEdit(slidingItem:ItemSliding,workitem:WorkitemElement,idx:number){
+onWiEdit(workitem:WorkitemElement,idx:number){
   console.log("Selected Item", JSON.stringify(workitem));
-  slidingItem.close();
   let modal=this.modalCtrl.create(WorkitemEditPage,{workitem:workitem});
   modal.present();
 

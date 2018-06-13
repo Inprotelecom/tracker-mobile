@@ -5,6 +5,7 @@ import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 @Injectable()
 export class WiElementDocStructureRepository {
@@ -105,11 +106,11 @@ public insert(entity: WorkItemElementDocStructure):Observable<boolean>{
                            +' WHERE ID_WORK_ITEM_ELEMENT='+wiElement
                            +' AND ID_ELEMENT_TYPE_CONFIG='+elementTypeConfigId;
                        //console.info('Query info WiElementAttribute'+sql);
-                       console.log('WorkItemElementDocStructure query:'+sql);
+                      // console.log('WorkItemElementDocStructure query:'+sql);
                     db.executeSql(sql, {}).then(res => {
                         console.log('WorkItemElementDocStructure query:'+sql);
                            for(var i =0; i< res.rows.length;i++){
-                             console.info('Executed SQL WorkItemElementDocStructure'+JSON.stringify(res.rows.item(i)));
+                             //console.info('Executed SQL WorkItemElementDocStructure'+JSON.stringify(res.rows.item(i)));
                              row=new WorkItemElementDocStructure();
                              row.elementTypeConfigId=res.rows.item(i).ID_ELEMENT_TYPE_CONFIG;
                              row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;

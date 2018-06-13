@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
 import {WiElementAttachment} from "../../app/clases/entities/wi-element-attachment";
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 @Injectable()
 export class WiElementAttachmentRepository {
@@ -66,7 +67,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
                      let sql = 'UPDATE WI_ELEMENT_ATTACHMENT SET ID_WI_ELEMENT_ATTACHMENT=?, FG_SYNCED=? WHERE ID_WI_ELEMENT_ATTACHMENT='+wiElementAttachmentIdLocal;
-                         console.log('Wi Attachment:'+sql);
+                        // console.log('Wi Attachment:'+sql);
                          db.executeSql(sql, [wiElementAttachmentIdRemote,(synced)?1:0])
                            .then(res=>{
                              observer.next(true);
@@ -102,15 +103,15 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
           this.platform.ready().then(() => {
           this.sqlite = new SQLite();
           this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
-            console.info('WiElementAttachment start:');
+
                    let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED
                              FROM WI_ELEMENT_ATTACHMENT
                              WHERE ID_WORK_ITEM_ELEMENT=${wiElementId}
                              AND FG_SYNCED=${(synced?1:0)}
                              AND ID_ELEMENT_TYPE_CONFIG_DOC=${etypeConfigDocId}`;
-                              console.info('WiElementAttachment query:'+sql);
+                              //console.info('WiElementAttachment query:'+sql);
                      db.executeSql(sql, {}).then(res => {
-                           console.info('WiElementAttachment query:'+sql);
+                           //console.info('WiElementAttachment query:'+sql);
                             for(var i =0; i< res.rows.length;i++){
                               row=new WiElementAttachment();
                               row.wiElementAttachmentId=res.rows.item(i).ID_WI_ELEMENT_ATTACHMENT;
@@ -199,9 +200,9 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
             +' JOIN WORKITEM_ELEMENT WI ON WI.ID_WORK_ITEM_ELEMENT=WA.ID_WORK_ITEM_ELEMENT '
             +' WHERE WI.ID_CASE='+caseId
             +' AND WA.FG_SYNCED=0';
-          console.info('WiElementAttachment query:'+sql);
+
           db.executeSql(sql, {}).then(res => {
-            console.info('WiElementAttachment query:'+sql);
+
             for(var i =0; i< res.rows.length;i++){
               row=new WiElementAttachment();
               row.wiElementAttachmentId=res.rows.item(i).ID_WI_ELEMENT_ATTACHMENT;

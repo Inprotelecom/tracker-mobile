@@ -12,6 +12,8 @@ export class WorkitemElement{
   parent:number;
   order:number;
   sequencial:number;
+  statusSynced:boolean;
+  notesSynced:boolean;
 
   constructor(){
   }

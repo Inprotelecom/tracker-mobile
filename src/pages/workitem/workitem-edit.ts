@@ -18,7 +18,10 @@ import {EtypeConfigWiStatus} from "../../app/clases/entities/etype-config-wi-sta
 export class WorkitemEditPage implements OnInit {
   wiAttributeList: WiElementAttribute[] = [];
   wiAttributeListResp: WiElementAttribute[] = [];
+
   workItemElement: WorkitemElement=new WorkitemElement();
+  workItemElementResp:WorkitemElement;
+
   webComponentTypeEnum = WebComponentType;
   etypeWorkItemStatusList: EtypeConfigWiStatus[] = [];
 
@@ -29,6 +32,7 @@ export class WorkitemEditPage implements OnInit {
               private toastCtrl: ToastController) {
 
     this.workItemElement = this.navParams.get("workitem");
+    this.workItemElementResp=_.cloneDeep(this.workItemElement);
   }
 
   ngOnInit() {
@@ -81,12 +85,17 @@ export class WorkitemEditPage implements OnInit {
 
 
   saveWiAttributes() {
-    this.workitemProvider.saveWiAttributes(this.wiAttributeList,this.workItemElement)
+
+    console.info("ngForm",JSON.stringify(this.wiAttributeList));
+    this.workitemProvider.saveWiAttributes(this.wiAttributeListResp,this.wiAttributeList,this.workItemElementResp,this.workItemElement)
       .subscribe(resp => {
         if (resp.filter(item => !item).length > 0) {
           this.showMessage("Error saving elements");
+
         } else {
           this.showMessage("Elements has been successfully saved");
+          this.wiAttributeListResp=_.cloneDeep(this.wiAttributeList);
+          this.workItemElementResp=_.cloneDeep(this.workItemElement);
         }
       });
   }

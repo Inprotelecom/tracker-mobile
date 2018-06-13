@@ -4,6 +4,7 @@ import { Platform } from 'ionic-angular';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
 import {WorkItemStatus} from "../../app/clases/entities/workitem-status";
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 @Injectable()
 export class WorkItemStatusRepository {
@@ -24,15 +25,15 @@ public insert(entity: WorkItemStatus):Observable<boolean>{
                 let sql = 'INSERT INTO WORK_ITEM_STATUS (ID_WORK_ITEM_STATUS,NM_WORK_ITEM_STATUS) VALUES(?,?)';
                       db.executeSql(sql, [entity.workitemStatusId,entity.name])
                       .then(()=>{
-                        console.info('Executed SQL');
+                        //console.info('Executed SQL');
                         observer.next(true);
                         observer.complete();
                        }).catch(e=> {
                          console.log("Error inserting 1:"+JSON.stringify(e));
                          let message:string=e.message;
                          message=message.toUpperCase();
-                         if((message.indexOf("UNIQUE CONSTRAINT FAILED"))){
-                           console.log("UNIQUE CONSTRAINT FAILED");
+                         if(message.indexOf(UNIQUE_CONSTRAINT_FAILED_CODE) != -1){
+                           console.log(UNIQUE_CONSTRAINT_FAILED_CODE);
                            this.update(entity).subscribe(resp=>{
                              console.log("Observable resp update:"+resp);
                            });

@@ -5,6 +5,7 @@ import {DB_CONFIG} from '../../config/app-constants';
 import {Observable} from 'rxjs';
 import {EtypeConfigWiStatus} from "../../app/clases/entities/etype-config-wi-status";
 import {WorkItemStatus} from "../../app/clases/entities/workitem-status";
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 @Injectable()
 export class EtypeConfigWiStatusRepository {

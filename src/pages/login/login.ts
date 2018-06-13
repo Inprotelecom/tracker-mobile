@@ -31,6 +31,8 @@ export class LoginPage implements OnInit{
           //this.dbManager.createDatabase();
           this.navCtrl.setRoot(TabsPage,{},{animate:true,direction:'forward'})
         }
+    },error=>{
+      console.error("LoginPage:"+error);
     });
   }
 

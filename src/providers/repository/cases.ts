@@ -5,6 +5,7 @@ import { Platform } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DB_CONFIG} from '../../config/app-constants';
 import { Observable } from 'rxjs';
+import { UNIQUE_CONSTRAINT_FAILED_CODE} from '../../config/sqlite-error-constants';
 
 
 @Injectable()
@@ -116,9 +117,9 @@ export class CasesRepository {
 
              let sql = 'SELECT ID_CASE,ID_ELEMENT, ID_ELEMENT_TYPE, ID_CASE_STATUS,NR_CASE,FG_SHARED,DT_SHARED '
                       +'FROM CASES WHERE FG_SHARED=1 AND ID_ELEMENT='+elementId;
-                 console.info("SharedCases query " + sql);
+                 //console.info("SharedCases query " + sql);
                db.executeSql(sql, []).then(res => {
-                 console.info("Res query " + JSON.stringify(res)+"- elementId="+elementId);
+                 //console.info("Res query " + JSON.stringify(res)+"- elementId="+elementId);
                       for(var i =0; i< res.rows.length;i++){
                             let row=new Cases();
                             row.caseId=res.rows.item(i).ID_CASE;

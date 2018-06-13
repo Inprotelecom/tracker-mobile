@@ -13,6 +13,7 @@ import {EtypeConfigWiStatusRepository} from "../repository/etype-config-wi-statu
 import {EtypeConfigWiStatus} from "../../app/clases/entities/etype-config-wi-status";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {ETYPE_CONFIG_DOCS, URL_TRACKER_SERVICE} from "../../config/url.services";
+import * as _ from "lodash";
 
 @Injectable()
 export class WorkitemProvider {
@@ -49,16 +50,49 @@ export class WorkitemProvider {
      return this.comboValueRepository.findByComboCategoryId(comboCategoryId);
   }
 
-  saveWiAttributes(wiElementAttributeList:WiElementAttribute[],workItemElement:WorkitemElement){
+  saveWiAttributes(wiAttributeListResp:WiElementAttribute[],
+                   wiElementAttributeList:WiElementAttribute[],
+                   workItemElementResp:WorkitemElement,
+                   workItemElement:WorkitemElement){
     let wiAttributeObservable:Observable<Boolean>[]=[];
-    wiAttributeObservable.push(this.workItemElementRepository.updateStatusAndNotes(workItemElement));
+
+
+    /*console.log('Old Object- Status',workItemElementResp.workItemStatusId);
+    console.log('New Object- Status'+workItemElement.workItemStatusId);
+    console.log('Is Equal',_.isEqual(workItemElementResp.workItemStatusId, workItemElement.workItemStatusId));*/
+    if(!_.isEqual(workItemElementResp.workItemStatusId, workItemElement.workItemStatusId)){
+        console.log('Synced false');
+        workItemElement.statusSynced=false;
+        wiAttributeObservable.push(this.workItemElementRepository.updateStatus(workItemElement));
+    }
+
+    /*console.log('Old Object- Notes',workItemElementResp.notes);
+    console.log('New Object- Notes'+workItemElement.notes);
+    console.log('Is Equal',_.isEqual(workItemElementResp.notes, workItemElement.notes));*/
+    if(!_.isEqual(workItemElementResp.notes, workItemElement.notes)){
+        console.log('Synced false');
+        workItemElement.notesSynced=false;
+        wiAttributeObservable.push(this.workItemElementRepository.updateNotes(workItemElement));
+    }
+
     wiElementAttributeList.forEach(item=>{
-        item.synced=false;
-        if(item.attribute.attributeTypeWebComponent==this.webComponentTypeEnum.CALENDAR && item.value!=''){
-          console.log('Date from web:'+item.value);
-          item.value=dateFormat(new Date(item.value),DT_FORMAT_WEB,true);
+        let cloneItem=_.cloneDeep(item);
+        let wiElementAttributeResp =_.find(wiAttributeListResp,{wiElementAttributeId:cloneItem.wiElementAttributeId});
+        /*console.log('Old Object-'+wiElementAttributeResp.attribute.name,wiElementAttributeResp.value);
+        console.log('New Object-'+cloneItem.attribute.name,cloneItem.value);
+        console.log('Is Equal',_.isEqual(wiElementAttributeResp.value, cloneItem.value));*/
+        if(!_.isEqual(wiElementAttributeResp.value, cloneItem.value)){
+          cloneItem.synced=false;
+          console.log('Synced false');
         }
-        wiAttributeObservable.push(this.wiElementAttributeRepository.insert(item));
+
+        if(cloneItem.attribute.attributeTypeWebComponent==this.webComponentTypeEnum.CALENDAR && cloneItem.value!=null && cloneItem.value!=''){
+          console.log('Date from web:'+cloneItem.value);
+          cloneItem.value=dateFormat(new Date(cloneItem.value),DT_FORMAT_WEB,true);
+        }
+
+
+        wiAttributeObservable.push(this.wiElementAttributeRepository.insert(cloneItem));
     });
     return Observable.forkJoin(wiAttributeObservable);
   }

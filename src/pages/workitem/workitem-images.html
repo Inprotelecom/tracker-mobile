@@ -39,7 +39,8 @@
         <ion-grid>
           <ion-row>
             <ion-col>
-              <button ion-button block icon-left>
+              <button ion-button block icon-lef
+                      (click)="showGallery()">
                 <ion-icon name="gallery"></ion-icon>
                 Select
               </button>
@@ -88,7 +89,10 @@
       <ion-row *ngFor="let r of wiElementAttachmentRemote| async">
         <ion-col>
           <img [src]="r.wiElementAttachmentId | trackerImages"/>
-          </ion-col>
+          <p *ngIf="r.comments">
+            Comments: {{r.comments}}
+          </p>
+        </ion-col>
       </ion-row>
     </ion-grid>
 

@@ -5,6 +5,7 @@ import {SAVE_FILE, SAVE_WI_ATTRIBUTTES, URL_TRACKER_SERVICE} from '../../config/
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { WiElementAttribute} from '../../app/clases/entities/wi-element-attribute';
+import { WorkitemElement} from '../../app/clases/entities/workitem-element';
 import { WiElementAttributeRepository} from '../repository/wi-element-attribute';
 import { WorkItemElementRepository} from '../repository/workitem-element';
 import { StorageProvider} from '../storage/storage';
@@ -37,20 +38,21 @@ export class SyncProvider {
                   params.append('wiElementAttributes', JSON.stringify(data[1]));
                   params.append('wiElement', JSON.stringify(data[0]));
                   params.append('user', JSON.stringify(data[2]));
-                  console.log("params"+JSON.stringify(params));
+                  console.log("wiElementParams:"+JSON.stringify(data[0]));
+                  console.log("wiElementAttributesParams:"+JSON.stringify(data[1]));
 
 
-                   return this.syncWiAttributes(params);
+                   return this.syncWiAttributes(params,data[0]);
               });
 
   }
 
-  private syncWiAttributes(params:any):Observable<any>{
+  private syncWiAttributes(params:any,wiElementList:WorkitemElement []):Observable<any>{
     return this.getPostResponse(URL_TRACKER_SERVICE+SAVE_WI_ATTRIBUTTES,params)
       .flatMap(resp=>{
         console.log("Http wi save:"+JSON.stringify(resp)+'-'+resp.wiElementAttribute.length);
-        if(resp.error==false && resp.wiElementAttribute.length>0) {
-          return this.processWiElementAttribute(resp.wiElementAttribute);
+        if(resp.error==false && (resp.wiElementAttribute.length>0 || wiElementList.length>0)) {
+          return this.processWiElementAttribute(resp.wiElementAttribute,wiElementList);
         }else{
           return Observable.of('').map(resp=>true);
         }
@@ -115,7 +117,7 @@ export class SyncProvider {
      })
   }
 
-  private processWiElementAttribute(list:any):Observable<Boolean>{
+  private processWiElementAttribute(list:any,wiElementList:WorkitemElement []):Observable<Boolean>{
     let listObservables:Observable<boolean>[]=[];
     list.forEach(data=>{
       let wiAttribute=new WiElementAttribute();
@@ -126,6 +128,12 @@ export class SyncProvider {
       wiAttribute.synced=true;
       listObservables.push(this.wiElementAttributeRepository.insert(wiAttribute));
     });
+
+    wiElementList.forEach(data=>{
+      data.notesSynced=true;
+      data.statusSynced=true;
+      listObservables.push(this.workItemElementRepository.update(data));
+    })
        return Observable.forkJoin(listObservables).map(resp=>{
             return resp.filter(r=>!r).length>0==false;
        });

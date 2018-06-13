@@ -82,7 +82,7 @@ export class ProjectLocalPage implements OnInit {
 
   onProjectSelect(project: ProjectSubproject) {
     console.log("Selected Item", JSON.stringify(project));
-    this.navCtrl.push(CasesLocalPage, {project: project, areaId: 1});
+    this.navCtrl.push(CasesLocalPage, {project: project});
 
   }
 
