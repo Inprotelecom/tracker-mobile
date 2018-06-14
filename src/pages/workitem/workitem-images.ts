@@ -1,3 +1,5 @@
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
 import { ImagePicker,ImagePickerOptions } from '@ionic-native/image-picker';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -10,6 +12,9 @@ import {WorkitemAttachmentProvider} from '../../providers/workitem-attachment/wo
 import {WorkitemElement} from "../../app/clases/entities/workitem-element";
 import * as _ from 'lodash';
 import {FilesSegmentEnum} from "../../app/enums/files_segment_enum";
+import { URL_TRACKER_SERVICE,TRACKER_DOWNLOAD_IMAGES} from '../../config/url.services';
+import { DocumentViewer,DocumentViewerOptions } from '@ionic-native/document-viewer';
+import { FileOpener } from '@ionic-native/file-opener';
 
 @Component({
   selector: 'page-workitem-images',
@@ -33,6 +38,8 @@ export class WorkitemImagesPage {
   wiElementAttachmentRemote:Observable<WiElementAttachment[]>;
   remoteFilesSelected:boolean=false;
 
+
+
   constructor(private viewCtrl:ViewController,
               private toastCtrl:ToastController,
               private camera:Camera,
@@ -40,7 +47,11 @@ export class WorkitemImagesPage {
               private navParams:NavParams,
               private wiElementAttachmentRepository:WiElementAttachmentRepository,
               private workitemAttachmentProvider:WorkitemAttachmentProvider,
-              private imagePicker: ImagePicker) {
+              private imagePicker: ImagePicker,
+              private transfer: FileTransfer,
+              private file: File,
+              private document: DocumentViewer,
+              private fileOpener: FileOpener) {
 
     this.node=this.navParams.get("node");
 
@@ -108,6 +119,32 @@ export class WorkitemImagesPage {
       }, (err) => {console.error("Show Gallery",JSON.stringify(err)) });
 
     }
+
+
+
+  downloadFile(wiAttachment:WiElementAttachment) {
+  const fileTransfer: FileTransferObject = this.transfer.create();
+  const options: DocumentViewerOptions = {
+  title: wiAttachment.filename
+  }
+
+
+
+  let url:string=`${URL_TRACKER_SERVICE}${TRACKER_DOWNLOAD_IMAGES}?image=${wiAttachment.wiElementAttachmentId}`;
+  fileTransfer.download(url, this.file.dataDirectory + wiAttachment.filename,true).then((entry) => {
+      console.log('download complete: ' + entry.toURL());
+      this.showMessage('File downloaded successfully');
+      //this.document.viewDocument(entry.toURL(), wiAttachment.type, options)
+
+      this.fileOpener.open(entry.toURL(), wiAttachment.type)
+      .then(() => console.log('File is opened'))
+      .catch(e => console.log('Error opening file', e));
+      
+  }, (error) => {
+      this.showMessage('Error downloading file');
+      console.error("DownloadFile",JSON.stringify(error));
+  });
+}
 
   saveFile(){
 

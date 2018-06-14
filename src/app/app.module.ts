@@ -38,6 +38,8 @@ import { ProjectProvider } from '../providers/project/project';
 
 //Plugins Providers
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
 import { Camera,CameraOptions} from '@ionic-native/camera';
 import { ImagePicker } from '@ionic-native/image-picker';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -51,6 +53,8 @@ import { WorkitemProvider } from '../providers/workitem/workitem';
 import { SyncProvider } from '../providers/sync/sync';
 import { FilesProvider } from '../providers/files/files';
 import { WorkitemAttachmentProvider} from '../providers/workitem-attachment/workitem-attachment';
+import { DocumentViewer } from '@ionic-native/document-viewer';
+import { FileOpener } from '@ionic-native/file-opener';
 
 
 //Repositories
@@ -129,6 +133,10 @@ import {HttpClientModule} from "@angular/common/http";
     SQLite,
     Camera,
     ImagePicker,
+    FileTransfer,
+    DocumentViewer,
+    FileOpener,
+    File,
     Geolocation,
     Storage,
     {provide: ErrorHandler, useClass: IonicErrorHandler},

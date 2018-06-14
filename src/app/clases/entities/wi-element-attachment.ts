@@ -7,6 +7,8 @@ export class WiElementAttachment{
   file:string;
   synced:boolean;
   type:string;
+  filename:string;
+  isImage:boolean;
 
   constructor(){
   }

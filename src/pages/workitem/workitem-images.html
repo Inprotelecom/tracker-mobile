@@ -87,8 +87,14 @@
 
     <ion-grid>
       <ion-row *ngFor="let r of wiElementAttachmentRemote| async">
-        <ion-col>
+        <ion-col *ngIf="r.isImage">
           <img [src]="r.wiElementAttachmentId | trackerImages"/>
+          <p *ngIf="r.comments">
+            Comments: {{r.comments}}
+          </p>
+        </ion-col>
+        <ion-col *ngIf="!r.isImage">
+          <ion-icon name="document" (click)="downloadFile(r)">{{r.filename}}</ion-icon>
           <p *ngIf="r.comments">
             Comments: {{r.comments}}
           </p>
