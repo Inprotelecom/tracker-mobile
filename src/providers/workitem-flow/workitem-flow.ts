@@ -172,6 +172,8 @@ export class WorkitemFlowProvider {
       wi.workitemTemplateId = data.workitemTemplateId;
       wi.statusSynced=true;
       wi.notesSynced=true;
+      wi.color=data.color;
+      wi.level=data.level;
       this.workitemflow.push(wi);
       listObservables.push(this.workItemElementRepository.insert(wi));
     })

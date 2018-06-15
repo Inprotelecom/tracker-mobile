@@ -1,8 +1,8 @@
 //Local
-//export const URL_TRACKER_SERVICE="http://192.168.0.202:8080/tracker-cr/rest";
+export const URL_TRACKER_SERVICE="http://192.168.0.202:8080/tracker-cr/rest";
 
 //Develop
-export const URL_TRACKER_SERVICE="http://187.188.193.211:7078/tracker/rest";
+//export const URL_TRACKER_SERVICE="http://187.188.193.211:7078/tracker/rest";
 //Production
 //export const URL_TRACKER_SERVICE="http://tracker.inpronet.inprotelecom.mx:8087/trackerinpro/rest";
 export const LOGIN="/mobile/login";

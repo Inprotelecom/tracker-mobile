@@ -3,7 +3,7 @@ import { File } from '@ionic-native/file';
 import { ImagePicker,ImagePickerOptions } from '@ionic-native/image-picker';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import {IonicPage, NavController, NavParams, ToastController, ViewController,SegmentButton} from 'ionic-angular';
+import {Platform,IonicPage, NavController, NavParams, ToastController, ViewController,SegmentButton,LoadingController} from 'ionic-angular';
 import {Camera, CameraOptions} from "@ionic-native/camera";
 import {Geolocation} from "@ionic-native/geolocation";
 import {WiElementAttachment} from "../../app/clases/entities/wi-element-attachment";
@@ -38,7 +38,9 @@ export class WorkitemImagesPage {
   wiElementAttachmentRemote:Observable<WiElementAttachment[]>;
   remoteFilesSelected:boolean=false;
 
-
+  messageConf={
+    content: 'Please wait...'
+  }
 
   constructor(private viewCtrl:ViewController,
               private toastCtrl:ToastController,
@@ -51,7 +53,9 @@ export class WorkitemImagesPage {
               private transfer: FileTransfer,
               private file: File,
               private document: DocumentViewer,
-              private fileOpener: FileOpener) {
+              private fileOpener: FileOpener,
+              private platform:Platform,
+              private loadingController:LoadingController) {
 
     this.node=this.navParams.get("node");
 
@@ -123,27 +127,40 @@ export class WorkitemImagesPage {
 
 
   downloadFile(wiAttachment:WiElementAttachment) {
-  const fileTransfer: FileTransferObject = this.transfer.create();
-  const options: DocumentViewerOptions = {
-  title: wiAttachment.filename
-  }
+    const fileTransfer: FileTransferObject = this.transfer.create();
+    const options: DocumentViewerOptions = {
+    title: wiAttachment.filename
+    }
+    let documentsDirectory='';
+    if (this.platform.is('ios')) {
+        documentsDirectory = this.file.documentsDirectory;
+      } else if (this.platform.is('android')) {
+        documentsDirectory = this.file.dataDirectory;
+    }
+    let url:string=`${URL_TRACKER_SERVICE}${TRACKER_DOWNLOAD_IMAGES}?image=${wiAttachment.wiElementAttachmentId}`;
+        let   loading = this.loadingController.create(this.messageConf);
+        loading.present();
+        fileTransfer.download(url, documentsDirectory + wiAttachment.filename,true).then((entry) => {
+          console.log('download complete: ' + entry.toURL());
+          this.showMessage('File downloaded successfully');
+          //this.document.viewDocument(entry.toURL(), wiAttachment.type, options)
 
 
+          this.fileOpener.open(entry.toURL(), wiAttachment.type)
+          .then(() =>{
+            loading.dismiss();
+            console.log('File is opened');
+          })
+          .catch(e => {
+            loading.dismiss();
+            console.log('Error opening file', e)
+            });
 
-  let url:string=`${URL_TRACKER_SERVICE}${TRACKER_DOWNLOAD_IMAGES}?image=${wiAttachment.wiElementAttachmentId}`;
-  fileTransfer.download(url, this.file.dataDirectory + wiAttachment.filename,true).then((entry) => {
-      console.log('download complete: ' + entry.toURL());
-      this.showMessage('File downloaded successfully');
-      //this.document.viewDocument(entry.toURL(), wiAttachment.type, options)
-
-      this.fileOpener.open(entry.toURL(), wiAttachment.type)
-      .then(() => console.log('File is opened'))
-      .catch(e => console.log('Error opening file', e));
-      
-  }, (error) => {
-      this.showMessage('Error downloading file');
-      console.error("DownloadFile",JSON.stringify(error));
-  });
+    }, (error) => {
+          loading.dismiss();
+          this.showMessage('Error downloading file');
+          console.error("DownloadFile",JSON.stringify(error));
+    });
 }
 
   saveFile(){

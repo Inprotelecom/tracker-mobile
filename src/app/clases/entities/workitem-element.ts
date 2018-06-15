@@ -14,6 +14,8 @@ export class WorkitemElement{
   sequencial:number;
   statusSynced:boolean;
   notesSynced:boolean;
+  level:number;
+  color:string;
 
   constructor(){
   }
