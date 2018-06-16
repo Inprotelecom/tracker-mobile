@@ -142,7 +142,7 @@ export class CasesLocalPage {
         slidingItem.close();
         loading.dismiss();
       })
-
+      //this.updateCase(cases,loading,slidingItem);
 
   }
 
@@ -163,7 +163,6 @@ export class CasesLocalPage {
               console.error("Error trying to share");
             }
         }
-
       },err=>{
           console.error("ShareCases",JSON.stringify(err));
             loading.dismiss();

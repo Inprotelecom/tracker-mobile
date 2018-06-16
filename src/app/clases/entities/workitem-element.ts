@@ -16,7 +16,8 @@ export class WorkitemElement{
   notesSynced:boolean;
   level:number;
   color:string;
-
+  invertedColor:string;
+  wiTemplateDiv:string;
   constructor(){
   }
 

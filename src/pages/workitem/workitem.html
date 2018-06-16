@@ -9,11 +9,12 @@
   <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
   <ion-list>
      <ion-item-sliding *ngFor="let item of workItemList;let i=index" #SlidingItem>
-        <button ion-item (click)="onWiEdit(item,i)">
-          {{ item.workitemTemplate }}  {{ item.color }}
-        </button>
+        <ion-item (click)="onWiEdit(item,i)">
+        <div [innerHTML]="item.wiTemplateDiv | escapeHtml"></div>
+        </ion-item>
             <ion-item-options side="right">
-              <button ion-button [color]="item.color" (click)="onWiImages(SlidingItem,item,i)">
+              <button ion-button
+                (click)="onWiImages(SlidingItem,item,i)">
                 <ion-icon name="image"></ion-icon>
                 Images
             </button>

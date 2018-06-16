@@ -32,6 +32,7 @@ export class WorkitemPage implements OnInit{
   });
 
   ngOnInit(){
+    console.log('Case selected',JSON.stringify(this.cases))
      this.findAllWorkitems();
   }
 
@@ -45,7 +46,7 @@ export class WorkitemPage implements OnInit{
         },e=>{
           console.error(e);
           this.workItemListResp=[];
-          this.workItemList==[];
+          this.workItemList=[];
           this.loading.dismiss();
         })
   }
@@ -78,5 +79,6 @@ onWiImages(slidingItem:ItemSliding,workitem:WorkitemElement,idx:number) {
   let modal = this.navCtrl.push(WorkitemFilesPage, {workitem: workitem});
 
 }
+
 
 }

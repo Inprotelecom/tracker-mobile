@@ -130,6 +130,7 @@ export class SyncProvider {
     });
 
     wiElementList.forEach(data=>{
+      console.log('Update share',JSON.stringify(data));
       data.notesSynced=true;
       data.statusSynced=true;
       listObservables.push(this.workItemElementRepository.update(data));

@@ -173,8 +173,9 @@ export class WorkitemFlowProvider {
       wi.statusSynced=true;
       wi.notesSynced=true;
       wi.color=data.color;
+      wi.invertedColor=data.invertedColor;
       wi.level=data.level;
-      this.workitemflow.push(wi);
+      //this.workitemflow.push(wi);
       listObservables.push(this.workItemElementRepository.insert(wi));
     })
 

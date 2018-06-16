@@ -30,6 +30,10 @@ export class WorkitemProvider {
     return this.workItemElementRepository.findWiByCaseId(caseId);
   }
 
+  findColorsByCaseId(caseId:number):Observable<string[]>{
+    return this.workItemElementRepository.findColorsByCaseId(caseId);
+  }
+
   findWiElementAttributeByWiElement(elementId:number):Observable<WiElementAttribute[]>{
       return this.wiElementAttributeRepository.findWorkitemElementId(elementId)
          .flatMap((data:WiElementAttribute[])=>{

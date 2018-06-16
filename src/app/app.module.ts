@@ -31,6 +31,10 @@ import { LocalFilesPage} from'../pages/local-files/local-files';
 import {PipeComboValuePipe} from '../pipes/pipe-combo-value-pipe-ts/pipe-combo-value-pipe';
 import {ImageStringPipe} from '../pipes/image-string/image-string';
 import {TrackerImagesPipe} from '../pipes/tracker-images/tracker-images';
+import {EscapeHtmlPipe} from '../pipes/escape-html/escape-html';
+import {IndentationPipe} from '../pipes/indentation/indentation';
+
+
 
 //Servicios
 import { ListaDeseosService } from './services/lista-deseos.service';
@@ -97,7 +101,8 @@ import {HttpClientModule} from "@angular/common/http";
     TreeFolderComponent,
     WorkitemFilesPage,
     ImageStringPipe,
-    LocalFilesPage
+    LocalFilesPage,
+    EscapeHtmlPipe
   ],
   imports: [
     BrowserModule,
