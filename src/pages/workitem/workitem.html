@@ -5,12 +5,12 @@
 
 </ion-header>
 
-<ion-content padding>
+<ion-content padding class="bodyworkitems">
   <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
   <ion-list>
-     <ion-item-sliding *ngFor="let item of workItemList;let i=index" #SlidingItem>
-        <ion-item (click)="onWiEdit(item,i)">
-        <div [innerHTML]="item.wiTemplateDiv | escapeHtml"></div>
+     <ion-item-sliding *ngFor="let item of workItemList;let i=index" #SlidingItem class="tdfilters">
+        <ion-item (click)="onWiEdit(item,i)" class="buttonfilter">
+        <div [innerHTML]="item.wiTemplateDiv | escapeHtml"  class="textfilter" ></div>
         </ion-item>
             <ion-item-options side="right">
               <button ion-button
