@@ -67,12 +67,7 @@ export class WorkitemImagesPage {
 
   initWiElementAttribute(){
     this.remoteFilesSelected=false;
-    this.wiElementAttachment=new WiElementAttachment();
-    this.wiElementAttachment.etypeConfigDocId=this.node.etypeConfigDoc;
-    this.wiElementAttachment.workitemElementId=this.node.workItemElementId;
-    this.wiElementAttachment.synced=false;
-
-    this.wiElementAttachmentResp=_.cloneDeep(this.wiElementAttachment);
+    this.cleanFile();
 
   }
 
@@ -196,7 +191,13 @@ export class WorkitemImagesPage {
 
   private cleanFile(){
     this.wiElementAttachment=new WiElementAttachment();
+    this.wiElementAttachment.etypeConfigDocId=this.node.etypeConfigDoc;
+    this.wiElementAttachment.workitemElementId=this.node.workItemElementId;
+    this.wiElementAttachment.synced=false;
     this.imageData='';
+    this.wiElementAttachmentResp=_.cloneDeep(this.wiElementAttachment);
+
+    console.info('Cleaning attachment object',JSON.stringify(this.wiElementAttachment));
   }
 
   showPosition(){
@@ -226,7 +227,7 @@ export class WorkitemImagesPage {
       case FilesSegmentEnum.LOCAL_FILES:
       this.wiElementAttachmentList=
         this.wiElementAttachmentRepository
-            .findWiElementAttachmentByWiElement(this.node.workItemElementId);
+            .findWiElementAttachmentByWiElementIdAndEtypeConfigDocId(this.node.workItemElementId,this.node.etypeConfigDoc);
       break;
       case FilesSegmentEnum.REMOTE_FILES:
         if(!this.remoteFilesSelected){

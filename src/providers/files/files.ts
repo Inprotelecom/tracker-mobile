@@ -35,7 +35,7 @@ export class FilesProvider {
     let listObservables: Observable<any>[] = [];
     return this.workItemElementRepository.findWiByCaseId(cases.caseId)
         .flatMap((resp:any)=>{
-          console.log("doc synf"+JSON.stringify(resp));
+          //console.log("doc synf"+JSON.stringify(resp));
           resp.forEach(w=>{
             listObservables.push(this.findElementTypeConfigDocumentsStructure(
               w.workitemElementId,w.elementTypeConfigId));
@@ -72,15 +72,15 @@ export class FilesProvider {
       new HttpParams().set('elementTypeConfigId',''+elementTypeConfig )
       .set('workItemElementId',''+workitemElement))
       .flatMap((resp:any)=>{
-        console.log('Resp srvice WorkItemElementDocStructure'+JSON.stringify(resp));
+        //console.log('Resp srvice WorkItemElementDocStructure'+JSON.stringify(resp));
         let wiElementDocStructure=new WorkItemElementDocStructure();
         wiElementDocStructure.elementTypeConfigId=elementTypeConfig;
         wiElementDocStructure.workitemElementId=workitemElement;
         wiElementDocStructure.structure=resp.structure;
-        console.log('WorkItemElementDocStructure-'+JSON.stringify(wiElementDocStructure));
+        //console.log('WorkItemElementDocStructure-'+JSON.stringify(wiElementDocStructure));
          return Observable.forkJoin(this.wiElementDocStructureRepository.insert(wiElementDocStructure))
          .map(resp => {
-            console.log("resp forkjoin WorkItemElementDocStructure:" + JSON.stringify(resp));
+            //console.log("resp forkjoin WorkItemElementDocStructure:" + JSON.stringify(resp));
             return true;
       })
     })

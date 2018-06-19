@@ -383,10 +383,10 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                              row.modifiedDate=res.rows.item(i).DT_MODIFIED;
                              let color='background-color: #'+row.color+' !important;';
                              let invertedColor='color: #'+row.invertedColor+' !important';
-                             row.wiTemplateDiv=`<div class="textfilter" style="${color}${invertedColor}">
+                             row.wiTemplateDiv=`<div style="${color}${invertedColor}">
                                <span>${this.getIndetation(row.level)}${row.workitemTemplate}</span>
                                </div>`;
-                               console.info("WI Template:",row.workitemTemplate);
+                               //console.info("WI Template:",row.workitemTemplate);
                              //row.color='#'+res.rows.item(i).VL_COLOR+' !important';
 
                              resList.push(row);

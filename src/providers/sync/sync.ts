@@ -98,7 +98,7 @@ export class SyncProvider {
   }
 
   private getWiAttachmentPostResponse(url:string,params:URLSearchParams):Observable<any>{
-    console.info('Server request attachment sync:'+url+JSON.stringify(params));
+    //console.info('Server request attachment sync:'+url+JSON.stringify(params));
 
 
      return this.http.post(url,params).map((resp:any)=>{
@@ -106,10 +106,10 @@ export class SyncProvider {
 
      }).flatMap((data:any)=>{
        if(data.error){
-          console.log("Error"+JSON.stringify(data));
+          console.log("Error",JSON.stringify(data));
          return Observable.of('').map(resp=>false);
        }else{
-
+          console.log("Update attachment from server",JSON.stringify(data));
          return this.wiElementAttachmentRepository.updateSyncedAndWiElementAttachmentId(
            data.wiElementAttachmentRequest,
            data.wiElementAttachmentResponse,

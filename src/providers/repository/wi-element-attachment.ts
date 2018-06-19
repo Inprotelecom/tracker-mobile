@@ -34,7 +34,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                       db.executeSql(sql, [entity.wiElementAttachmentId,entity.workitemElementId,
                         entity.etypeConfigDocId,entity.comments,entity.file,entity.synced?1:0,entity.type,entity.modifiedDate])
                       .then(()=>{
-                          console.info('Executed SQL');
+                          console.info('Inserted Attachment',entity.wiElementAttachmentId);
                           observer.next(true);
                           observer.complete();
                        }).catch(e=> {
@@ -62,14 +62,16 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
   public updateSyncedAndWiElementAttachmentId(wiElementAttachmentIdLocal:number,
                                               wiElementAttachmentIdRemote:number,
                                               synced:boolean):Observable<boolean>{
+      console.log('Update attachment','wiLocal-'+wiElementAttachmentIdLocal+' wiRemote-'+wiElementAttachmentIdRemote+' synced-'+synced);
       return Observable.create(observer=>{
         this.platform.ready().then(() => {
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
-                     let sql = 'UPDATE WI_ELEMENT_ATTACHMENT SET ID_WI_ELEMENT_ATTACHMENT=?, FG_SYNCED=? WHERE ID_WI_ELEMENT_ATTACHMENT='+wiElementAttachmentIdLocal;
+                     let sql = 'UPDATE WI_ELEMENT_ATTACHMENT SET ID_WI_ELEMENT_ATTACHMENT=?, FG_SYNCED=? WHERE ID_WI_ELEMENT_ATTACHMENT=?';
                         // console.log('Wi Attachment:'+sql);
-                         db.executeSql(sql, [wiElementAttachmentIdRemote,(synced)?1:0])
+                         db.executeSql(sql, [wiElementAttachmentIdRemote,synced?1:0,wiElementAttachmentIdLocal])
                            .then(res=>{
+                             console.info('Res updating attachment',JSON.stringify(res));
                              observer.next(true);
                              observer.complete();
                            }).catch(e=>{
@@ -104,7 +106,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
           this.sqlite = new SQLite();
           this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-                   let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED
+                   let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED,WA.DT_MODIFIED
                              FROM WI_ELEMENT_ATTACHMENT
                              WHERE ID_WORK_ITEM_ELEMENT=${wiElementId}
                              AND FG_SYNCED=${(synced?1:0)}
@@ -142,6 +144,52 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
    }
 
 
+   public findWiElementAttachmentByWiElementIdAndEtypeConfigDocId(
+     wiElementId:number,etypeConfigDocId:number):Observable<WiElementAttachment[]>{
+       let resList:WiElementAttachment []=[];
+       let row=new WiElementAttachment();
+       return  Observable.create(observer=>{
+           this.platform.ready().then(() => {
+           this.sqlite = new SQLite();
+           this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
+
+                    let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED
+                              FROM WI_ELEMENT_ATTACHMENT
+                              WHERE ID_WORK_ITEM_ELEMENT=${wiElementId}
+                              AND ID_ELEMENT_TYPE_CONFIG_DOC=${etypeConfigDocId}`;
+                               //console.info('WiElementAttachment query:'+sql);
+                      db.executeSql(sql, {}).then(res => {
+                            //console.info('WiElementAttachment query:'+sql);
+                             for(var i =0; i< res.rows.length;i++){
+                               row=new WiElementAttachment();
+                               row.wiElementAttachmentId=res.rows.item(i).ID_WI_ELEMENT_ATTACHMENT;
+                               row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
+                               row.etypeConfigDocId=res.rows.item(i).ID_ELEMENT_TYPE_CONFIG_DOC;
+                               row.comments=res.rows.item(i).DE_WI_ELEMENT_ATTACHMENT;
+                               row.file=res.rows.item(i).VL_FILE_B64;
+                               row.synced=(res.rows.item(i).FG_SYNCED)==1;
+                               row.modifiedDate=res.rows.item(i).DT_MODIFIED;
+                               resList.push(row);
+                             }
+                            observer.next(resList);
+                            observer.complete();
+                         }).catch(e=>{
+                       console.error("Error querying WiElementAttachment:"+JSON.stringify(e));
+                       observer.next(resList);
+                       observer.complete();
+                     });
+
+              }).catch(e => {
+                     console.error("Error opening database: " + JSON.stringify(e));
+                     observer.next(resList);
+                     observer.complete();
+             });
+
+             });
+
+       })
+    }
+
    public findWiElementAttachmentByWiElement(wiElement:number):Observable<WiElementAttachment[]>{
      let resList:WiElementAttachment []=[];
      let row=new WiElementAttachment();
@@ -150,7 +198,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
          this.sqlite = new SQLite();
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-           let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE '
+           let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE,WA.DT_MODIFIED '
              +' FROM WI_ELEMENT_ATTACHMENT WA '
              +' WHERE WA.ID_WORK_ITEM_ELEMENT='+wiElement;
            console.info('WiElementAttachment query:'+sql);
@@ -165,6 +213,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                row.file=res.rows.item(i).VL_FILE_B64;
                row.synced=(res.rows.item(i).FG_SYNCED)==1;
                row.type=res.rows.item(i).VL_TYPE;
+               row.modifiedDate=res.rows.item(i).DT_MODIFIED;
                resList.push(row);
                //console.info('WiElementAttachment:'+JSON.stringify(row));
              }
@@ -186,6 +235,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
 
      })
    }
+
 
   public findWiElementAttachmentByNotSyncedByCaseId(caseId:number):Observable<WiElementAttachment[]>{
     let resList:WiElementAttachment []=[];
@@ -212,7 +262,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
               row.file=res.rows.item(i).VL_FILE_B64;
               row.synced=(res.rows.item(i).FG_SYNCED)==1;
               row.type=res.rows.item(i).VL_TYPE;
-              row.type=res.rows.item(i).DT_MODIFIED;
+              row.modifiedDate=res.rows.item(i).DT_MODIFIED;
+              //console.log('Attachment not synced',JSON.stringify(row));
               resList.push(row);
             }
             observer.next(resList);
