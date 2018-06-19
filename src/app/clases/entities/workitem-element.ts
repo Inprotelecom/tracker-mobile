@@ -1,4 +1,4 @@
-export class WorkitemElement{
+export class WorkitemElement {
 
   workitemElementId:number;
   elementId:number;
@@ -18,6 +18,7 @@ export class WorkitemElement{
   color:string;
   invertedColor:string;
   wiTemplateDiv:string;
+  modifiedDate:string;
   constructor(){
   }
 

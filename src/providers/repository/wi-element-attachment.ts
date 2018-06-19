@@ -29,10 +29,10 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                let localId:string=''+entity.etypeConfigDocId+new Date().getTime();
                entity.wiElementAttachmentId=parseInt(localId)*-1;
               }
-              let sql = 'INSERT INTO WI_ELEMENT_ATTACHMENT (ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED,VL_TYPE) '
-                          +'VALUES(?,?,?,?,?,?,?)';
+              let sql = 'INSERT INTO WI_ELEMENT_ATTACHMENT (ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED,VL_TYPE,DT_MODIFIED) '
+                          +'VALUES(?,?,?,?,?,?,?,?)';
                       db.executeSql(sql, [entity.wiElementAttachmentId,entity.workitemElementId,
-                        entity.etypeConfigDocId,entity.comments,entity.file,entity.synced?1:0,entity.type])
+                        entity.etypeConfigDocId,entity.comments,entity.file,entity.synced?1:0,entity.type,entity.modifiedDate])
                       .then(()=>{
                           console.info('Executed SQL');
                           observer.next(true);
@@ -195,7 +195,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
         this.sqlite = new SQLite();
         this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-          let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE '
+          let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE,WA.DT_MODIFIED '
             +' FROM WI_ELEMENT_ATTACHMENT WA '
             +' JOIN WORKITEM_ELEMENT WI ON WI.ID_WORK_ITEM_ELEMENT=WA.ID_WORK_ITEM_ELEMENT '
             +' WHERE WI.ID_CASE='+caseId
@@ -212,6 +212,7 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
               row.file=res.rows.item(i).VL_FILE_B64;
               row.synced=(res.rows.item(i).FG_SYNCED)==1;
               row.type=res.rows.item(i).VL_TYPE;
+              row.type=res.rows.item(i).DT_MODIFIED;
               resList.push(row);
             }
             observer.next(resList);

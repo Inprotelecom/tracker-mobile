@@ -10,6 +10,7 @@ export class WiElementAttribute{
   synced:boolean;
   attribute:Attribute;
   comboValue:ComboValue[];
+  modifiedDate:string;
 
   constructor(){
   }

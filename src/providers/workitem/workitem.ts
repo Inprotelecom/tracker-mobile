@@ -67,6 +67,7 @@ export class WorkitemProvider {
     if(!_.isEqual(workItemElementResp.workItemStatusId, workItemElement.workItemStatusId)){
         console.log('Synced false');
         workItemElement.statusSynced=false;
+        workItemElement.modifiedDate=dateFormat(new Date(),DT_FORMAT_WEB,true);
         wiAttributeObservable.push(this.workItemElementRepository.updateStatus(workItemElement));
     }
 
@@ -76,6 +77,7 @@ export class WorkitemProvider {
     if(!_.isEqual(workItemElementResp.notes, workItemElement.notes)){
         console.log('Synced false');
         workItemElement.notesSynced=false;
+        workItemElement.modifiedDate=dateFormat(new Date(),DT_FORMAT_WEB,true);
         wiAttributeObservable.push(this.workItemElementRepository.updateNotes(workItemElement));
     }
 
@@ -87,16 +89,14 @@ export class WorkitemProvider {
         console.log('Is Equal',_.isEqual(wiElementAttributeResp.value, cloneItem.value));*/
         if(!_.isEqual(wiElementAttributeResp.value, cloneItem.value)){
           cloneItem.synced=false;
-          console.log('Synced false');
+          cloneItem.modifiedDate=dateFormat(new Date(),DT_FORMAT_WEB,true);
+          if(cloneItem.attribute.attributeTypeWebComponent==this.webComponentTypeEnum.CALENDAR && cloneItem.value!=null && cloneItem.value!=''){
+            console.log('Date from web:'+cloneItem.value);
+            cloneItem.value=dateFormat(new Date(cloneItem.value),DT_FORMAT_WEB,true);
+          }
+
+          wiAttributeObservable.push(this.wiElementAttributeRepository.insert(cloneItem));
         }
-
-        if(cloneItem.attribute.attributeTypeWebComponent==this.webComponentTypeEnum.CALENDAR && cloneItem.value!=null && cloneItem.value!=''){
-          console.log('Date from web:'+cloneItem.value);
-          cloneItem.value=dateFormat(new Date(cloneItem.value),DT_FORMAT_WEB,true);
-        }
-
-
-        wiAttributeObservable.push(this.wiElementAttributeRepository.insert(cloneItem));
     });
     return Observable.forkJoin(wiAttributeObservable);
   }

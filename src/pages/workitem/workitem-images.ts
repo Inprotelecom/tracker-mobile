@@ -15,6 +15,8 @@ import {FilesSegmentEnum} from "../../app/enums/files_segment_enum";
 import { URL_TRACKER_SERVICE,TRACKER_DOWNLOAD_IMAGES} from '../../config/url.services';
 import { DocumentViewer,DocumentViewerOptions } from '@ionic-native/document-viewer';
 import { FileOpener } from '@ionic-native/file-opener';
+import dateFormat from 'dateformat';
+import {DT_FORMAT_WEB} from "../../config/app-constants";
 
 @Component({
   selector: 'page-workitem-images',
@@ -171,6 +173,7 @@ export class WorkitemImagesPage {
     this.wiElementAttachment.type='jpeg';
     this.wiElementAttachment.file=this.imageData;
     this.wiElementAttachment.synced=false;
+    this.wiElementAttachment.modifiedDate=dateFormat(new Date(),DT_FORMAT_WEB,true);
     this.wiElementAttachmentRepository.insert(this.wiElementAttachment)
       .subscribe(resp=>{
         console.log('resp image save:'+resp);

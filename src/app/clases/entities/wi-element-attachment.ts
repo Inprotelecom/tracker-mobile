@@ -9,6 +9,7 @@ export class WiElementAttachment{
   type:string;
   filename:string;
   isImage:boolean;
+  modifiedDate:string;
 
   constructor(){
   }

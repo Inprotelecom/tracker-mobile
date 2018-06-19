@@ -28,10 +28,10 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                let localId:string=''+entity.attributeId+new Date().getTime();
                entity.wiElementAttributeId=parseInt(localId)*-1;
               }
-              let sql = 'INSERT INTO WI_ELEMENT_ATTRIBUTE (ID_WI_ELEMENT_ATTRIBUTE, ID_ATTRIBUTE, VL_ATTRIBUTE,ID_WORK_ITEM_ELEMENT,FG_SYNCED) '
-                          +'VALUES(?,?,?,?,?)';
+              let sql = 'INSERT INTO WI_ELEMENT_ATTRIBUTE (ID_WI_ELEMENT_ATTRIBUTE, ID_ATTRIBUTE, VL_ATTRIBUTE,ID_WORK_ITEM_ELEMENT,FG_SYNCED,DT_MODIFIED) '
+                          +'VALUES(?,?,?,?,?,?)';
                       db.executeSql(sql, [entity.wiElementAttributeId,entity.attributeId,
-                        entity.value,entity.workitemElementId,entity.synced?1:0])
+                        entity.value,entity.workitemElementId,entity.synced?1:0,entity.modifiedDate])
                       .then(()=>{
                         //console.info('Executed SQL');
                         observer.next(true);
@@ -75,9 +75,9 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
         this.platform.ready().then(() => {
                  this.sqlite = new SQLite();
                  this.sqlite.create(DB_CONFIG).then((db) => {
-                     let sql = 'UPDATE WI_ELEMENT_ATTRIBUTE SET ID_WI_ELEMENT_ATTRIBUTE=?, VL_ATTRIBUTE=?, FG_SYNCED=? WHERE ID_ATTRIBUTE=? AND ID_WORK_ITEM_ELEMENT=?';
-                           db.executeSql(sql, [entity.wiElementAttributeId,entity.value,(entity.synced)?1:0,entity.attributeId,
-                             entity.workitemElementId])
+                     let sql = 'UPDATE WI_ELEMENT_ATTRIBUTE SET ID_WI_ELEMENT_ATTRIBUTE=?, VL_ATTRIBUTE=?, FG_SYNCED=?,DT_MODIFIED=? WHERE ID_ATTRIBUTE=? AND ID_WORK_ITEM_ELEMENT=?';
+                           db.executeSql(sql, [entity.wiElementAttributeId,entity.value,(entity.synced)?1:0,
+                                               entity.modifiedDate,entity.attributeId,entity.workitemElementId])
                            .then(res=>{
                              console.log('Executed SQL wi update');
                              observer.next(true);
@@ -169,7 +169,7 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
           this.sqlite = new SQLite();
           this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-                   let sql = 'SELECT WA.ID_WI_ELEMENT_ATTRIBUTE, WA.ID_ATTRIBUTE, WA.VL_ATTRIBUTE,WA.ID_WORK_ITEM_ELEMENT,WA.FG_SYNCED '
+                   let sql = 'SELECT WA.ID_WI_ELEMENT_ATTRIBUTE, WA.ID_ATTRIBUTE, WA.VL_ATTRIBUTE,WA.ID_WORK_ITEM_ELEMENT,WA.FG_SYNCED,WA.DT_MODIFIED '
                              +'FROM WORKITEM_ELEMENT W JOIN WI_ELEMENT_ATTRIBUTE WA '
                              +'ON W.ID_WORK_ITEM_ELEMENT=WA.ID_WORK_ITEM_ELEMENT '
                              +'WHERE W.ID_CASE='+caseId
@@ -185,6 +185,7 @@ public insert(entity: WiElementAttribute):Observable<boolean>{
                               row.value=res.rows.item(i).VL_ATTRIBUTE;
                               row.workitemElementId=res.rows.item(i).ID_WORK_ITEM_ELEMENT;
                               row.synced=(res.rows.item(i).FG_SYNCED)==1;
+                              row.modifiedDate=res.rows.item(i).DT_MODIFIED;
                               resList.push(row);
                             }
                            observer.next(resList);

@@ -185,10 +185,10 @@ public insert(entity: WorkitemElement):Observable<boolean>{
       this.platform.ready().then(() => {
         this.sqlite = new SQLite();
         this.sqlite.create(DB_CONFIG).then((db) => {
-          let sql = 'UPDATE WORKITEM_ELEMENT SET DE_NOTES=?,FG_NOTES_SYNCED=? WHERE ID_WORK_ITEM_ELEMENT=?';
+          let sql = 'UPDATE WORKITEM_ELEMENT SET DE_NOTES=?,FG_NOTES_SYNCED=?,DT_MODIFIED=? WHERE ID_WORK_ITEM_ELEMENT=?';
           //console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
 
-          db.executeSql(sql, [entity.notes,entity.notesSynced?1:0,entity.workitemElementId])
+          db.executeSql(sql, [entity.notes,entity.notesSynced?1:0,entity.modifiedDate,entity.workitemElementId])
             .then(res=>{
               //console.log('Executed SQL wi update');
               observer.next(true);
@@ -222,10 +222,10 @@ public insert(entity: WorkitemElement):Observable<boolean>{
       this.platform.ready().then(() => {
         this.sqlite = new SQLite();
         this.sqlite.create(DB_CONFIG).then((db) => {
-          let sql = 'UPDATE WORKITEM_ELEMENT SET ID_WORK_ITEM_STATUS=?,FG_STATUS_SYNCED=? WHERE ID_WORK_ITEM_ELEMENT=?';
+          let sql = 'UPDATE WORKITEM_ELEMENT SET ID_WORK_ITEM_STATUS=?,FG_STATUS_SYNCED=?,DT_MODIFIED=? WHERE ID_WORK_ITEM_ELEMENT=?';
           //console.info("going to ipdate  WorkitemElement:"+JSON.stringify(entity));
 
-          db.executeSql(sql, [entity.workItemStatusId,entity.statusSynced?1:0,entity.workitemElementId])
+          db.executeSql(sql, [entity.workItemStatusId,entity.statusSynced?1:0,entity.modifiedDate,entity.workitemElementId])
             .then(res=>{
               //console.log('Executed SQL wi update');
               observer.next(true);
@@ -360,7 +360,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
                   let sql = 'SELECT ID_WORK_ITEM_ELEMENT, ID_ELEMENT, ID_CASE,ID_ELEMENT_TYPE_CONFIG, ID_WORK_ITEM_STATUS,ID_PARENT,NR_ORDER,NR_SEQUENCIAL, '
-                           +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES,FG_STATUS_SYNCED,FG_NOTES_SYNCED,VL_COLOR,VL_INVERTED_COLOR,VL_LEVEL FROM WORKITEM_ELEMENT WHERE ID_CASE='+ caseId+' ORDER BY NR_SEQUENCIAL';
+                           +'NM_WORKITEM_TEMPLATE,NM_WORKITEM_STATUS,DE_NOTES,FG_STATUS_SYNCED,FG_NOTES_SYNCED,VL_COLOR,VL_INVERTED_COLOR,VL_LEVEL,DT_MODIFIED FROM WORKITEM_ELEMENT WHERE ID_CASE='+ caseId+' ORDER BY NR_SEQUENCIAL';
                     db.executeSql(sql, {}).then(res => {
 
                            for(var i =0; i< res.rows.length;i++){
@@ -380,6 +380,7 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                              row.level=res.rows.item(i).VL_LEVEL;
                              row.invertedColor=res.rows.item(i).VL_INVERTED_COLOR;
                              row.color=res.rows.item(i).VL_COLOR;
+                             row.modifiedDate=res.rows.item(i).DT_MODIFIED;
                              let color='background-color: #'+row.color+' !important;';
                              let invertedColor='color: #'+row.invertedColor+' !important';
                              row.wiTemplateDiv=`<div style="${color}${invertedColor}">
