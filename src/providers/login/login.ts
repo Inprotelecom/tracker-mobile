@@ -41,7 +41,7 @@ export class LoginProvider {
     let url=URL_TRACKER_SERVICE+LOGIN;
 
       return this.http.post(url,data)
-                      .timeout(3000)
+                      .timeout(5000)
                       .map( resp=>{
                       let data_resp=resp.json();
                       console.log("Login Resp:"+data_resp);
