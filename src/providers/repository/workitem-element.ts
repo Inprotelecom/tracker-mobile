@@ -381,9 +381,9 @@ public insert(entity: WorkitemElement):Observable<boolean>{
                              row.invertedColor=res.rows.item(i).VL_INVERTED_COLOR;
                              row.color=res.rows.item(i).VL_COLOR;
                              row.modifiedDate=res.rows.item(i).DT_MODIFIED;
-                             let color='background-color: #'+row.color+' !important;';
-                             let invertedColor='color: #'+row.invertedColor+' !important';
-                             row.wiTemplateDiv=`<div style="${color}${invertedColor}">
+                             //let color='background-color: #'+row.color+' !important;';
+                             //let invertedColor='color: #'+row.invertedColor+' !important';
+                             row.wiTemplateDiv=`<div style="color:white">
                                <span>${this.getIndetation(row.level)}${row.workitemTemplate}</span>
                                </div>`;
                                //console.info("WI Template:",row.workitemTemplate);
@@ -414,9 +414,9 @@ public insert(entity: WorkitemElement):Observable<boolean>{
 
     let indentation:string='';
     for(let cont=level;cont>=1;cont--){
-      indentation=indentation+'-';
+      indentation=indentation+'&nbsp;&nbsp;';
     }
-    return indentation+'>';
+    return indentation;
   }
 
   public findColorsByCaseId(caseId:number):Observable<string []>{

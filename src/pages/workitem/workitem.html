@@ -10,7 +10,7 @@
   <ion-list>
      <ion-item-sliding *ngFor="let item of workItemList;let i=index" #SlidingItem class="tdfilters">
         <ion-item (click)="onWiEdit(item,i)" class="buttonfilter">
-        {{item.workitemTemplate}}
+        <div [innerHTML]="item.wiTemplateDiv | escapeHtml" ></div>
         </ion-item>
             <ion-item-options side="right">
               <button ion-button
