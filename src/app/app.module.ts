@@ -57,7 +57,6 @@ import { WorkitemProvider } from '../providers/workitem/workitem';
 import { SyncProvider } from '../providers/sync/sync';
 import { FilesProvider } from '../providers/files/files';
 import { WorkitemAttachmentProvider} from '../providers/workitem-attachment/workitem-attachment';
-import { DocumentViewer } from '@ionic-native/document-viewer';
 import { FileOpener } from '@ionic-native/file-opener';
 
 
@@ -139,7 +138,6 @@ import {HttpClientModule} from "@angular/common/http";
     Camera,
     ImagePicker,
     FileTransfer,
-    DocumentViewer,
     FileOpener,
     File,
     Geolocation,

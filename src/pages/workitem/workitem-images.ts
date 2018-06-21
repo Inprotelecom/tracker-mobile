@@ -13,7 +13,6 @@ import {WorkitemElement} from "../../app/clases/entities/workitem-element";
 import * as _ from 'lodash';
 import {FilesSegmentEnum} from "../../app/enums/files_segment_enum";
 import { URL_TRACKER_SERVICE,TRACKER_DOWNLOAD_IMAGES} from '../../config/url.services';
-import { DocumentViewer,DocumentViewerOptions } from '@ionic-native/document-viewer';
 import { FileOpener } from '@ionic-native/file-opener';
 import dateFormat from 'dateformat';
 import {DT_FORMAT_WEB} from "../../config/app-constants";
@@ -54,7 +53,6 @@ export class WorkitemImagesPage {
               private imagePicker: ImagePicker,
               private transfer: FileTransfer,
               private file: File,
-              private document: DocumentViewer,
               private fileOpener: FileOpener,
               private platform:Platform,
               private loadingController:LoadingController) {
@@ -125,9 +123,7 @@ export class WorkitemImagesPage {
 
   downloadFile(wiAttachment:WiElementAttachment) {
     const fileTransfer: FileTransferObject = this.transfer.create();
-    const options: DocumentViewerOptions = {
-    title: wiAttachment.filename
-    }
+    
     let documentsDirectory='';
     if (this.platform.is('ios')) {
         documentsDirectory = this.file.documentsDirectory;
