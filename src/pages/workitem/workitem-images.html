@@ -30,6 +30,14 @@
       <div *ngSwitchCase="segment.FORM">
 
           <ion-item>
+            <ion-label floating>Name:</ion-label>
+            <ion-input type="text" [(ngModel)]="wiElementAttachment.name" name="Name"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label floating>Order:</ion-label>
+            <ion-input type="number" [(ngModel)]="wiElementAttachment.order" name="Order"></ion-input>
+          </ion-item>
+          <ion-item>
             <ion-label floating>Comments:</ion-label>
             <ion-input type="text" [(ngModel)]="wiElementAttachment.comments" name="Comments"></ion-input>
           </ion-item>
@@ -72,6 +80,12 @@
         <ion-row *ngFor="let w of wiElementAttachmentList| async">
           <ion-col>
             <img [src]="w.file | imageString" *ngIf="w.file"/>
+            <p *ngIf="w.name">
+              Name: {{w.name}}
+            </p>
+            <p *ngIf="w.order">
+              Order: {{w.order}}
+            </p>
             <p *ngIf="w.comments">
               Comments: {{w.comments}}
             </p>
@@ -89,12 +103,24 @@
       <ion-row *ngFor="let r of wiElementAttachmentRemote| async">
         <ion-col *ngIf="r.isImage">
           <img [src]="r.wiElementAttachmentId | trackerImages"/>
+          <p *ngIf="r.name">
+            Name: {{r.name}}
+          </p>
+          <p *ngIf="r.order">
+            Order: {{r.order}}
+          </p>
           <p *ngIf="r.comments">
             Comments: {{r.comments}}
           </p>
         </ion-col>
         <ion-col *ngIf="!r.isImage">
           <ion-icon name="document" (click)="downloadFile(r)">{{r.filename}}</ion-icon>
+          <p *ngIf="r.name">
+            Name: {{r.name}}
+          </p>
+          <p *ngIf="r.order">
+            Order: {{r.order}}
+          </p>
           <p *ngIf="r.comments">
             Comments: {{r.comments}}
           </p>

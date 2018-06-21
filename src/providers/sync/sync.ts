@@ -85,6 +85,8 @@ export class SyncProvider {
       params.set('file',item.file);
       params.set('type',item.type);
       params.set('comment',item.comments);
+      params.set('name',item.name);
+      params.set('order',`${item.order==null?0:item.order}`);
       params.set('modifiedDate',item.modifiedDate)
       listObservables.push(this.getWiAttachmentPostResponse(url,params));
     })

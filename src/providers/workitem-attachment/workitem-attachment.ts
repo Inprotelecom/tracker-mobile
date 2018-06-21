@@ -27,6 +27,8 @@ public findRemoteWiElementAttachment(workItemElementId:number,etypeConfigDoc:num
                wi.filename=d.filename;
                wi.type=d.type;
                wi.isImage=d.isImage;
+               wi.name=d.name;
+               wi.order=d.order;
                this.wiElementAttachment.push(wi);
          });
         }

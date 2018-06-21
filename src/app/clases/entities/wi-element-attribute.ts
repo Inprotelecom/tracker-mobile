@@ -11,6 +11,7 @@ export class WiElementAttribute{
   attribute:Attribute;
   comboValue:ComboValue[];
   modifiedDate:string;
+  order:number;
 
   constructor(){
   }

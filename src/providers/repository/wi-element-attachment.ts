@@ -29,12 +29,14 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                let localId:string=''+entity.etypeConfigDocId+new Date().getTime();
                entity.wiElementAttachmentId=parseInt(localId)*-1;
               }
-              let sql = 'INSERT INTO WI_ELEMENT_ATTACHMENT (ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED,VL_TYPE,DT_MODIFIED) '
-                          +'VALUES(?,?,?,?,?,?,?,?)';
+              let sql = 'INSERT INTO WI_ELEMENT_ATTACHMENT (ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED,VL_TYPE,DT_MODIFIED,NM_ATTACHMENT,NR_ORDER) '
+                          +'VALUES(?,?,?,?,?,?,?,?,?,?)';
                       db.executeSql(sql, [entity.wiElementAttachmentId,entity.workitemElementId,
-                        entity.etypeConfigDocId,entity.comments,entity.file,entity.synced?1:0,entity.type,entity.modifiedDate])
+                        entity.etypeConfigDocId,entity.comments,entity.file,
+                        entity.synced?1:0,entity.type,entity.modifiedDate,entity.name,
+                        entity.order])
                       .then(()=>{
-                          console.info('Inserted Attachment',entity.wiElementAttachmentId);
+                          //console.info('Inserted Attachment',entity.wiElementAttachmentId);
                           observer.next(true);
                           observer.complete();
                        }).catch(e=> {
@@ -106,7 +108,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
           this.sqlite = new SQLite();
           this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-                   let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED,WA.DT_MODIFIED
+                   let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,
+                             VL_FILE_B64,FG_SYNCED,DT_MODIFIED,NM_ATTACHMENT,NR_ORDER
                              FROM WI_ELEMENT_ATTACHMENT
                              WHERE ID_WORK_ITEM_ELEMENT=${wiElementId}
                              AND FG_SYNCED=${(synced?1:0)}
@@ -122,6 +125,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                               row.comments=res.rows.item(i).DE_WI_ELEMENT_ATTACHMENT;
                               row.file=res.rows.item(i).VL_FILE_B64;
                               row.synced=(res.rows.item(i).FG_SYNCED)==1;
+                              row.name=res.rows.item(i).NM_ATTACHMENT;
+                              row.order=res.rows.item(i).NR_ORDER;
                               resList.push(row);
                             }
                            observer.next(resList);
@@ -153,7 +158,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
            this.sqlite = new SQLite();
            this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-                    let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,FG_SYNCED
+                    let sql = `SELECT  ID_WI_ELEMENT_ATTACHMENT, ID_WORK_ITEM_ELEMENT, ID_ELEMENT_TYPE_CONFIG_DOC,DE_WI_ELEMENT_ATTACHMENT,
+                              VL_FILE_B64,FG_SYNCED,NM_ATTACHMENT,NR_ORDER
                               FROM WI_ELEMENT_ATTACHMENT
                               WHERE ID_WORK_ITEM_ELEMENT=${wiElementId}
                               AND ID_ELEMENT_TYPE_CONFIG_DOC=${etypeConfigDocId}`;
@@ -169,6 +175,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                                row.file=res.rows.item(i).VL_FILE_B64;
                                row.synced=(res.rows.item(i).FG_SYNCED)==1;
                                row.modifiedDate=res.rows.item(i).DT_MODIFIED;
+                               row.name=res.rows.item(i).NM_ATTACHMENT;
+                               row.order=res.rows.item(i).NR_ORDER;
                                resList.push(row);
                              }
                             observer.next(resList);
@@ -198,7 +206,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
          this.sqlite = new SQLite();
          this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-           let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE,WA.DT_MODIFIED '
+           let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,'
+             +'VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE,WA.DT_MODIFIED,WA.NM_ATTACHMENT,WA.NR_ORDER '
              +' FROM WI_ELEMENT_ATTACHMENT WA '
              +' WHERE WA.ID_WORK_ITEM_ELEMENT='+wiElement;
            console.info('WiElementAttachment query:'+sql);
@@ -214,6 +223,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
                row.synced=(res.rows.item(i).FG_SYNCED)==1;
                row.type=res.rows.item(i).VL_TYPE;
                row.modifiedDate=res.rows.item(i).DT_MODIFIED;
+               row.name=res.rows.item(i).NM_ATTACHMENT;
+               row.order=res.rows.item(i).NR_ORDER;
                resList.push(row);
                //console.info('WiElementAttachment:'+JSON.stringify(row));
              }
@@ -245,7 +256,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
         this.sqlite = new SQLite();
         this.sqlite.create(DB_CONFIG).then((db:SQLiteObject) => {
 
-          let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE,WA.DT_MODIFIED '
+          let sql = 'SELECT  WA.ID_WI_ELEMENT_ATTACHMENT, WA.ID_WORK_ITEM_ELEMENT, WA.ID_ELEMENT_TYPE_CONFIG_DOC,WA.DE_WI_ELEMENT_ATTACHMENT,'
+            +'VL_FILE_B64,WA.FG_SYNCED,WA.VL_TYPE,WA.DT_MODIFIED,WA.NM_ATTACHMENT,WA.NR_ORDER '
             +' FROM WI_ELEMENT_ATTACHMENT WA '
             +' JOIN WORKITEM_ELEMENT WI ON WI.ID_WORK_ITEM_ELEMENT=WA.ID_WORK_ITEM_ELEMENT '
             +' WHERE WI.ID_CASE='+caseId
@@ -263,6 +275,8 @@ public insert(entity: WiElementAttachment):Observable<boolean>{
               row.synced=(res.rows.item(i).FG_SYNCED)==1;
               row.type=res.rows.item(i).VL_TYPE;
               row.modifiedDate=res.rows.item(i).DT_MODIFIED;
+              row.name=res.rows.item(i).NM_ATTACHMENT;
+              row.order=res.rows.item(i).NR_ORDER;
               //console.log('Attachment not synced',JSON.stringify(row));
               resList.push(row);
             }

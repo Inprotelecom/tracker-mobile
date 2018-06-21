@@ -10,6 +10,8 @@ export class WiElementAttachment{
   filename:string;
   isImage:boolean;
   modifiedDate:string;
+  name:string;
+  order:number;
 
   constructor(){
   }
