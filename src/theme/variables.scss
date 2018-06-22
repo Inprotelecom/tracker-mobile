@@ -215,6 +215,32 @@ ion-item-options button{
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#71ceef', endColorstr='#21b4e2',GradientType=0 ); /* IE6-9 */
   text-shadow:0px 0px 2px rgba(0, 0, 0, 0.55);
 }
+
+ion-list.list button.item {/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f3f3f3+50,ededed+51,ffffff+100;White+Gloss+%232 */
+
+
+    width: 100%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin: 2px;
+    box-sizing: border-box;
+
+    -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  text-shadow:0px 0px 2px black;
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#499bea+0,005cf2+100 */
+background: rgb(73,155,234); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(0,92,242,1) 100%) !important; /* FF3.6-15 */
+background: -webkit-linear-gradient(top, rgba(73,155,234,1) 0%,rgba(0,92,242,1) 100%)!important; /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, rgba(73,155,234,1) 0%,rgba(0,92,242,1) 100%)!important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', endColorstr='#005cf2',GradientType=0 )!important; /* IE6-9 */    resize: none;
+    opacity:1;
+border-style: dotted;
+color:white !important;
+
+}
+
 .inputform{
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f3f3f3+50,ededed+51,ffffff+100;White+Gloss+%232 */
 background: #ffffff; /* Old browsers */
