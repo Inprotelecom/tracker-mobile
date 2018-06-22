@@ -123,7 +123,7 @@ export class WorkitemImagesPage {
 
   downloadFile(wiAttachment:WiElementAttachment) {
     const fileTransfer: FileTransferObject = this.transfer.create();
-    
+
     let documentsDirectory='';
     if (this.platform.is('ios')) {
         documentsDirectory = this.file.documentsDirectory;
@@ -158,7 +158,7 @@ export class WorkitemImagesPage {
 
   saveFile(){
 
-    if(this.imageData==null){
+    if(this.imageData==''){
       this.showMessage('File is mandatory');
     }else{
     this.wiElementAttachment.type='jpeg';
@@ -191,6 +191,9 @@ export class WorkitemImagesPage {
     this.wiElementAttachment.workitemElementId=this.node.workItemElementId;
     this.wiElementAttachment.synced=false;
     this.imageData='';
+    this.wiElementAttachment.name='';
+    this.wiElementAttachment.comments='';
+    this.wiElementAttachment.order=0;
     this.wiElementAttachmentResp=_.cloneDeep(this.wiElementAttachment);
 
     console.info('Cleaning attachment object',JSON.stringify(this.wiElementAttachment));
