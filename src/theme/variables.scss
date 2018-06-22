@@ -207,16 +207,10 @@ border:2px solid grey !important;
 border-style: dotted;
 }
 ion-item-options button{
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#71ceef+30,21b4e2+97 */
-  background: rgb(113,206,239); /* Old browsers */
-  background: -moz-linear-gradient(top, rgba(113,206,239,1) 30%, rgba(33,180,226,1) 97%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top, rgba(113,206,239,1) 30%,rgba(33,180,226,1) 97%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom, rgba(113,206,239,1) 30%,rgba(33,180,226,1) 97%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#71ceef', endColorstr='#21b4e2',GradientType=0 ); /* IE6-9 */
-  text-shadow:0px 0px 2px rgba(0, 0, 0, 0.55);
+
 }
 
-ion-list.list button.item {/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f3f3f3+50,ededed+51,ffffff+100;White+Gloss+%232 */
+ion-list.list button.item.casesmenu {/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f3f3f3+50,ededed+51,ffffff+100;White+Gloss+%232 */
 
 
     width: 100%;

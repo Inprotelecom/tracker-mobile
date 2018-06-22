@@ -10,7 +10,7 @@
   <ion-searchbar (ionInput)="filterElements($event)"></ion-searchbar>
   <ion-list>
      <ion-item-sliding *ngFor="let item of cases;let i=index" #SlidingItem>
-        <button ion-item (click)="onCaseSelect(item)">
+        <button ion-item (click)="onCaseSelect(item)" class="casesmenu">
           {{ item.number }}
         </button>
 
